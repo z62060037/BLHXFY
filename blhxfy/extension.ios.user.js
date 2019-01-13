@@ -5697,7 +5697,7 @@
 	  return str;
 	};
 
-	var version = "1.5.2";
+	var version = "1.5.3";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -7990,8 +7990,9 @@
   display: block;
   position: absolute;
   top: 26px;
-  left: 0;
-  width: 100%;
+  left: 50%;
+  width: 180px;
+  margin-left: -90px;
   z-index: 9999;
   text-align: center;
 }
