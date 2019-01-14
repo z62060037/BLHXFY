@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.5.3
+// @version      1.5.4
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -5713,7 +5713,7 @@
 	  return str;
 	};
 
-	var version = "1.5.3";
+	var version = "1.5.4";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -11133,6 +11133,20 @@ ${extraHtml}
 	      const _trans = getNameTrans(nmKey, map, scenarioName);
 
 	      if (_trans) trans = `${_trans}的声音`;
+	    } else if (!trans && /・/.test(name)) {
+	      const arr = _name.split('・');
+
+	      trans = arr.map(nm => {
+	        const rst = getNameTrans(nm, map, scenarioName);
+	        return rst || nm;
+	      }).join('・');
+	    } else if (!trans && /\band\b/i.test(name)) {
+	      const arr = _name.split(' and ');
+
+	      trans = arr.map(nm => {
+	        const rst = getNameTrans(nm, map, scenarioName);
+	        return rst || nm;
+	      }).join('・');
 	    }
 
 	    if (trans) {
@@ -11142,7 +11156,7 @@ ${extraHtml}
 
 	      item[key] = trans;
 	    } else if (trans !== '') {
-	      return _name;
+	      return name;
 	    }
 	  }
 	};
