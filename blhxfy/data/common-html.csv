@@ -195,7 +195,7 @@ path,text,trans,count
 /item/content/index,空図の欠片,空图碎片,
 /item/content/index,大事なもの,重要物品,4
 /item/content/index,ショップへ,去商店,
-/profile/content/index,<div class="prt-talk-title">挨拶</div>,<div class="prt-talk-title">留言</div>,
+/profile/content/index,"<div class=""prt-talk-title"">挨拶</div>",<div class=prt-talk-title>留言</div>,
 /profile/content/index,ステータス,状态,
 /profile/content/index,ポイント,点数,2
 /profile/content/index,フレンド,好友,2
@@ -320,7 +320,7 @@ path,text,trans,count
 /detail/content/detail,メイン装備時,主召唤时,
 /detail/content/detail,サブ装備時,副召唤时,
 /detail/content/detail,サポーター選択時,支援选择时,
-/detail/content/detail,<div class="prt-title">アビリティ</div>,<div class="prt-title">技能</div>,
+/detail/content/detail,"<div class=""prt-title"">アビリティ</div>",<div class=prt-title>技能</div>,
 /detail/content/detail,トライアルキャラでは使用できないアビリティです,不能与试用角色一起使用的技能,5
 /detail/content/detail,発生条件,开始条件,4
 /detail/content/detail,習得クエストへ,解锁任务,8

@@ -4310,33 +4310,64 @@
 	  return ret;
 	}
 
-	var html = ['a', 'abbr', 'acronym', 'address', 'area', 'article', 'aside', 'audio', 'b', 'bdi', 'bdo', 'big', 'blink', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup', 'content', 'data', 'datalist', 'dd', 'decorator', 'del', 'details', 'dfn', 'dir', 'div', 'dl', 'dt', 'element', 'em', 'fieldset', 'figcaption', 'figure', 'font', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'map', 'mark', 'marquee', 'menu', 'menuitem', 'meter', 'nav', 'nobr', 'ol', 'optgroup', 'option', 'output', 'p', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'section', 'select', 'shadow', 'small', 'source', 'spacer', 'span', 'strike', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr'];
+	var freeze$1 = Object.freeze || function (x) {
+	  return x;
+	};
+
+	var html = freeze$1(['a', 'abbr', 'acronym', 'address', 'area', 'article', 'aside', 'audio', 'b', 'bdi', 'bdo', 'big', 'blink', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup', 'content', 'data', 'datalist', 'dd', 'decorator', 'del', 'details', 'dfn', 'dir', 'div', 'dl', 'dt', 'element', 'em', 'fieldset', 'figcaption', 'figure', 'font', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'map', 'mark', 'marquee', 'menu', 'menuitem', 'meter', 'nav', 'nobr', 'ol', 'optgroup', 'option', 'output', 'p', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'section', 'select', 'shadow', 'small', 'source', 'spacer', 'span', 'strike', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr']);
 
 	// SVG
-	var svg = ['svg', 'a', 'altglyph', 'altglyphdef', 'altglyphitem', 'animatecolor', 'animatemotion', 'animatetransform', 'audio', 'canvas', 'circle', 'clippath', 'defs', 'desc', 'ellipse', 'filter', 'font', 'g', 'glyph', 'glyphref', 'hkern', 'image', 'line', 'lineargradient', 'marker', 'mask', 'metadata', 'mpath', 'path', 'pattern', 'polygon', 'polyline', 'radialgradient', 'rect', 'stop', 'style', 'switch', 'symbol', 'text', 'textpath', 'title', 'tref', 'tspan', 'video', 'view', 'vkern'];
+	var svg = freeze$1(['svg', 'a', 'altglyph', 'altglyphdef', 'altglyphitem', 'animatecolor', 'animatemotion', 'animatetransform', 'audio', 'canvas', 'circle', 'clippath', 'defs', 'desc', 'ellipse', 'filter', 'font', 'g', 'glyph', 'glyphref', 'hkern', 'image', 'line', 'lineargradient', 'marker', 'mask', 'metadata', 'mpath', 'path', 'pattern', 'polygon', 'polyline', 'radialgradient', 'rect', 'stop', 'style', 'switch', 'symbol', 'text', 'textpath', 'title', 'tref', 'tspan', 'video', 'view', 'vkern']);
 
-	var svgFilters = ['feBlend', 'feColorMatrix', 'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting', 'feDisplacementMap', 'feDistantLight', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG', 'feFuncR', 'feGaussianBlur', 'feMerge', 'feMergeNode', 'feMorphology', 'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile', 'feTurbulence'];
+	var svgFilters = freeze$1(['feBlend', 'feColorMatrix', 'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting', 'feDisplacementMap', 'feDistantLight', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG', 'feFuncR', 'feGaussianBlur', 'feMerge', 'feMergeNode', 'feMorphology', 'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile', 'feTurbulence']);
 
-	var mathMl = ['math', 'menclose', 'merror', 'mfenced', 'mfrac', 'mglyph', 'mi', 'mlabeledtr', 'mmuliscripts', 'mn', 'mo', 'mover', 'mpadded', 'mphantom', 'mroot', 'mrow', 'ms', 'mpspace', 'msqrt', 'mystyle', 'msub', 'msup', 'msubsup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder', 'munderover'];
+	var mathMl = freeze$1(['math', 'menclose', 'merror', 'mfenced', 'mfrac', 'mglyph', 'mi', 'mlabeledtr', 'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded', 'mphantom', 'mroot', 'mrow', 'ms', 'mspace', 'msqrt', 'mstyle', 'msub', 'msup', 'msubsup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder', 'munderover']);
 
-	var text = ['#text'];
+	var text = freeze$1(['#text']);
 
-	var html$1 = ['accept', 'action', 'align', 'alt', 'autocomplete', 'background', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'coords', 'crossorigin', 'datetime', 'default', 'dir', 'disabled', 'download', 'enctype', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'integrity', 'ismap', 'label', 'lang', 'list', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'multiple', 'name', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'type', 'usemap', 'valign', 'value', 'width', 'xmlns'];
+	var freeze$2 = Object.freeze || function (x) {
+	  return x;
+	};
 
-	var svg$1 = ['accent-height', 'accumulate', 'additivive', 'alignment-baseline', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'specularconstant', 'specularexponent', 'spreadmethod', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'tabindex', 'targetx', 'targety', 'transform', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan'];
+	var html$1 = freeze$2(['accept', 'action', 'align', 'alt', 'autocomplete', 'background', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'coords', 'crossorigin', 'datetime', 'default', 'dir', 'disabled', 'download', 'enctype', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'integrity', 'ismap', 'label', 'lang', 'list', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'multiple', 'name', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'type', 'usemap', 'valign', 'value', 'width', 'xmlns']);
 
-	var mathMl$1 = ['accent', 'accentunder', 'align', 'bevelled', 'close', 'columnsalign', 'columnlines', 'columnspan', 'denomalign', 'depth', 'dir', 'display', 'displaystyle', 'fence', 'frame', 'height', 'href', 'id', 'largeop', 'length', 'linethickness', 'lspace', 'lquote', 'mathbackground', 'mathcolor', 'mathsize', 'mathvariant', 'maxsize', 'minsize', 'movablelimits', 'notation', 'numalign', 'open', 'rowalign', 'rowlines', 'rowspacing', 'rowspan', 'rspace', 'rquote', 'scriptlevel', 'scriptminsize', 'scriptsizemultiplier', 'selection', 'separator', 'separators', 'stretchy', 'subscriptshift', 'supscriptshift', 'symmetric', 'voffset', 'width', 'xmlns'];
+	var svg$1 = freeze$2(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'specularconstant', 'specularexponent', 'spreadmethod', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'tabindex', 'targetx', 'targety', 'transform', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
 
-	var xml = ['xlink:href', 'xml:id', 'xlink:title', 'xml:space', 'xmlns:xlink'];
+	var mathMl$1 = freeze$2(['accent', 'accentunder', 'align', 'bevelled', 'close', 'columnsalign', 'columnlines', 'columnspan', 'denomalign', 'depth', 'dir', 'display', 'displaystyle', 'fence', 'frame', 'height', 'href', 'id', 'largeop', 'length', 'linethickness', 'lspace', 'lquote', 'mathbackground', 'mathcolor', 'mathsize', 'mathvariant', 'maxsize', 'minsize', 'movablelimits', 'notation', 'numalign', 'open', 'rowalign', 'rowlines', 'rowspacing', 'rowspan', 'rspace', 'rquote', 'scriptlevel', 'scriptminsize', 'scriptsizemultiplier', 'selection', 'separator', 'separators', 'stretchy', 'subscriptshift', 'supscriptshift', 'symmetric', 'voffset', 'width', 'xmlns']);
+
+	var xml = freeze$2(['xlink:href', 'xml:id', 'xlink:title', 'xml:space', 'xmlns:xlink']);
+
+	var hasOwnProperty$1 = Object.hasOwnProperty;
+	var setPrototypeOf = Object.setPrototypeOf;
+
+	var _ref$1 = typeof Reflect !== 'undefined' && Reflect;
+	var apply$1 = _ref$1.apply;
+
+	if (!apply$1) {
+	  apply$1 = function apply(fun, thisValue, args) {
+	    return fun.apply(thisValue, args);
+	  };
+	}
 
 	/* Add properties to a lookup table */
 	function addToSet(set, array) {
+	  if (setPrototypeOf) {
+	    // Make 'in' and truthy checks like Boolean(set.constructor)
+	    // independent of any properties defined on Object.prototype.
+	    // Prevent prototype setters from intercepting set as a this value.
+	    setPrototypeOf(set, null);
+	  }
 	  var l = array.length;
 	  while (l--) {
-	    if (typeof array[l] === 'string') {
-	      array[l] = array[l].toLowerCase();
+	    var element = array[l];
+	    if (typeof element === 'string') {
+	      var lcElement = element.toLowerCase();
+	      if (lcElement !== element) {
+	        array[l] = lcElement;
+	        element = lcElement;
+	      }
 	    }
-	    set[array[l]] = true;
+	    set[element] = true;
 	  }
 	  return set;
 	}
@@ -4346,27 +4377,84 @@
 	  var newObject = {};
 	  var property = void 0;
 	  for (property in object) {
-	    if (Object.prototype.hasOwnProperty.call(object, property)) {
+	    if (apply$1(hasOwnProperty$1, object, [property])) {
 	      newObject[property] = object[property];
 	    }
 	  }
 	  return newObject;
 	}
 
-	var MUSTACHE_EXPR = /\{\{[\s\S]*|[\s\S]*\}\}/gm; // Specify template detection regex for SAFE_FOR_TEMPLATES mode
-	var ERB_EXPR = /<%[\s\S]*|[\s\S]*%>/gm;
-	var DATA_ATTR = /^data-[\-\w.\u00B7-\uFFFF]/; // eslint-disable-line no-useless-escape
-	var ARIA_ATTR = /^aria-[\-\w]+$/; // eslint-disable-line no-useless-escape
-	var IS_ALLOWED_URI = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i; // eslint-disable-line no-useless-escape
-	var IS_SCRIPT_OR_DATA = /^(?:\w+script|data):/i;
-	var ATTR_WHITESPACE = /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g; // eslint-disable-line no-control-regex
+	var seal = Object.seal || function (x) {
+	  return x;
+	};
+
+	var MUSTACHE_EXPR = seal(/\{\{[\s\S]*|[\s\S]*\}\}/gm); // Specify template detection regex for SAFE_FOR_TEMPLATES mode
+	var ERB_EXPR = seal(/<%[\s\S]*|[\s\S]*%>/gm);
+	var DATA_ATTR = seal(/^data-[\-\w.\u00B7-\uFFFF]/); // eslint-disable-line no-useless-escape
+	var ARIA_ATTR = seal(/^aria-[\-\w]+$/); // eslint-disable-line no-useless-escape
+	var IS_ALLOWED_URI = seal(/^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i // eslint-disable-line no-useless-escape
+	);
+	var IS_SCRIPT_OR_DATA = seal(/^(?:\w+script|data):/i);
+	var ATTR_WHITESPACE = seal(/[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g // eslint-disable-line no-control-regex
+	);
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
+	var _ref = typeof Reflect !== 'undefined' && Reflect;
+	var apply = _ref.apply;
+
+	var arraySlice = Array.prototype.slice;
+	var freeze = Object.freeze;
+
 	var getGlobal = function getGlobal() {
 	  return typeof window === 'undefined' ? null : window;
+	};
+
+	if (!apply) {
+	  apply = function apply(fun, thisValue, args) {
+	    return fun.apply(thisValue, args);
+	  };
+	}
+
+	/**
+	 * Creates a no-op policy for internal use only.
+	 * Don't export this function outside this module!
+	 * @param {?TrustedTypePolicyFactory} trustedTypes The policy factory.
+	 * @param {Document} document The document object (to determine policy name suffix)
+	 * @return {?TrustedTypePolicy} The policy created (or null, if Trusted Types
+	 * are not supported).
+	 */
+	var _createTrustedTypesPolicy = function _createTrustedTypesPolicy(trustedTypes, document) {
+	  if ((typeof trustedTypes === 'undefined' ? 'undefined' : _typeof(trustedTypes)) !== 'object' || typeof trustedTypes.createPolicy !== 'function') {
+	    return null;
+	  }
+
+	  // Allow the callers to control the unique policy name
+	  // by adding a data-tt-policy-suffix to the script element with the DOMPurify.
+	  // Policy creation with duplicate names throws in Trusted Types.
+	  var suffix = null;
+	  var ATTR_NAME = 'data-tt-policy-suffix';
+	  if (document.currentScript && document.currentScript.hasAttribute(ATTR_NAME)) {
+	    suffix = document.currentScript.getAttribute(ATTR_NAME);
+	  }
+
+	  var policyName = 'dompurify' + (suffix ? '#' + suffix : '');
+
+	  try {
+	    return trustedTypes.createPolicy(policyName, {
+	      createHTML: function createHTML(html$$1) {
+	        return html$$1;
+	      }
+	    });
+	  } catch (e) {
+	    // Policy creation failed (most likely another DOMPurify script has
+	    // already run). Skip creating the policy, as this will only cause errors
+	    // if TT are enforced.
+	    console.warn('TrustedTypes policy ' + policyName + ' could not be created.');
+	    return null;
+	  }
 	};
 
 	function createDOMPurify() {
@@ -4380,7 +4468,7 @@
 	   * Version label, exposed for easier checks
 	   * if DOMPurify is up to date or not
 	   */
-	  DOMPurify.version = '1.0.8';
+	  DOMPurify.version = '1.0.9';
 
 	  /**
 	   * Array of elements that DOMPurify removed during sanitation.
@@ -4397,8 +4485,8 @@
 	  }
 
 	  var originalDocument = window.document;
-	  var useDOMParser = false; // See comment below
-	  var removeTitle = false; // See comment below
+	  var useDOMParser = false;
+	  var removeTitle = false;
 
 	  var document = window.document;
 	  var DocumentFragment = window.DocumentFragment,
@@ -4409,7 +4497,8 @@
 	      NamedNodeMap = _window$NamedNodeMap === undefined ? window.NamedNodeMap || window.MozNamedAttrMap : _window$NamedNodeMap,
 	      Text = window.Text,
 	      Comment = window.Comment,
-	      DOMParser = window.DOMParser;
+	      DOMParser = window.DOMParser,
+	      TrustedTypes = window.TrustedTypes;
 
 	  // As per issue #47, the web-components registry is inherited by a
 	  // new document created via createHTMLDocument. As per the spec
@@ -4424,6 +4513,9 @@
 	      document = template.content.ownerDocument;
 	    }
 	  }
+
+	  var trustedTypesPolicy = _createTrustedTypesPolicy(TrustedTypes, originalDocument);
+	  var emptyHTML = trustedTypesPolicy ? trustedTypesPolicy.createHTML('') : '';
 
 	  var _document = document,
 	      implementation = _document.implementation,
@@ -4494,12 +4586,14 @@
 	   * document.body. By default, browsers might move them to document.head */
 	  var FORCE_BODY = false;
 
-	  /* Decide if a DOM `HTMLBodyElement` should be returned, instead of a html string.
+	  /* Decide if a DOM `HTMLBodyElement` should be returned, instead of a html
+	   * string (or a TrustedHTML object if Trusted Types are supported).
 	   * If `WHOLE_DOCUMENT` is enabled a `HTMLHtmlElement` will be returned instead
 	   */
 	  var RETURN_DOM = false;
 
-	  /* Decide if a DOM `DocumentFragment` should be returned, instead of a html string */
+	  /* Decide if a DOM `DocumentFragment` should be returned, instead of a html
+	   * string  (or a TrustedHTML object if Trusted Types are supported) */
 	  var RETURN_DOM_FRAGMENT = false;
 
 	  /* If `RETURN_DOM` or `RETURN_DOM_FRAGMENT` is enabled, decide if the returned DOM
@@ -4545,8 +4639,12 @@
 	   */
 	  // eslint-disable-next-line complexity
 	  var _parseConfig = function _parseConfig(cfg) {
+	    if (CONFIG && CONFIG === cfg) {
+	      return;
+	    }
+
 	    /* Shield configuration object from tampering */
-	    if ((typeof cfg === 'undefined' ? 'undefined' : _typeof(cfg)) !== 'object') {
+	    if (!cfg || (typeof cfg === 'undefined' ? 'undefined' : _typeof(cfg)) !== 'object') {
 	      cfg = {};
 	    }
 	    /* Set configuration parameters */
@@ -4638,8 +4736,8 @@
 
 	    // Prevent further manipulation of configuration.
 	    // Not available in IE8, Safari 5, etc.
-	    if (Object && 'freeze' in Object) {
-	      Object.freeze(cfg);
+	    if (freeze) {
+	      freeze(cfg);
 	    }
 
 	    CONFIG = cfg;
@@ -4655,7 +4753,7 @@
 	    try {
 	      node.parentNode.removeChild(node);
 	    } catch (err) {
-	      node.outerHTML = '';
+	      node.outerHTML = emptyHTML;
 	    }
 	  };
 
@@ -4689,9 +4787,17 @@
 	  var _initDocument = function _initDocument(dirty) {
 	    /* Create a HTML document */
 	    var doc = void 0;
+	    var leadingWhitespace = void 0;
 
 	    if (FORCE_BODY) {
 	      dirty = '<remove></remove>' + dirty;
+	    } else {
+	      /* If FORCE_BODY isn't used, leading whitespace needs to be preserved manually */
+	      var matches = dirty.match(/^[\s]+/);
+	      leadingWhitespace = matches && matches[0];
+	      if (leadingWhitespace) {
+	        dirty = dirty.slice(leadingWhitespace.length);
+	      }
 	    }
 
 	    /* Use DOMParser to workaround Firefox bug (see comment below) */
@@ -4701,7 +4807,7 @@
 	      } catch (err) {}
 	    }
 
-	    /* Remove title to fix an mXSS bug in older MS Edge */
+	    /* Remove title to fix a mXSS bug in older MS Edge */
 	    if (removeTitle) {
 	      addToSet(FORBID_TAGS, ['title']);
 	    }
@@ -4714,7 +4820,11 @@
 	          body = _doc.body;
 
 	      body.parentNode.removeChild(body.parentNode.firstElementChild);
-	      body.outerHTML = dirty;
+	      body.outerHTML = trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
+	    }
+
+	    if (leadingWhitespace) {
+	      doc.body.insertBefore(document.createTextNode(leadingWhitespace), doc.body.childNodes[0] || null);
 	    }
 
 	    /* Work on whole document or just its body */
@@ -4733,7 +4843,7 @@
 	  if (DOMPurify.isSupported) {
 	    (function () {
 	      try {
-	        var doc = _initDocument('<svg><p><style><img src="</style><img src=x onerror=alert(1)//">');
+	        var doc = _initDocument('<svg><p><style><img src="</style><img src=x onerror=1//">');
 	        if (doc.querySelector('svg img')) {
 	          useDOMParser = true;
 	        }
@@ -4742,7 +4852,7 @@
 	    (function () {
 	      try {
 	        var doc = _initDocument('<x/><title>&lt;/title&gt;&lt;img&gt;');
-	        if (doc.querySelector('title').textContent.match(/<\/title/)) {
+	        if (doc.querySelector('title').innerHTML.match(/<\/title/)) {
 	          removeTitle = true;
 	        }
 	      } catch (err) {}
@@ -4841,7 +4951,8 @@
 	      /* Keep content except for black-listed elements */
 	      if (KEEP_CONTENT && !FORBID_CONTENTS[tagName] && typeof currentNode.insertAdjacentHTML === 'function') {
 	        try {
-	          currentNode.insertAdjacentHTML('AfterEnd', currentNode.innerHTML);
+	          var htmlToInsert = currentNode.innerHTML;
+	          currentNode.insertAdjacentHTML('AfterEnd', trustedTypesPolicy ? trustedTypesPolicy.createHTML(htmlToInsert) : htmlToInsert);
 	        } catch (err) {}
 	      }
 	      _forceRemove(currentNode);
@@ -4969,7 +5080,7 @@
 	      // attribute at the time.
 	      if (lcName === 'name' && currentNode.nodeName === 'IMG' && attributes.id) {
 	        idAttr = attributes.id;
-	        attributes = Array.prototype.slice.apply(attributes);
+	        attributes = apply(arraySlice, attributes, []);
 	        _removeAttribute('id', currentNode);
 	        _removeAttribute(name, currentNode);
 	        if (attributes.indexOf(idAttr) > l) {
@@ -5120,7 +5231,7 @@
 	    } else {
 	      /* Exit directly if we have nothing to do */
 	      if (!RETURN_DOM && !WHOLE_DOCUMENT && dirty.indexOf('<') === -1) {
-	        return dirty;
+	        return trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
 	      }
 
 	      /* Initialize the document to work on */
@@ -5128,7 +5239,7 @@
 
 	      /* Check we have a DOM node from the data */
 	      if (!body) {
-	        return RETURN_DOM ? null : '';
+	        return RETURN_DOM ? null : emptyHTML;
 	      }
 	    }
 
@@ -5163,6 +5274,8 @@
 	      oldNode = currentNode;
 	    }
 
+	    oldNode = null;
+
 	    /* If we sanitized `dirty` in-place, return it. */
 	    if (IN_PLACE) {
 	      return dirty;
@@ -5192,7 +5305,8 @@
 	      return returnNode;
 	    }
 
-	    return WHOLE_DOCUMENT ? body.outerHTML : body.innerHTML;
+	    var serializedHTML = WHOLE_DOCUMENT ? body.outerHTML : body.innerHTML;
+	    return trustedTypesPolicy ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
 	  };
 
 	  /**
@@ -5408,7 +5522,7 @@
 	var objectProto = Object.prototype;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$1 = objectProto.hasOwnProperty;
+	var hasOwnProperty$2 = objectProto.hasOwnProperty;
 
 	/**
 	 * Used to resolve the
@@ -5428,7 +5542,7 @@
 	 * @returns {string} Returns the raw `toStringTag`.
 	 */
 	function getRawTag(value) {
-	  var isOwn = hasOwnProperty$1.call(value, symToStringTag),
+	  var isOwn = hasOwnProperty$2.call(value, symToStringTag),
 	      tag = value[symToStringTag];
 
 	  try {
@@ -5639,7 +5753,7 @@
 	var funcToString = funcProto.toString;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$2 = objectProto$2.hasOwnProperty;
+	var hasOwnProperty$3 = objectProto$2.hasOwnProperty;
 
 	/** Used to infer the `Object` constructor. */
 	var objectCtorString = funcToString.call(Object);
@@ -5680,7 +5794,7 @@
 	  if (proto === null) {
 	    return true;
 	  }
-	  var Ctor = hasOwnProperty$2.call(proto, 'constructor') && proto.constructor;
+	  var Ctor = hasOwnProperty$3.call(proto, 'constructor') && proto.constructor;
 	  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
 	    funcToString.call(Ctor) == objectCtorString;
 	}
@@ -5697,7 +5811,7 @@
 	  return str;
 	};
 
-	var version = "1.5.4";
+	var version = "1.6.0";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -5707,6 +5821,8 @@
 	  displayName: '',
 	  defaultName: '姬塔',
 	  defaultEnName: 'Djeeta',
+	  font: '',
+	  fontBold: false,
 	  transApi: 'caiyun',
 	  timeout: 8,
 	  autoDownload: false,
@@ -5732,7 +5848,7 @@
 	    config.origin = origin.trim();
 	  }
 
-	  const keys = ['autoDownload', 'bottomToolbar', 'displayName', 'removeScroller', 'hideSidebar', 'transJa', 'transEn', 'keepBgm', 'transApi'];
+	  const keys = ['autoDownload', 'bottomToolbar', 'displayName', 'removeScroller', 'hideSidebar', 'transJa', 'transEn', 'keepBgm', 'transApi', 'font', 'fontBold'];
 	  keys.forEach(key => {
 	    let value = setting[key];
 	    if (isString_1(value)) value = filter(value.trim());
@@ -5856,12 +5972,22 @@
 	window.addEventListener("message", receiveMessage, false);
 
 	var papaparse = createCommonjsModule(function (module, exports) {
-	/*@license
-		Papa Parse
-		v4.6.0
-		https://github.com/mholt/PapaParse
-		License: MIT
+	/* @license
+	Papa Parse
+	v4.6.3
+	https://github.com/mholt/PapaParse
+	License: MIT
 	*/
+
+	// Polyfills
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray#Polyfill
+	if (!Array.isArray)
+	{
+		Array.isArray = function(arg) {
+			return Object.prototype.toString.call(arg) === '[object Array]';
+		};
+	}
+
 	(function(root, factory)
 	{
 		/* globals define */
@@ -5886,7 +6012,6 @@
 			// When running tests none of the above have been defined
 			return {};
 		})();
-
 
 		var IS_WORKER = !global.document && !!global.postMessage,
 			IS_PAPA_WORKER = IS_WORKER && /(\?|&)papaworker(=|&|$)/.test(global.location.search),
@@ -5918,7 +6043,9 @@
 		Papa.FileStreamer = FileStreamer;
 		Papa.StringStreamer = StringStreamer;
 		Papa.ReadableStreamStreamer = ReadableStreamStreamer;
-		Papa.DuplexStreamStreamer = DuplexStreamStreamer;
+		if (typeof PAPA_BROWSER_CONTEXT === 'undefined') {
+			Papa.DuplexStreamStreamer = DuplexStreamStreamer;
+		}
 
 		if (global.jQuery)
 		{
@@ -6078,7 +6205,7 @@
 			}
 
 			var streamer = null;
-			if (_input === Papa.NODE_STREAM_INPUT)
+			if (_input === Papa.NODE_STREAM_INPUT && typeof PAPA_BROWSER_CONTEXT === 'undefined')
 			{
 				// create a node Duplex stream for use
 				// with .pipe
@@ -6126,40 +6253,43 @@
 			/** quote character */
 			var _quoteChar = '"';
 
+			/** whether to skip empty lines */
+			var _skipEmptyLines = false;
+
 			unpackConfig();
 
-			var quoteCharRegex = new RegExp(_quoteChar, 'g');
+			var quoteCharRegex = new RegExp(escapeRegExp(_quoteChar), 'g');
 
 			if (typeof _input === 'string')
 				_input = JSON.parse(_input);
 
-			if (_input instanceof Array)
+			if (Array.isArray(_input))
 			{
-				if (!_input.length || _input[0] instanceof Array)
-					return serialize(null, _input);
+				if (!_input.length || Array.isArray(_input[0]))
+					return serialize(null, _input, _skipEmptyLines);
 				else if (typeof _input[0] === 'object')
-					return serialize(objectKeys(_input[0]), _input);
+					return serialize(objectKeys(_input[0]), _input, _skipEmptyLines);
 			}
 			else if (typeof _input === 'object')
 			{
 				if (typeof _input.data === 'string')
 					_input.data = JSON.parse(_input.data);
 
-				if (_input.data instanceof Array)
+				if (Array.isArray(_input.data))
 				{
 					if (!_input.fields)
 						_input.fields =  _input.meta && _input.meta.fields;
 
 					if (!_input.fields)
-						_input.fields =  _input.data[0] instanceof Array
+						_input.fields =  Array.isArray(_input.data[0])
 							? _input.fields
 							: objectKeys(_input.data[0]);
 
-					if (!(_input.data[0] instanceof Array) && typeof _input.data[0] !== 'object')
+					if (!(Array.isArray(_input.data[0])) && typeof _input.data[0] !== 'object')
 						_input.data = [_input.data];	// handles input like [1,2,3] or ['asdf']
 				}
 
-				return serialize(_input.fields || [], _input.data || []);
+				return serialize(_input.fields || [], _input.data || [], _skipEmptyLines);
 			}
 
 			// Default (any valid paths should return before this)
@@ -6178,8 +6308,12 @@
 				}
 
 				if (typeof _config.quotes === 'boolean'
-					|| _config.quotes instanceof Array)
+					|| Array.isArray(_config.quotes))
 					_quotes = _config.quotes;
+
+				if (typeof _config.skipEmptyLines === 'boolean'
+					|| typeof _config.skipEmptyLines === 'string')
+					_skipEmptyLines = _config.skipEmptyLines;
 
 				if (typeof _config.newline === 'string')
 					_newline = _config.newline;
@@ -6204,7 +6338,7 @@
 			}
 
 			/** The double for loop that iterates the data and writes out a CSV string including header row */
-			function serialize(fields, data)
+			function serialize(fields, data, skipEmptyLines)
 			{
 				var csv = '';
 
@@ -6213,8 +6347,8 @@
 				if (typeof data === 'string')
 					data = JSON.parse(data);
 
-				var hasHeader = fields instanceof Array && fields.length > 0;
-				var dataKeyedByField = !(data[0] instanceof Array);
+				var hasHeader = Array.isArray(fields) && fields.length > 0;
+				var dataKeyedByField = !(Array.isArray(data[0]));
 
 				// If there a header row, write it first
 				if (hasHeader && _writeHeader)
@@ -6234,18 +6368,35 @@
 				{
 					var maxCol = hasHeader ? fields.length : data[row].length;
 
-					for (var col = 0; col < maxCol; col++)
+					var emptyLine = false;
+					var nullLine = hasHeader ? Object.keys(data[row]).length === 0 : data[row].length === 0;
+					if (skipEmptyLines && !hasHeader)
 					{
-						if (col > 0)
-							csv += _delimiter;
-						var colIdx = hasHeader && dataKeyedByField ? fields[col] : col;
-						csv += safe(data[row][colIdx], col);
+						emptyLine = skipEmptyLines === 'greedy' ? data[row].join('').trim() === '' : data[row].length === 1 && data[row][0].length === 0;
 					}
-
-					if (row < data.length - 1)
-						csv += _newline;
+					if (skipEmptyLines === 'greedy' && hasHeader) {
+						var line = [];
+						for (var c = 0; c < maxCol; c++) {
+							var cx = dataKeyedByField ? fields[c] : c;
+							line.push(data[row][cx]);
+						}
+						emptyLine = line.join('').trim() === '';
+					}
+					if (!emptyLine)
+					{
+						for (var col = 0; col < maxCol; col++)
+						{
+							if (col > 0 && !nullLine)
+								csv += _delimiter;
+							var colIdx = hasHeader && dataKeyedByField ? fields[col] : col;
+							csv += safe(data[row][colIdx], col);
+						}
+						if (row < data.length - 1 && (!skipEmptyLines || (maxCol > 0 && !nullLine)))
+						{
+							csv += _newline;
+						}
+					}
 				}
-
 				return csv;
 			}
 
@@ -6261,7 +6412,7 @@
 				str = str.toString().replace(quoteCharRegex, _quoteChar + _quoteChar);
 
 				var needsQuotes = (typeof _quotes === 'boolean' && _quotes)
-								|| (_quotes instanceof Array && _quotes[col])
+								|| (Array.isArray(_quotes) && _quotes[col])
 								|| hasAny(str, Papa.BAD_DELIMITERS)
 								|| str.indexOf(_delimiter) > -1
 								|| str.charAt(0) === ' '
@@ -6795,8 +6946,10 @@
 			});
 			stream.once('finish', bindFunction(this._onWriteComplete, this));
 		}
-		DuplexStreamStreamer.prototype = Object.create(ChunkStreamer.prototype);
-		DuplexStreamStreamer.prototype.constructor = DuplexStreamStreamer;
+		if (typeof PAPA_BROWSER_CONTEXT === 'undefined') {
+			DuplexStreamStreamer.prototype = Object.create(ChunkStreamer.prototype);
+			DuplexStreamStreamer.prototype.constructor = DuplexStreamStreamer;
+		}
 
 
 		// Use one ParserHandle per entire CSV file or string
@@ -7075,7 +7228,7 @@
 
 						if (typeof fieldCountPrevRow === 'undefined')
 						{
-							fieldCountPrevRow = fieldCount;
+							fieldCountPrevRow = 0;
 							continue;
 						}
 						else if (fieldCount > 1)
@@ -7088,7 +7241,7 @@
 					if (preview.data.length > 0)
 						avgFieldCount /= (preview.data.length - emptyLinesCount);
 
-					if ((typeof bestDelta === 'undefined' || delta < bestDelta)
+					if ((typeof bestDelta === 'undefined' || delta > bestDelta)
 						&& avgFieldCount > 1.99)
 					{
 						bestDelta = delta;
@@ -7247,7 +7400,7 @@
 
 				var nextDelim = input.indexOf(delim, cursor);
 				var nextNewline = input.indexOf(newline, cursor);
-				var quoteCharRegex = new RegExp(escapeChar.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&') + quoteChar, 'g');
+				var quoteCharRegex = new RegExp(escapeRegExp(escapeChar) + escapeRegExp(quoteChar), 'g');
 				var quoteSearch;
 
 				// Parser loop
@@ -7615,7 +7768,7 @@
 		{
 			if (typeof obj !== 'object' || obj === null)
 				return obj;
-			var cpy = obj instanceof Array ? [] : {};
+			var cpy = Array.isArray(obj) ? [] : {};
 			for (var key in obj)
 				cpy[key] = copy(obj[key]);
 			return cpy;
@@ -7851,9 +8004,18 @@
 			<div class="prt-setting-article">
 				<div class="txt-article-title">机翻设置</div>
 				<ul class="txt-article-lead">
-					<li>仅在脚本通过油猴插件加载时有效</li>
+					<li>在一些使用场景下，可能不会生效</li>
 				</ul>
 				<div class="prt-button">
+					<div class="prt-select-box" style="margin:0 6px 0 0">
+						<div style="width:103px" id="trans-api-setting-blhxfy-pulldown" class="prt-list-pulldown btn-sort">
+							<div id="trans-api-setting-blhxfy-txt" class="txt-selected">彩云小译</div>
+							<select id="trans-api-setting-blhxfy" class="frm-list-select" onchange="window.blhxfy.sendEvent('setting', 'trans-api', this.value)">
+								<option value="caiyun" selected="">彩云小译</option>
+								<option value="google">Google翻译</option>
+							</select>
+						</div>
+					</div>
 					<div>
 						<input id="trans-ja-setting-blhxfy" onchange="window.blhxfy.sendEvent('setting', 'trans-ja', this.checked)" type="checkbox" value="">
 						<label for="trans-ja-setting-blhxfy" class="btn-usual-setting-new adjust-font-s">日语机翻</label>
@@ -7863,18 +8025,25 @@
 						<label for="trans-en-setting-blhxfy" class="btn-usual-setting-new adjust-font-s">英语机翻</label>
 					</div>
 				</div>
+			</div>
+
+			<div class="prt-setting-article">
+				<div class="txt-article-title">字体设置</div>
+				<ul class="txt-article-lead">
+					<li>剧情文本使用的字体。</li>
+				</ul>
 				<div class="prt-button">
-					<div class="prt-select-box">
-						<div id="trans-api-setting-blhxfy-pulldown" class="prt-list-pulldown btn-sort">
-							<div id="trans-api-setting-blhxfy-txt" class="txt-selected">彩云小译</div>
-							<select id="trans-api-setting-blhxfy" class="frm-list-select" onchange="window.blhxfy.sendEvent('setting', 'trans-api', this.value)">
-								<option value="caiyun" selected="">彩云小译</option>
-								<option value="google">Google翻译</option>
-							</select>
-						</div>
+					<input style="width:180px;margin-right:10px" id="font-setting-blhxfy" oninput="window.blhxfy.sendEvent('setting', 'font', this.value)" type="text" value="" placeholder="请输入字体">
+					<div>
+						<input id="font-bold-setting-blhxfy" onchange="window.blhxfy.sendEvent('setting', 'font-bold', this.checked)" type="checkbox" value="">
+						<label style="top:2px" for="font-bold-setting-blhxfy" class="btn-usual-setting-new adjust-font-s">加粗</label>
 					</div>
 				</div>
 			</div>
+
+			<div class="txt-setting-lead">
+        ※格式同CSS的font-family，默认使用微软正黑体。填 none 则不修改字体，显示游戏默认字体效果。
+      </div>
 
       <div class="prt-setting-article">
 				<div class="txt-article-title">剧情CSV文件快捷下载</div>
@@ -8508,11 +8677,11 @@ ${extraHtml}
 	var funcToString$2 = funcProto$2.toString;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$3 = objectProto$3.hasOwnProperty;
+	var hasOwnProperty$4 = objectProto$3.hasOwnProperty;
 
 	/** Used to detect if a method is native. */
 	var reIsNative = RegExp('^' +
-	  funcToString$2.call(hasOwnProperty$3).replace(reRegExpChar, '\\$&')
+	  funcToString$2.call(hasOwnProperty$4).replace(reRegExpChar, '\\$&')
 	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
 	);
 
@@ -8612,7 +8781,7 @@ ${extraHtml}
 	var objectProto$4 = Object.prototype;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$4 = objectProto$4.hasOwnProperty;
+	var hasOwnProperty$5 = objectProto$4.hasOwnProperty;
 
 	/**
 	 * Gets the hash value for `key`.
@@ -8629,7 +8798,7 @@ ${extraHtml}
 	    var result = data[key];
 	    return result === HASH_UNDEFINED ? undefined : result;
 	  }
-	  return hasOwnProperty$4.call(data, key) ? data[key] : undefined;
+	  return hasOwnProperty$5.call(data, key) ? data[key] : undefined;
 	}
 
 	var _hashGet = hashGet;
@@ -8638,7 +8807,7 @@ ${extraHtml}
 	var objectProto$5 = Object.prototype;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$5 = objectProto$5.hasOwnProperty;
+	var hasOwnProperty$6 = objectProto$5.hasOwnProperty;
 
 	/**
 	 * Checks if a hash value for `key` exists.
@@ -8651,7 +8820,7 @@ ${extraHtml}
 	 */
 	function hashHas(key) {
 	  var data = this.__data__;
-	  return _nativeCreate ? (data[key] !== undefined) : hasOwnProperty$5.call(data, key);
+	  return _nativeCreate ? (data[key] !== undefined) : hasOwnProperty$6.call(data, key);
 	}
 
 	var _hashHas = hashHas;
@@ -8964,7 +9133,7 @@ ${extraHtml}
 	var objectProto$6 = Object.prototype;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$6 = objectProto$6.hasOwnProperty;
+	var hasOwnProperty$7 = objectProto$6.hasOwnProperty;
 
 	/**
 	 * Assigns `value` to `key` of `object` if the existing value is not equivalent
@@ -8978,7 +9147,7 @@ ${extraHtml}
 	 */
 	function assignValue(object, key, value) {
 	  var objValue = object[key];
-	  if (!(hasOwnProperty$6.call(object, key) && eq_1(objValue, value)) ||
+	  if (!(hasOwnProperty$7.call(object, key) && eq_1(objValue, value)) ||
 	      (value === undefined && !(key in object))) {
 	    _baseAssignValue(object, key, value);
 	  }
@@ -9065,7 +9234,7 @@ ${extraHtml}
 	var objectProto$7 = Object.prototype;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$7 = objectProto$7.hasOwnProperty;
+	var hasOwnProperty$8 = objectProto$7.hasOwnProperty;
 
 	/** Built-in value references. */
 	var propertyIsEnumerable = objectProto$7.propertyIsEnumerable;
@@ -9089,7 +9258,7 @@ ${extraHtml}
 	 * // => false
 	 */
 	var isArguments = _baseIsArguments(function() { return arguments; }()) ? _baseIsArguments : function(value) {
-	  return isObjectLike_1(value) && hasOwnProperty$7.call(value, 'callee') &&
+	  return isObjectLike_1(value) && hasOwnProperty$8.call(value, 'callee') &&
 	    !propertyIsEnumerable.call(value, 'callee');
 	};
 
@@ -9345,7 +9514,7 @@ ${extraHtml}
 	var objectProto$8 = Object.prototype;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$8 = objectProto$8.hasOwnProperty;
+	var hasOwnProperty$9 = objectProto$8.hasOwnProperty;
 
 	/**
 	 * Creates an array of the enumerable property names of the array-like `value`.
@@ -9365,7 +9534,7 @@ ${extraHtml}
 	      length = result.length;
 
 	  for (var key in value) {
-	    if ((inherited || hasOwnProperty$8.call(value, key)) &&
+	    if ((inherited || hasOwnProperty$9.call(value, key)) &&
 	        !(skipIndexes && (
 	           // Safari 9 has enumerable `arguments.length` in strict mode.
 	           key == 'length' ||
@@ -9412,7 +9581,7 @@ ${extraHtml}
 	var objectProto$a = Object.prototype;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$9 = objectProto$a.hasOwnProperty;
+	var hasOwnProperty$a = objectProto$a.hasOwnProperty;
 
 	/**
 	 * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
@@ -9427,7 +9596,7 @@ ${extraHtml}
 	  }
 	  var result = [];
 	  for (var key in Object(object)) {
-	    if (hasOwnProperty$9.call(object, key) && key != 'constructor') {
+	    if (hasOwnProperty$a.call(object, key) && key != 'constructor') {
 	      result.push(key);
 	    }
 	  }
@@ -9541,7 +9710,7 @@ ${extraHtml}
 	var objectProto$b = Object.prototype;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$a = objectProto$b.hasOwnProperty;
+	var hasOwnProperty$b = objectProto$b.hasOwnProperty;
 
 	/**
 	 * The base implementation of `_.keysIn` which doesn't treat sparse arrays as dense.
@@ -9558,7 +9727,7 @@ ${extraHtml}
 	      result = [];
 
 	  for (var key in object) {
-	    if (!(key == 'constructor' && (isProto || !hasOwnProperty$a.call(object, key)))) {
+	    if (!(key == 'constructor' && (isProto || !hasOwnProperty$b.call(object, key)))) {
 	      result.push(key);
 	    }
 	  }
@@ -9936,7 +10105,7 @@ ${extraHtml}
 	var objectProto$d = Object.prototype;
 
 	/** Used to check objects for own properties. */
-	var hasOwnProperty$b = objectProto$d.hasOwnProperty;
+	var hasOwnProperty$c = objectProto$d.hasOwnProperty;
 
 	/**
 	 * Initializes an array clone.
@@ -9950,7 +10119,7 @@ ${extraHtml}
 	      result = new array.constructor(length);
 
 	  // Add properties assigned by `RegExp#exec`.
-	  if (length && typeof array[0] == 'string' && hasOwnProperty$b.call(array, 'index')) {
+	  if (length && typeof array[0] == 'string' && hasOwnProperty$c.call(array, 'index')) {
 	    result.index = array.index;
 	    result.input = array.input;
 	  }
@@ -12678,6 +12847,34 @@ ${extraHtml}
 	  $('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
 	});
 
+	const insertCSS$1 = fontValue => {
+	  const style = document.createElement('style');
+	  style.innerHTML = `.prt-scene-comment, .prt-log-display, .btn-select-baloon {
+    font-family: ${fontValue} !important;
+  }`;
+	  document.head.appendChild(style);
+	};
+
+	const setBold = () => {
+	  const style = document.createElement('style');
+	  style.innerHTML = `.prt-scene-comment, .prt-log-display, .btn-select-baloon {
+    font-weight: bold;
+  }`;
+	  document.head.appendChild(style);
+	};
+
+	const scenarioFont = () => {
+	  if (!config.font) {
+	    insertCSS$1('jpkana, yaheiSymbol, "Microsoft Jhenghei", "Yu Gothic", "Meiryo", sans-serif');
+	  } else if (config.font !== 'none') {
+	    insertCSS$1(config.font);
+	  }
+
+	  if (config.fontBold) setBold();
+	};
+
+	scenarioFont();
+
 	/**
 	 * Gets the timestamp of the number of milliseconds that have elapsed since
 	 * the Unix epoch (1 January 1970 00:00:00 UTC).
@@ -12996,7 +13193,7 @@ ${extraHtml}
 	  localStorage.setItem('blhxfy:setting', JSON.stringify(data));
 	};
 
-	const keyMap = new Map([['origin', 'origin'], ['auto-download', 'autoDownload'], ['bottom-toolbar', 'bottomToolbar'], ['username', 'displayName'], ['remove-scroller', 'removeScroller'], ['hide-sidebar', 'hideSidebar'], ['trans-ja', 'transJa'], ['trans-en', 'transEn'], ['keep-bgm', 'keepBgm'], ['trans-api', 'transApi']]);
+	const keyMap = new Map([['origin', 'origin'], ['auto-download', 'autoDownload'], ['bottom-toolbar', 'bottomToolbar'], ['username', 'displayName'], ['remove-scroller', 'removeScroller'], ['hide-sidebar', 'hideSidebar'], ['trans-ja', 'transJa'], ['trans-en', 'transEn'], ['keep-bgm', 'keepBgm'], ['trans-api', 'transApi'], ['font', 'font'], ['font-bold', 'fontBold']]);
 
 	const setting = (type, value) => {
 	  if (type === 'show') {
