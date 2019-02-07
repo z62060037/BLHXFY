@@ -5811,7 +5811,7 @@
 	  return str;
 	};
 
-	var version = "1.6.0";
+	var version = "1.6.1";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -11032,6 +11032,32 @@ ${extraHtml}
 	  }
 	}
 
+	const insertCSS$1 = fontValue => {
+	  const style = document.createElement('style');
+	  style.innerHTML = `.prt-scene-comment, .prt-pop-synopsis, .prt-log-display, .btn-select-baloon {
+    font-family: ${fontValue}, nickname_scene, "FOT-ニューシネマA Std D", "Average Sans", sans-serif !important;
+  }`;
+	  document.head.appendChild(style);
+	};
+
+	const setBold = () => {
+	  const style = document.createElement('style');
+	  style.innerHTML = `.prt-scene-comment, .prt-log-display, .btn-select-baloon {
+    font-weight: bold;
+  }`;
+	  document.head.appendChild(style);
+	};
+
+	const scenarioFont = () => {
+	  if (!config.font) {
+	    insertCSS$1('jpkana, FZShuiYJW, "Microsoft Jhenghei", "Yu Gothic", "Meiryo", sans-serif');
+	  } else if (config.font !== 'none') {
+	    insertCSS$1(config.font);
+	  }
+
+	  if (config.fontBold) setBold();
+	};
+
 	const txtKeys = ['chapter_name', 'synopsis', 'detail', 'sel1_txt', 'sel2_txt', 'sel3_txt', 'sel4_txt', 'sel5_txt', 'sel6_txt'];
 	const WORDS_LIMIT = 4500;
 	const scenarioCache = {
@@ -11385,6 +11411,10 @@ ${extraHtml}
 	    scenarioCache.hasTrans = true;
 	    scenarioCache.csv = csv;
 	    scenarioCache.transMap = transMap;
+	  }
+
+	  if (scenarioCache.hasAutoTrans || scenarioCache.hasTrans) {
+	    scenarioFont();
 	  }
 
 	  data.forEach(item => {
@@ -12846,34 +12876,6 @@ ${extraHtml}
 	window.addEventListener('load', function () {
 	  $('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
 	});
-
-	const insertCSS$1 = fontValue => {
-	  const style = document.createElement('style');
-	  style.innerHTML = `.prt-scene-comment, .prt-log-display, .btn-select-baloon {
-    font-family: ${fontValue} !important;
-  }`;
-	  document.head.appendChild(style);
-	};
-
-	const setBold = () => {
-	  const style = document.createElement('style');
-	  style.innerHTML = `.prt-scene-comment, .prt-log-display, .btn-select-baloon {
-    font-weight: bold;
-  }`;
-	  document.head.appendChild(style);
-	};
-
-	const scenarioFont = () => {
-	  if (!config.font) {
-	    insertCSS$1('jpkana, yaheiSymbol, "Microsoft Jhenghei", "Yu Gothic", "Meiryo", sans-serif');
-	  } else if (config.font !== 'none') {
-	    insertCSS$1(config.font);
-	  }
-
-	  if (config.fontBold) setBold();
-	};
-
-	scenarioFont();
 
 	/**
 	 * Gets the timestamp of the number of milliseconds that have elapsed since
