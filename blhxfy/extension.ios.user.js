@@ -5811,7 +5811,7 @@
 	  return str;
 	};
 
-	var version = "1.6.1";
+	var version = "1.6.2";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -8042,7 +8042,7 @@
 			</div>
 
 			<div class="txt-setting-lead">
-        ※格式同CSS的font-family，默认使用微软正黑体。填 none 则不修改字体，显示游戏默认字体效果。
+        ※格式同CSS的font-family。填 none 则不修改字体，显示游戏默认字体效果。
       </div>
 
       <div class="prt-setting-article">
@@ -11050,7 +11050,11 @@ ${extraHtml}
 
 	const scenarioFont = () => {
 	  if (!config.font) {
-	    insertCSS$1('jpkana, FZShuiYJW, "Microsoft Jhenghei", "Yu Gothic", "Meiryo", sans-serif');
+	    if (Game.ua.os.name === 'Windows') {
+	      insertCSS$1('jpkana, FZShuiYJW, "Microsoft Jhenghei", "Yu Gothic", "Meiryo", sans-serif');
+	    } else {
+	      insertCSS$1('jpkana, sans-serif');
+	    }
 	  } else if (config.font !== 'none') {
 	    insertCSS$1(config.font);
 	  }
