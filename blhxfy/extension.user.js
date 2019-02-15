@@ -5974,8 +5974,11 @@
 	  });
 	};
 
-	const getHash = fetchData('/blhxfy/manifest.json').then(data => data.hash);
-	getHash.then(hash => {
+	const getHash = fetchData('/blhxfy/manifest.json');
+	getHash.then(data => {
+	  config.newVersion = data.version;
+	  return data.hash;
+	}).then(hash => {
 	  config.hash = hash;
 	  insertCSS('BLHXFY');
 	  return hash;

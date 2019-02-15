@@ -9032,10 +9032,11 @@
     };
   }();
 
-  var getHash = fetchData('/blhxfy/manifest.json').then(function (data) {
+  var getHash = fetchData('/blhxfy/manifest.json');
+  getHash.then(function (data) {
+    config.newVersion = data.version;
     return data.hash;
-  });
-  getHash.then(function (hash) {
+  }).then(function (hash) {
     config.hash = hash;
     insertCSS('BLHXFY');
     return hash;
