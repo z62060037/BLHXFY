@@ -5430,13 +5430,27 @@
 	  return html;
 	};
 
-	const removeHtmlTag = (str, count = 0) => {
+	const removeNotMatchedHtmlTag = str => {
+	  if (/<\/?(span|div)[^>]*>/.test(str)) {
+	    return str.replace(/<\/?(span|div)[^>]*>/g, '');
+	  }
+
+	  return str;
+	};
+
+	const removeNormalHtmlTag = (str, count = 0) => {
 	  count++;
 	  if (!/<(\w{1,7})[^>]*>/.test(str) || count > 2) return str;
 
 	  const _str = str.replace(/<br\s?\/?>/g, '').replace(/<(\w{1,7})[^>]*>([^<]*)<\/\1>/g, '$2');
 
-	  return removeHtmlTag(_str, count);
+	  return removeNormalHtmlTag(_str, count);
+	};
+
+	const removeHtmlTag = (str, count = 0) => {
+	  const _str = removeNormalHtmlTag(str, count);
+
+	  return removeNotMatchedHtmlTag(_str);
 	};
 
 	const replaceWords = (str, map, lang = 'en') => {
@@ -5811,7 +5825,7 @@
 	  return str;
 	};
 
-	var version = "1.6.2";
+	var version = "1.6.3";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
