@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.6.3
+// @version      1.6.4
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -5841,7 +5841,7 @@
 	  return str;
 	};
 
-	var version = "1.6.3";
+	var version = "1.6.4";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -8138,8 +8138,36 @@
 </div>
 </div>
 `;
+	const templateForWheel = `
+<style>
+#blhxfy-setting-modal {
+	height: 100%;
+	overflow: auto;
+}
+</style>
+`;
+
+	const wheelStopPg = e => {
+	  e.stopImmediatePropagation();
+	};
+
 	function insertSettingHtml (html) {
-	  return html.replace('<div class="cnt-setting">', `${template}<div class="cnt-setting"><div class="cnt-setting"><div class="btn-usual-text" id="btn-setting-blhxfy" onclick="window.blhxfy.sendEvent('setting', 'show')">汉化插件设置</div>`);
+	  html = html.replace('<div class="cnt-setting">', `${template}<div class="cnt-setting"><div class="cnt-setting"><div class="btn-usual-text" id="btn-setting-blhxfy" onclick="window.blhxfy.sendEvent('setting', 'show')">汉化插件设置</div>`);
+
+	  if (location.hash !== '#setting') {
+	    html = html.replace('<div class="btn-usual-text" id="btn-setting-blhxfy"', `${templateForWheel}<div class="btn-usual-text" id="btn-setting-blhxfy"`);
+	    setTimeout(() => {
+	      const modal = document.getElementById('blhxfy-setting-modal');
+	      modal.removeEventListener('wheel', wheelStopPg);
+	      modal.removeEventListener('DOMMouseScroll', wheelStopPg);
+	      modal.removeEventListener('mousewheel', wheelStopPg);
+	      modal.addEventListener('wheel', wheelStopPg, false);
+	      modal.addEventListener('DOMMouseScroll', wheelStopPg, false);
+	      modal.addEventListener('mousewheel', wheelStopPg, false);
+	    }, 1000);
+	  }
+
+	  return html;
 	}
 
 	const extraHtml = template.replace('data-href="setting"', 'onclick="window.blhxfy.sendEvent(\'setting\', \'hide\')"').replace('返回设置', '返回剧情');
