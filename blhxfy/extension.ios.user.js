@@ -5442,7 +5442,7 @@
 	  count++;
 	  if (!/<(\w{1,7})[^>]*>/.test(str) || count > 2) return str;
 
-	  const _str = str.replace(/<br\s?\/?>/g, '').replace(/<(\w{1,7})[^>]*>([^<]*)<\/\1>/g, '$2');
+	  const _str = str.replace(/<br\s?\/?>/ig, '').replace(/<(\w{1,7})[^>]*>([^<]*)<\/\1>/g, '$2');
 
 	  return removeNormalHtmlTag(_str, count);
 	};
@@ -5889,13 +5889,13 @@
 	  origin
 	} = config;
 	let ee = new events();
-	let lecia;
+	let lacia;
 
 	const insertCSS = name => {
 	  const link = document.createElement('link');
 	  link.type = 'text/css';
 	  link.rel = 'stylesheet';
-	  link.href = `${origin}/blhxfy/data/static/style/${name}.css?lecia=${config.hash || config.localHash}`;
+	  link.href = `${origin}/blhxfy/data/static/style/${name}.css?lacia=${config.hash || config.localHash}`;
 	  document.head.appendChild(link);
 	};
 
@@ -5917,12 +5917,12 @@
 	  let timer;
 	  window.addEventListener('load', () => {
 	    const iframe = document.createElement('iframe');
-	    iframe.src = `${origin}/blhxfy/lecia.html`;
+	    iframe.src = `${origin}/blhxfy/lacia.html`;
 	    iframe.style.display = 'none';
 	    document.body.appendChild(iframe);
-	    lecia = iframe.contentWindow;
+	    lacia = iframe.contentWindow;
 	    timer = setTimeout(() => {
-	      rej('加载lecia.html超时');
+	      rej('加载lacia.html超时');
 	      timeoutStyle();
 	    }, config.timeout * 1000);
 	  });
@@ -5936,7 +5936,7 @@
 	  await load;
 	  const url = pathname;
 	  const flag = Math.random();
-	  lecia.postMessage({
+	  lacia.postMessage({
 	    type: 'fetch',
 	    url,
 	    flag
@@ -5958,8 +5958,7 @@
 	  });
 	};
 
-	const getHash = fetchData('/blhxfy/manifest.json');
-	getHash.then(data => {
+	const getHash = fetchData('/blhxfy/manifest.json').then(data => {
 	  config.newVersion = data.version;
 	  return data.hash;
 	}).then(hash => {
@@ -5970,7 +5969,7 @@
 
 	const fetchWithHash = async pathname => {
 	  const hash = await getHash;
-	  const data = await fetchData(`${pathname}?lecia=${hash}`);
+	  const data = await fetchData(`${pathname}?lacia=${hash}`);
 	  return data;
 	};
 

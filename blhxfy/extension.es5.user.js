@@ -8453,7 +8453,7 @@
     count++;
     if (!/<(\w{1,7})[^>]*>/.test(str) || count > 2) return str;
 
-    var _str = str.replace(/<br\s?\/?>/g, '').replace(/<(\w{1,7})[^>]*>([^<]*)<\/\1>/g, '$2');
+    var _str = str.replace(/<br\s?\/?>/ig, '').replace(/<(\w{1,7})[^>]*>([^<]*)<\/\1>/g, '$2');
 
     return removeNormalHtmlTag(_str, count);
   };
@@ -8942,13 +8942,13 @@
 
   var origin = config.origin;
   var ee = new events();
-  var lecia;
+  var lacia;
 
   var insertCSS = function insertCSS(name) {
     var link = document.createElement('link');
     link.type = 'text/css';
     link.rel = 'stylesheet';
-    link.href = "".concat(origin, "/blhxfy/data/static/style/").concat(name, ".css?lecia=").concat(config.hash || config.localHash);
+    link.href = "".concat(origin, "/blhxfy/data/static/style/").concat(name, ".css?lacia=").concat(config.hash || config.localHash);
     document.head.appendChild(link);
   };
 
@@ -8966,12 +8966,12 @@
     var timer;
     window.addEventListener('load', function () {
       var iframe = document.createElement('iframe');
-      iframe.src = "".concat(origin, "/blhxfy/lecia.html");
+      iframe.src = "".concat(origin, "/blhxfy/lacia.html");
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
-      lecia = iframe.contentWindow;
+      lacia = iframe.contentWindow;
       timer = setTimeout(function () {
-        rej('加载lecia.html超时');
+        rej('加载lacia.html超时');
         timeoutStyle();
       }, config.timeout * 1000);
     });
@@ -8998,7 +8998,7 @@
             case 2:
               url = pathname;
               flag = Math.random();
-              lecia.postMessage({
+              lacia.postMessage({
                 type: 'fetch',
                 url: url,
                 flag: flag
@@ -9032,8 +9032,7 @@
     };
   }();
 
-  var getHash = fetchData('/blhxfy/manifest.json');
-  getHash.then(function (data) {
+  var getHash = fetchData('/blhxfy/manifest.json').then(function (data) {
     config.newVersion = data.version;
     return data.hash;
   }).then(function (hash) {
@@ -9059,7 +9058,7 @@
             case 2:
               hash = _context2.sent;
               _context2.next = 5;
-              return fetchData("".concat(pathname, "?lecia=").concat(hash));
+              return fetchData("".concat(pathname, "?lacia=").concat(hash));
 
             case 5:
               data = _context2.sent;
