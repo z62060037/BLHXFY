@@ -5825,7 +5825,7 @@
 	  return str;
 	};
 
-	var version = "1.6.4";
+	var version = "1.6.5";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -5839,6 +5839,7 @@
 	  fontBold: false,
 	  transApi: 'caiyun',
 	  timeout: 8,
+	  plainText: false,
 	  autoDownload: false,
 	  bottomToolbar: false,
 	  removeScroller: true,
@@ -5862,7 +5863,7 @@
 	    config.origin = origin.trim();
 	  }
 
-	  const keys = ['autoDownload', 'bottomToolbar', 'displayName', 'removeScroller', 'hideSidebar', 'transJa', 'transEn', 'keepBgm', 'transApi', 'font', 'fontBold'];
+	  const keys = ['autoDownload', 'bottomToolbar', 'displayName', 'removeScroller', 'hideSidebar', 'transJa', 'transEn', 'keepBgm', 'transApi', 'font', 'fontBold', 'plainText'];
 	  keys.forEach(key => {
 	    let value = setting[key];
 	    if (isString_1(value)) value = filter(value.trim());
@@ -8266,10 +8267,22 @@
 }
 .language-setting-blhxfy select {
   border: none;
-    border-radius: 2px;
+  border-radius: 2px;
+}
+.blhxfy-story-plaintext {
+  position: absolute;
+  right: -33px;
+  top: 8px;
+  color: #fff;
+  width: auto !important;
+  font-size: 8px;
 }
 </style>
 <div id="blhxfy-story-tool">
+  <div class="blhxfy-story-plaintext">
+    <input id="plain-text-blhxfy" type="checkbox" onchange="window.blhxfy.sendEvent('setting', 'plain-text', this.checked)">
+    <label for="plain-text-blhxfy" style="padding-left:2px" title="勾选后，下载的csv文件会去掉里面的html代码">纯文本</label>
+  </div>
   <div>
     <button onclick="window.blhxfy.sendEvent('dlStoryCsv')" title="下载未翻译的剧情文本">原文</button>
     <button onclick="window.blhxfy.sendEvent('dlStoryCsv', 'fill')" title="下载用原文填充trans列的剧情文本">填充</button>
@@ -8310,6 +8323,7 @@ ${extraHtml}
 	      en: 2
 	    };
 	    $('#language-type-blhxfy').val(langVal[Game.lang]);
+	    $('#plain-text-blhxfy')[0].checked = config.plainText;
 	  }
 	}
 
@@ -13240,15 +13254,17 @@ ${extraHtml}
 	  }
 
 	  data[key] = value;
+	  config[key] = value;
 	  localStorage.setItem('blhxfy:setting', JSON.stringify(data));
 	};
 
-	const keyMap = new Map([['origin', 'origin'], ['auto-download', 'autoDownload'], ['bottom-toolbar', 'bottomToolbar'], ['username', 'displayName'], ['remove-scroller', 'removeScroller'], ['hide-sidebar', 'hideSidebar'], ['trans-ja', 'transJa'], ['trans-en', 'transEn'], ['keep-bgm', 'keepBgm'], ['trans-api', 'transApi'], ['font', 'font'], ['font-bold', 'fontBold']]);
+	const keyMap = new Map([['origin', 'origin'], ['auto-download', 'autoDownload'], ['bottom-toolbar', 'bottomToolbar'], ['username', 'displayName'], ['remove-scroller', 'removeScroller'], ['hide-sidebar', 'hideSidebar'], ['trans-ja', 'transJa'], ['trans-en', 'transEn'], ['keep-bgm', 'keepBgm'], ['trans-api', 'transApi'], ['font', 'font'], ['font-bold', 'fontBold'], ['plain-text', 'plainText']]);
 
 	const setting = (type, value) => {
 	  if (type === 'show') {
 	    for (let [id, key] of keyMap) {
 	      const ipt = $(`#${id}-setting-blhxfy`);
+	      if (!ipt.length) continue;
 
 	      if (ipt.attr('type') === 'checkbox') {
 	        ipt[0].checked = config[key];
@@ -13280,7 +13296,7 @@ ${extraHtml}
 	  }
 	};
 
-	const dbSetting = debounce_1(setting, 500);
+	const dbSetting = debounce_1(setting, 300);
 
 	const txtKeys$1 = ['chapter_name', 'synopsis', 'detail', 'sel1_txt', 'sel2_txt', 'sel3_txt', 'sel4_txt', 'sel5_txt', 'sel6_txt'];
 
@@ -13300,7 +13316,10 @@ ${extraHtml}
 
 	const dataToCsv = (data, fill, isTrans, isAutoTrans) => {
 	  const result = [];
-	  data.forEach(item => {
+
+	  const _data = cloneDeep_1(data);
+
+	  _data.forEach(item => {
 	    const name = removeTag(item.charcter1_name);
 	    replaceChar('charcter1_name', item, scenarioCache.nameMap, scenarioCache.name);
 	    const transName = removeTag(item.charcter1_name);
@@ -13329,6 +13348,11 @@ ${extraHtml}
 	          trans = txt;
 	        }
 
+	        if (config.plainText) {
+	          txt = removeHtmlTag(txt);
+	          trans = removeHtmlTag(trans);
+	        }
+
 	        result.push({
 	          id: `${item.id}${key === 'detail' ? '' : '-' + key}`,
 	          name: hasName ? `${name}${hasTransName ? '/' + transName : ''}` : '',
@@ -13338,6 +13362,7 @@ ${extraHtml}
 	      }
 	    });
 	  });
+
 	  const extraInfo = {
 	    id: 'info',
 	    name: '',
@@ -13354,7 +13379,7 @@ ${extraHtml}
 	    tryDownload(dataToCsv(scenarioCache.data), scenarioCache.name + '.csv');
 	  } else if (type === 'trans') {
 	    if (scenarioCache.hasTrans) {
-	      tryDownload(dataToCsv(scenarioCache.data, false, true), scenarioCache.originName);
+	      tryDownload(dataToCsv(scenarioCache.data, false, true), scenarioCache.originName || `${scenarioCache.name}.csv`);
 	    } else {
 	      if (scenarioCache.hasAutoTrans) {
 	        if (confirm('这个章节还没有翻译，是否下载含有机翻文本的文件。')) {

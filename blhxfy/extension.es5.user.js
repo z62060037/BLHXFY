@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.6.4
+// @version      1.6.5
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -8881,7 +8881,7 @@
     return str;
   };
 
-  var version = "1.6.4";
+  var version = "1.6.5";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -8895,6 +8895,7 @@
     fontBold: false,
     transApi: 'caiyun',
     timeout: 8,
+    plainText: false,
     autoDownload: false,
     bottomToolbar: false,
     removeScroller: true,
@@ -8917,7 +8918,7 @@
       config.origin = origin.trim();
     }
 
-    var keys = ['autoDownload', 'bottomToolbar', 'displayName', 'removeScroller', 'hideSidebar', 'transJa', 'transEn', 'keepBgm', 'transApi', 'font', 'fontBold'];
+    var keys = ['autoDownload', 'bottomToolbar', 'displayName', 'removeScroller', 'hideSidebar', 'transJa', 'transEn', 'keepBgm', 'transApi', 'font', 'fontBold', 'plainText'];
     keys.forEach(function (key) {
       var value = setting[key];
       if (isString_1(value)) value = filter(value.trim());
@@ -11180,7 +11181,7 @@
   }
 
   var extraHtml = template.replace('data-href="setting"', 'onclick="window.blhxfy.sendEvent(\'setting\', \'hide\')"').replace('返回设置', '返回剧情');
-  var html$2 = "\n<style>\n.cnt-quest-scene .prt-log-display {\n  padding-top: 74px;\n}\n#blhxfy-story-tool {\n  display: none;\n}\n#blhxfy-story-tool > div {\n  width: 152px;\n  margin: 7px auto;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n#blhxfy-story-input button,\n#blhxfy-story-tool button {\n  border: none;\n  background: none;\n  cursor: pointer;\n  padding: 4px 6px;\n  font-size: 10px;\n  margin: 0;\n  letter-spacing: 1px;\n  line-height: 1;\n  outline: none;\n  position: relative;\n  transition: none;\n  border-radius: 3px;\n  background: #539cba;\n  color: #fff;\n  box-shadow: 0 3px #165c85;\n  text-shadow: 1px 1px 2px rgba(0,0,0,0.5)\n}\n\n#blhxfy-story-input button:hover,\n#blhxfy-story-tool button:hover {\n  box-shadow: 0 2px #165c85;\n  top: 1px;\n}\n#blhxfy-story-input button:active,\n#blhxfy-story-tool button:active {\n  box-shadow: 0 1px #165c85;\n  top: 2px;\n}\n.log #blhxfy-story-tool {\n  display: block;\n  position: absolute;\n  top: 26px;\n  left: 50%;\n  width: 180px;\n  margin-left: -90px;\n  z-index: 9999;\n  text-align: center;\n}\n#blhxfy-story-input {\n  position: absolute;\n  display: none;\n  top: 0;\n  left: 0;\n  width: 320px;\n  height: 100%;\n  background: #fff;\n  z-index: 10000;\n}\n.blhxfy-preview-tool {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  border-bottom: 1px solid #e3e3e3;\n  display: flex;\n  justify-content: space-between;\n  padding-left: 10px;\n  padding-right: 10px;\n  background: #116d82;\n}\n#blhxfy-story-input p {\n  margin: 10px 10px 0 10px;\n  color: #5b8690;\n  text-align: left;\n  font-size: 10px;\n  position: relative;\n}\n#blhxfy-story-input p a {\n  color: #29b82d;\n  position: absolute;\n  cursor: pointer;\n  padding: 4px;\n  right: 0;\n  top: -5px;\n}\n#blhxfy-story-input textarea {\n  width: 300px;\n  height: calc(100% - 80px);\n  margin: 10px;\n  box-sizing: border-box;\n  font-size: 8px;\n  padding: 4px;\n  border-radius: 2px;\n  box-shadow: inset 0 0 3px #2c88d775;\n  outline: none;\n  resize: none;\n  font-family: Consolas, \"Microsoft Yahei\";\n}\n.language-setting-blhxfy {\n  font-size: 10px;\n  color: #fff;\n  top: 1px;\n  position: relative;\n  font-family: Microsoft Jhenghei;\n}\n.language-setting-blhxfy select {\n  border: none;\n    border-radius: 2px;\n}\n</style>\n<div id=\"blhxfy-story-tool\">\n  <div>\n    <button onclick=\"window.blhxfy.sendEvent('dlStoryCsv')\" title=\"\u4E0B\u8F7D\u672A\u7FFB\u8BD1\u7684\u5267\u60C5\u6587\u672C\">\u539F\u6587</button>\n    <button onclick=\"window.blhxfy.sendEvent('dlStoryCsv', 'fill')\" title=\"\u4E0B\u8F7D\u7528\u539F\u6587\u586B\u5145trans\u5217\u7684\u5267\u60C5\u6587\u672C\">\u586B\u5145</button>\n    <button onclick=\"window.blhxfy.sendEvent('dlStoryCsv', 'trans')\" title=\"\u4E0B\u8F7D\u5DF2\u7FFB\u8BD1\u7684\u5267\u60C5\u6587\u672C\">\u8BD1\u6587</button>\n    <button onclick=\"window.blhxfy.sendEvent('previewCsv', 'show')\" title=\"\u586B\u5199\u7FFB\u8BD1\u597D\u7684\u5267\u60C5\u6587\u672C\u6765\u9884\u89C8\">\u9884\u89C8</button>\n  </div>\n  <div>\n    <div class=\"language-setting-blhxfy\">\n      <span>\u8BED\u8A00\uFF1A</span>\n      <select id=\"language-type-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'language', event)\" class=\"frm-list-select frm-post-async is-reload\" data-post-name=\"language_type\">\n        <option value=\"1\">\u65E5\u672C\u8A9E</option>\n        <option value=\"2\">English</option>\n      </select>\n    </div>\n    <button onclick=\"window.blhxfy.sendEvent('setting', 'show')\" title=\"\u63D2\u4EF6\u8BBE\u7F6E\">\u8BBE\u7F6E</button>\n  </div>\n</div>\n<div id=\"blhxfy-story-input\">\n  <div class=\"blhxfy-preview-tool\">\n    <button onclick=\"window.blhxfy.sendEvent('previewCsv', 'hide')\">\u53D6\u6D88</button>\n    <button onclick=\"window.blhxfy.sendEvent('previewCsv', 'save')\" title=\"\u4FDD\u5B58\u9884\u89C8\u6587\u672C\u5E76\u5237\u65B0\u9875\u9762\">\u4FDD\u5B58</button>\n  </div>\n  <p>\u8BF7\u5C06\u7F16\u8F91\u597D\u7684\u5267\u60C5\u6587\u672C\u7C98\u8D34\u5230\u6587\u672C\u6846<a onclick=\"window.blhxfy.sendEvent('previewCsv', 'clear')\" title=\"\u6E05\u9664\u9884\u89C8\u6587\u672C\">\u6E05\u7A7A</a></p>\n  <textarea placeholder=\"\u5267\u60C5\u6587\u672C\"></textarea>\n</div>\n<link type=\"text/css\" rel=\"stylesheet\" href=\"".concat(Game.cssUri, "/setting/index.css\">\n").concat(extraHtml, "\n");
+  var html$2 = "\n<style>\n.cnt-quest-scene .prt-log-display {\n  padding-top: 74px;\n}\n#blhxfy-story-tool {\n  display: none;\n}\n#blhxfy-story-tool > div {\n  width: 152px;\n  margin: 7px auto;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n#blhxfy-story-input button,\n#blhxfy-story-tool button {\n  border: none;\n  background: none;\n  cursor: pointer;\n  padding: 4px 6px;\n  font-size: 10px;\n  margin: 0;\n  letter-spacing: 1px;\n  line-height: 1;\n  outline: none;\n  position: relative;\n  transition: none;\n  border-radius: 3px;\n  background: #539cba;\n  color: #fff;\n  box-shadow: 0 3px #165c85;\n  text-shadow: 1px 1px 2px rgba(0,0,0,0.5)\n}\n\n#blhxfy-story-input button:hover,\n#blhxfy-story-tool button:hover {\n  box-shadow: 0 2px #165c85;\n  top: 1px;\n}\n#blhxfy-story-input button:active,\n#blhxfy-story-tool button:active {\n  box-shadow: 0 1px #165c85;\n  top: 2px;\n}\n.log #blhxfy-story-tool {\n  display: block;\n  position: absolute;\n  top: 26px;\n  left: 50%;\n  width: 180px;\n  margin-left: -90px;\n  z-index: 9999;\n  text-align: center;\n}\n#blhxfy-story-input {\n  position: absolute;\n  display: none;\n  top: 0;\n  left: 0;\n  width: 320px;\n  height: 100%;\n  background: #fff;\n  z-index: 10000;\n}\n.blhxfy-preview-tool {\n  padding-top: 10px;\n  padding-bottom: 10px;\n  border-bottom: 1px solid #e3e3e3;\n  display: flex;\n  justify-content: space-between;\n  padding-left: 10px;\n  padding-right: 10px;\n  background: #116d82;\n}\n#blhxfy-story-input p {\n  margin: 10px 10px 0 10px;\n  color: #5b8690;\n  text-align: left;\n  font-size: 10px;\n  position: relative;\n}\n#blhxfy-story-input p a {\n  color: #29b82d;\n  position: absolute;\n  cursor: pointer;\n  padding: 4px;\n  right: 0;\n  top: -5px;\n}\n#blhxfy-story-input textarea {\n  width: 300px;\n  height: calc(100% - 80px);\n  margin: 10px;\n  box-sizing: border-box;\n  font-size: 8px;\n  padding: 4px;\n  border-radius: 2px;\n  box-shadow: inset 0 0 3px #2c88d775;\n  outline: none;\n  resize: none;\n  font-family: Consolas, \"Microsoft Yahei\";\n}\n.language-setting-blhxfy {\n  font-size: 10px;\n  color: #fff;\n  top: 1px;\n  position: relative;\n  font-family: Microsoft Jhenghei;\n}\n.language-setting-blhxfy select {\n  border: none;\n  border-radius: 2px;\n}\n.blhxfy-story-plaintext {\n  position: absolute;\n  right: -33px;\n  top: 8px;\n  color: #fff;\n  width: auto !important;\n  font-size: 8px;\n}\n</style>\n<div id=\"blhxfy-story-tool\">\n  <div class=\"blhxfy-story-plaintext\">\n    <input id=\"plain-text-blhxfy\" type=\"checkbox\" onchange=\"window.blhxfy.sendEvent('setting', 'plain-text', this.checked)\">\n    <label for=\"plain-text-blhxfy\" style=\"padding-left:2px\" title=\"\u52FE\u9009\u540E\uFF0C\u4E0B\u8F7D\u7684csv\u6587\u4EF6\u4F1A\u53BB\u6389\u91CC\u9762\u7684html\u4EE3\u7801\">\u7EAF\u6587\u672C</label>\n  </div>\n  <div>\n    <button onclick=\"window.blhxfy.sendEvent('dlStoryCsv')\" title=\"\u4E0B\u8F7D\u672A\u7FFB\u8BD1\u7684\u5267\u60C5\u6587\u672C\">\u539F\u6587</button>\n    <button onclick=\"window.blhxfy.sendEvent('dlStoryCsv', 'fill')\" title=\"\u4E0B\u8F7D\u7528\u539F\u6587\u586B\u5145trans\u5217\u7684\u5267\u60C5\u6587\u672C\">\u586B\u5145</button>\n    <button onclick=\"window.blhxfy.sendEvent('dlStoryCsv', 'trans')\" title=\"\u4E0B\u8F7D\u5DF2\u7FFB\u8BD1\u7684\u5267\u60C5\u6587\u672C\">\u8BD1\u6587</button>\n    <button onclick=\"window.blhxfy.sendEvent('previewCsv', 'show')\" title=\"\u586B\u5199\u7FFB\u8BD1\u597D\u7684\u5267\u60C5\u6587\u672C\u6765\u9884\u89C8\">\u9884\u89C8</button>\n  </div>\n  <div>\n    <div class=\"language-setting-blhxfy\">\n      <span>\u8BED\u8A00\uFF1A</span>\n      <select id=\"language-type-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'language', event)\" class=\"frm-list-select frm-post-async is-reload\" data-post-name=\"language_type\">\n        <option value=\"1\">\u65E5\u672C\u8A9E</option>\n        <option value=\"2\">English</option>\n      </select>\n    </div>\n    <button onclick=\"window.blhxfy.sendEvent('setting', 'show')\" title=\"\u63D2\u4EF6\u8BBE\u7F6E\">\u8BBE\u7F6E</button>\n  </div>\n</div>\n<div id=\"blhxfy-story-input\">\n  <div class=\"blhxfy-preview-tool\">\n    <button onclick=\"window.blhxfy.sendEvent('previewCsv', 'hide')\">\u53D6\u6D88</button>\n    <button onclick=\"window.blhxfy.sendEvent('previewCsv', 'save')\" title=\"\u4FDD\u5B58\u9884\u89C8\u6587\u672C\u5E76\u5237\u65B0\u9875\u9762\">\u4FDD\u5B58</button>\n  </div>\n  <p>\u8BF7\u5C06\u7F16\u8F91\u597D\u7684\u5267\u60C5\u6587\u672C\u7C98\u8D34\u5230\u6587\u672C\u6846<a onclick=\"window.blhxfy.sendEvent('previewCsv', 'clear')\" title=\"\u6E05\u9664\u9884\u89C8\u6587\u672C\">\u6E05\u7A7A</a></p>\n  <textarea placeholder=\"\u5267\u60C5\u6587\u672C\"></textarea>\n</div>\n<link type=\"text/css\" rel=\"stylesheet\" href=\"".concat(Game.cssUri, "/setting/index.css\">\n").concat(extraHtml, "\n");
   function insertToolHtml () {
     var cont = $('.cnt-quest-scene');
     var tool = $('#blhxfy-story-tool');
@@ -11193,6 +11194,7 @@
         en: 2
       };
       $('#language-type-blhxfy').val(langVal[Game.lang]);
+      $('#plain-text-blhxfy')[0].checked = config.plainText;
     }
   }
 
@@ -18229,10 +18231,11 @@
     }
 
     data[key] = value;
+    config[key] = value;
     localStorage.setItem('blhxfy:setting', JSON.stringify(data));
   };
 
-  var keyMap = new Map([['origin', 'origin'], ['auto-download', 'autoDownload'], ['bottom-toolbar', 'bottomToolbar'], ['username', 'displayName'], ['remove-scroller', 'removeScroller'], ['hide-sidebar', 'hideSidebar'], ['trans-ja', 'transJa'], ['trans-en', 'transEn'], ['keep-bgm', 'keepBgm'], ['trans-api', 'transApi'], ['font', 'font'], ['font-bold', 'fontBold']]);
+  var keyMap = new Map([['origin', 'origin'], ['auto-download', 'autoDownload'], ['bottom-toolbar', 'bottomToolbar'], ['username', 'displayName'], ['remove-scroller', 'removeScroller'], ['hide-sidebar', 'hideSidebar'], ['trans-ja', 'transJa'], ['trans-en', 'transEn'], ['keep-bgm', 'keepBgm'], ['trans-api', 'transApi'], ['font', 'font'], ['font-bold', 'fontBold'], ['plain-text', 'plainText']]);
 
   var setting = function setting(type, value) {
     if (type === 'show') {
@@ -18247,6 +18250,7 @@
               key = _step$value[1];
 
           var ipt = $("#".concat(id, "-setting-blhxfy"));
+          if (!ipt.length) continue;
 
           if (ipt.attr('type') === 'checkbox') {
             ipt[0].checked = config[key];
@@ -18293,7 +18297,7 @@
     }
   };
 
-  var dbSetting = debounce_1(setting, 500);
+  var dbSetting = debounce_1(setting, 300);
 
   var txtKeys$1 = ['chapter_name', 'synopsis', 'detail', 'sel1_txt', 'sel2_txt', 'sel3_txt', 'sel4_txt', 'sel5_txt', 'sel6_txt'];
 
@@ -18313,7 +18317,10 @@
 
   var dataToCsv = function dataToCsv(data, fill, isTrans, isAutoTrans) {
     var result = [];
-    data.forEach(function (item) {
+
+    var _data = cloneDeep_1(data);
+
+    _data.forEach(function (item) {
       var name = removeTag(item.charcter1_name);
       replaceChar('charcter1_name', item, scenarioCache.nameMap, scenarioCache.name);
       var transName = removeTag(item.charcter1_name);
@@ -18342,6 +18349,11 @@
             trans = txt;
           }
 
+          if (config.plainText) {
+            txt = removeHtmlTag(txt);
+            trans = removeHtmlTag(trans);
+          }
+
           result.push({
             id: "".concat(item.id).concat(key === 'detail' ? '' : '-' + key),
             name: hasName ? "".concat(name).concat(hasTransName ? '/' + transName : '') : '',
@@ -18351,6 +18363,7 @@
         }
       });
     });
+
     var extraInfo = {
       id: 'info',
       name: '',
@@ -18369,7 +18382,7 @@
       tryDownload(dataToCsv(scenarioCache.data), scenarioCache.name + '.csv');
     } else if (type === 'trans') {
       if (scenarioCache.hasTrans) {
-        tryDownload(dataToCsv(scenarioCache.data, false, true), scenarioCache.originName);
+        tryDownload(dataToCsv(scenarioCache.data, false, true), scenarioCache.originName || "".concat(scenarioCache.name, ".csv"));
       } else {
         if (scenarioCache.hasAutoTrans) {
           if (confirm('这个章节还没有翻译，是否下载含有机翻文本的文件。')) {
