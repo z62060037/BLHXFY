@@ -5825,7 +5825,7 @@
 	  return str;
 	};
 
-	var version = "1.6.5";
+	var version = "1.6.6";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -8333,14 +8333,14 @@ ${extraHtml}
 	    $('#wrapper').off('click.blhxfy-dlcsv').on('click.blhxfy-dlcsv', '.cnt-quest-scene .btn-skip', function () {
 	      setTimeout(() => {
 	        if (!document.querySelector('.pop-synopsis')) {
-	          window.blhx.sendEvent('dlStoryCsv', 'fill');
+	          window.blhx.sendEvent('dlStoryCsv');
 	          downloaded = true;
 	        }
 	      }, 100);
 	    });
 	    $('#wrapper').off('click.blhxfy-dlcsv2').on('click.blhxfy-dlcsv2', '.pop-synopsis .btn-usual-ok', function () {
 	      if (!downloaded) {
-	        window.blhx.sendEvent('dlStoryCsv', 'fill');
+	        window.blhx.sendEvent('dlStoryCsv');
 	      }
 	    });
 	  }

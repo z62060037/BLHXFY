@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.6.5
+// @version      1.6.6
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -5841,7 +5841,7 @@
 	  return str;
 	};
 
-	var version = "1.6.5";
+	var version = "1.6.6";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -8349,14 +8349,14 @@ ${extraHtml}
 	    $('#wrapper').off('click.blhxfy-dlcsv').on('click.blhxfy-dlcsv', '.cnt-quest-scene .btn-skip', function () {
 	      setTimeout(() => {
 	        if (!document.querySelector('.pop-synopsis')) {
-	          window.blhx.sendEvent('dlStoryCsv', 'fill');
+	          window.blhx.sendEvent('dlStoryCsv');
 	          downloaded = true;
 	        }
 	      }, 100);
 	    });
 	    $('#wrapper').off('click.blhxfy-dlcsv2').on('click.blhxfy-dlcsv2', '.pop-synopsis .btn-usual-ok', function () {
 	      if (!downloaded) {
-	        window.blhx.sendEvent('dlStoryCsv', 'fill');
+	        window.blhx.sendEvent('dlStoryCsv');
 	      }
 	    });
 	  }
