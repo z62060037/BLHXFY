@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.6.6
+// @version      1.7.0
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -976,8 +976,24 @@
     return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
   }
 
+  function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  }
+
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+      return arr2;
+    }
+  }
+
   function _arrayWithHoles(arr) {
     if (Array.isArray(arr)) return arr;
+  }
+
+  function _iterableToArray(iter) {
+    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
   }
 
   function _iterableToArrayLimit(arr, i) {
@@ -1004,6 +1020,10 @@
     }
 
     return _arr;
+  }
+
+  function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance");
   }
 
   function _nonIterableRest() {
@@ -7306,6 +7326,22 @@
     return ret;
   }
 
+  var ENDS_WITH = 'endsWith';
+  var $endsWith = ''[ENDS_WITH];
+
+  _export(_export.P + _export.F * _failsIsRegexp(ENDS_WITH), 'String', {
+    endsWith: function endsWith(searchString /* , endPosition = @length */) {
+      var that = _stringContext(this, searchString, ENDS_WITH);
+      var endPosition = arguments.length > 1 ? arguments[1] : undefined;
+      var len = _toLength(that.length);
+      var end = endPosition === undefined ? len : Math.min(_toLength(endPosition), len);
+      var search = String(searchString);
+      return $endsWith
+        ? $endsWith.call(that, search, end)
+        : that.slice(end - search.length, end) === search;
+    }
+  });
+
   var STARTS_WITH = 'startsWith';
   var $startsWith = ''[STARTS_WITH];
 
@@ -8570,6 +8606,36 @@
     return true;
   };
 
+  var getPlusStr = function getPlusStr(str) {
+    var plusStr = '';
+    var plusStr2 = '';
+    var _str = str;
+
+    while (_str.endsWith('+') || _str.endsWith('＋')) {
+      plusStr += '＋';
+      plusStr2 += '+';
+      _str = _str.slice(0, _str.length - 1);
+    }
+
+    return [plusStr, plusStr2, _str];
+  };
+
+  var race = function race(func) {
+    return function () {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      var promise1 = func.apply(void 0, args);
+      var promise2 = new Promise(function (rev) {
+        setTimeout(function () {
+          rev(args[0]);
+        }, 300);
+      });
+      return Promise.race([promise1, promise2]);
+    };
+  };
+
   /** Detect free variable `global` from Node.js. */
   var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
 
@@ -8881,7 +8947,7 @@
     return str;
   };
 
-  var version = "1.6.6";
+  var version = "1.7.0";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -8900,6 +8966,7 @@
     bottomToolbar: false,
     removeScroller: true,
     hideSidebar: false,
+    battleTrans: true,
     localHash: '',
     transJa: true,
     transEn: true,
@@ -8918,7 +8985,7 @@
       config.origin = origin.trim();
     }
 
-    var keys = ['autoDownload', 'bottomToolbar', 'displayName', 'removeScroller', 'hideSidebar', 'transJa', 'transEn', 'keepBgm', 'transApi', 'font', 'fontBold', 'plainText'];
+    var keys = ['autoDownload', 'bottomToolbar', 'displayName', 'removeScroller', 'hideSidebar', 'transJa', 'transEn', 'keepBgm', 'transApi', 'font', 'fontBold', 'plainText', 'battleTrans'];
     keys.forEach(function (key) {
       var value = setting[key];
       if (isString_1(value)) value = filter(value.trim());
@@ -11154,7 +11221,7 @@
     };
   }();
 
-  var template = "\n<style>\n#btn-setting-blhxfy {\n  position: absolute;\n  left: 16px;\n  top: 104px;\n}\n#blhxfy-setting-modal {\n  display: none;\n  position: absolute;\n  top: 0;\n  left: 0;\n  background: #f6feff;\n  width: 100%;\n  min-height: 100%;\n  z-index: 99999;\n  padding-bottom: 38px;\n}\n#blhxfy-setting-modal input[type=text] {\n  display: block !important;\n  outline: none;\n  width: 274px;\n  font-size: 12px;\n  padding: 4px;\n  box-shadow: none;\n  border: 1px solid #78bbd8;\n  border-radius: 2px;\n  font-family: sans-serif;\n  color: #4d6671;\n}\n#blhxfy-setting-modal.show {\n  display: block;\n}\n#blhxfy-setting-modal input[type=text]::placeholder {\n  color: #aaa;\n}\n</style>\n<div id=\"blhxfy-setting-modal\">\n<div class=\"cnt-setting\">\n\t<div class=\"prt-setting-header\"><img class=\"img-header\" src=\"https://blhx.danmu9.com/blhxfy/data/static/image/setting-header.jpg\" alt=\"header_public\"></div>\n\n\n\t<div class=\"prt-setting-module\">\n\t\t<div class=\"txt-setting-title\">\u63D2\u4EF6\u8BBE\u7F6E</div>\n\t\t<div class=\"prt-setting-frame\">\n\t\t\t<div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">\u7FFB\u8BD1\u6570\u636E\u57DF\u540D</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u7559\u7A7A\u5219\u4F7F\u7528\u9ED8\u8BA4\u7684\u6570\u636E\u6E90</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button-l\">\n          <input id=\"origin-setting-blhxfy\" oninput=\"window.blhxfy.sendEvent('setting', 'origin', this.value)\" type=\"text\" value=\"\" placeholder=\"https://blhx.danmu9.com\">\n        </div>\n      </div>\n      <div class=\"txt-setting-lead\">\n        \u203B\u4F7F\u7528\u7B2C\u4E09\u65B9\u6570\u636E\u6E90\u6709\u98CE\u9669\uFF0C\u8BF7\u9009\u62E9\u53EF\u4EE5\u4FE1\u4EFB\u7684\u6570\u636E\u6E90\u3002\n      </div>\n\n      <div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">\u4E3B\u89D2\u540D</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u5267\u60C5\u91CC\u663E\u793A\u7684\u4E3B\u89D2\u540D\u5B57\uFF0C\u7559\u7A7A\u5219\u4F7F\u7528\u4F60\u81EA\u5DF1\u7684\u6635\u79F0</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button-l\">\n          <input id=\"username-setting-blhxfy\" oninput=\"window.blhxfy.sendEvent('setting', 'username', this.value)\" type=\"text\" value=\"\" placeholder=\"\u8BF7\u8F93\u5165\u4E3B\u89D2\u540D\">\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">\u673A\u7FFB\u8BBE\u7F6E</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u5728\u4E00\u4E9B\u4F7F\u7528\u573A\u666F\u4E0B\uFF0C\u53EF\u80FD\u4E0D\u4F1A\u751F\u6548</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button\">\n\t\t\t\t\t<div class=\"prt-select-box\" style=\"margin:0 6px 0 0\">\n\t\t\t\t\t\t<div style=\"width:103px\" id=\"trans-api-setting-blhxfy-pulldown\" class=\"prt-list-pulldown btn-sort\">\n\t\t\t\t\t\t\t<div id=\"trans-api-setting-blhxfy-txt\" class=\"txt-selected\">\u5F69\u4E91\u5C0F\u8BD1</div>\n\t\t\t\t\t\t\t<select id=\"trans-api-setting-blhxfy\" class=\"frm-list-select\" onchange=\"window.blhxfy.sendEvent('setting', 'trans-api', this.value)\">\n\t\t\t\t\t\t\t\t<option value=\"caiyun\" selected=\"\">\u5F69\u4E91\u5C0F\u8BD1</option>\n\t\t\t\t\t\t\t\t<option value=\"google\">Google\u7FFB\u8BD1</option>\n\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"trans-ja-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'trans-ja', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"trans-ja-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u65E5\u8BED\u673A\u7FFB</label>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"trans-en-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'trans-en', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"trans-en-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u82F1\u8BED\u673A\u7FFB</label>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">\u5B57\u4F53\u8BBE\u7F6E</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u5267\u60C5\u6587\u672C\u4F7F\u7528\u7684\u5B57\u4F53\u3002</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button\">\n\t\t\t\t\t<input style=\"width:180px;margin-right:10px\" id=\"font-setting-blhxfy\" oninput=\"window.blhxfy.sendEvent('setting', 'font', this.value)\" type=\"text\" value=\"\" placeholder=\"\u8BF7\u8F93\u5165\u5B57\u4F53\">\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"font-bold-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'font-bold', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label style=\"top:2px\" for=\"font-bold-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u52A0\u7C97</label>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class=\"txt-setting-lead\">\n        \u203B\u683C\u5F0F\u540CCSS\u7684font-family\u3002\u586B none \u5219\u4E0D\u4FEE\u6539\u5B57\u4F53\uFF0C\u663E\u793A\u6E38\u620F\u9ED8\u8BA4\u5B57\u4F53\u6548\u679C\u3002\n      </div>\n\n      <div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">\u5267\u60C5CSV\u6587\u4EF6\u5FEB\u6377\u4E0B\u8F7D</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u6FC0\u6D3B\u540E\u5728 SKIP \u7684\u65F6\u5019\u81EA\u52A8\u4E0B\u8F7D\u5267\u60C5CSV</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button-l\">\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"auto-download-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'auto-download', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"auto-download-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u81EA\u52A8\u4E0B\u8F7DCSV</label>\n\t\t\t\t\t</div>\n        </div>\n\t\t\t</div>\n\n\t\t\t<div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">BGM\u8BBE\u7F6E</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u6FC0\u6D3B\u540E\u5728\u6D4F\u89C8\u5668\u5931\u53BB\u7126\u70B9\u540E\u7EE7\u7EED\u64AD\u653E\u6E38\u620F\u58F0\u97F3</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button-l\">\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"keep-bgm-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'keep-bgm', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"keep-bgm-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u4FDD\u6301BGM\u64AD\u653E</label>\n\t\t\t\t\t</div>\n        </div>\n      </div>\n\n\t\t\t<div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">UI\u8BBE\u7F6E</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u53EF\u4EE5\u9690\u85CFMobage\u4FA7\u8FB9\u680F\uFF08PC\u7F51\u9875\uFF09/\u663E\u793A\u5E95\u90E8\u5DE5\u5177\u680F\uFF08\u624B\u673A\u6D4F\u89C8\u5668\u4E2D\uFF09</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button\">\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"remove-scroller-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'remove-scroller', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"remove-scroller-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u9690\u85CF\u6EDA\u52A8\u6761</label>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"hide-sidebar-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'hide-sidebar', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"hide-sidebar-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u9690\u85CF\u4FA7\u8FB9\u680F</label>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"bottom-toolbar-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'bottom-toolbar', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"bottom-toolbar-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u5E95\u90E8\u5DE5\u5177\u680F</label>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n      <div class=\"txt-setting-lead\">\n        \u203B\u4FEE\u6539\u7684\u8BBE\u7F6E\u5728\u5237\u65B0\u9875\u9762\u540E\u751F\u6548\n      </div>\n\t\t</div>\n\t</div>\n\n\t<div class=\"prt-lead-link\">\n\t\t<div class=\"lis-lead-prev\" data-href=\"setting\"><div class=\"atx-lead-link\">\u8FD4\u56DE\u8BBE\u7F6E</div></div>\n\t\t<div class=\"lis-lead-prev\" data-href=\"mypage\"><div class=\"atx-lead-link\">\u8FD4\u56DE\u9996\u9875</div></div>\n\t</div>\n</div>\n</div>\n";
+  var template = "\n<style>\n#btn-setting-blhxfy {\n  position: absolute;\n  left: 16px;\n  top: 104px;\n}\n#blhxfy-setting-modal {\n  display: none;\n  position: absolute;\n  top: 0;\n  left: 0;\n  background: #f6feff;\n  width: 100%;\n  min-height: 100%;\n  z-index: 99999;\n  padding-bottom: 38px;\n}\n#blhxfy-setting-modal input[type=text] {\n  display: block !important;\n  outline: none;\n  width: 274px;\n  font-size: 12px;\n  padding: 4px;\n  box-shadow: none;\n  border: 1px solid #78bbd8;\n  border-radius: 2px;\n  font-family: sans-serif;\n  color: #4d6671;\n}\n#blhxfy-setting-modal.show {\n  display: block;\n}\n#blhxfy-setting-modal input[type=text]::placeholder {\n  color: #aaa;\n}\n</style>\n<div id=\"blhxfy-setting-modal\">\n<div class=\"cnt-setting\">\n\t<div class=\"prt-setting-header\"><img class=\"img-header\" src=\"https://blhx.danmu9.com/blhxfy/data/static/image/setting-header.jpg\" alt=\"header_public\"></div>\n\n\n\t<div class=\"prt-setting-module\">\n\t\t<div class=\"txt-setting-title\">\u63D2\u4EF6\u8BBE\u7F6E</div>\n\t\t<div class=\"prt-setting-frame\">\n\t\t\t<div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">\u7FFB\u8BD1\u6570\u636E\u57DF\u540D</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u7559\u7A7A\u5219\u4F7F\u7528\u9ED8\u8BA4\u7684\u6570\u636E\u6E90</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button-l\">\n          <input id=\"origin-setting-blhxfy\" oninput=\"window.blhxfy.sendEvent('setting', 'origin', this.value)\" type=\"text\" value=\"\" placeholder=\"https://blhx.danmu9.com\">\n        </div>\n      </div>\n      <div class=\"txt-setting-lead\">\n        \u203B\u4F7F\u7528\u7B2C\u4E09\u65B9\u6570\u636E\u6E90\u6709\u98CE\u9669\uFF0C\u8BF7\u9009\u62E9\u53EF\u4EE5\u4FE1\u4EFB\u7684\u6570\u636E\u6E90\u3002\n      </div>\n\n      <div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">\u4E3B\u89D2\u540D</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u5267\u60C5\u91CC\u663E\u793A\u7684\u4E3B\u89D2\u540D\u5B57\uFF0C\u7559\u7A7A\u5219\u4F7F\u7528\u4F60\u81EA\u5DF1\u7684\u6635\u79F0</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button-l\">\n          <input id=\"username-setting-blhxfy\" oninput=\"window.blhxfy.sendEvent('setting', 'username', this.value)\" type=\"text\" value=\"\" placeholder=\"\u8BF7\u8F93\u5165\u4E3B\u89D2\u540D\">\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">\u673A\u7FFB\u8BBE\u7F6E</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u5728\u4E00\u4E9B\u4F7F\u7528\u573A\u666F\u4E0B\uFF0C\u53EF\u80FD\u4E0D\u4F1A\u751F\u6548</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button\">\n\t\t\t\t\t<div class=\"prt-select-box\" style=\"margin:0 6px 0 0\">\n\t\t\t\t\t\t<div style=\"width:103px\" id=\"trans-api-setting-blhxfy-pulldown\" class=\"prt-list-pulldown btn-sort\">\n\t\t\t\t\t\t\t<div id=\"trans-api-setting-blhxfy-txt\" class=\"txt-selected\">\u5F69\u4E91\u5C0F\u8BD1</div>\n\t\t\t\t\t\t\t<select id=\"trans-api-setting-blhxfy\" class=\"frm-list-select\" onchange=\"window.blhxfy.sendEvent('setting', 'trans-api', this.value)\">\n\t\t\t\t\t\t\t\t<option value=\"caiyun\" selected=\"\">\u5F69\u4E91\u5C0F\u8BD1</option>\n\t\t\t\t\t\t\t\t<option value=\"google\">Google\u7FFB\u8BD1</option>\n\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"trans-ja-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'trans-ja', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"trans-ja-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u65E5\u8BED\u673A\u7FFB</label>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"trans-en-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'trans-en', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"trans-en-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u82F1\u8BED\u673A\u7FFB</label>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">\u5B57\u4F53\u8BBE\u7F6E</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u5267\u60C5\u6587\u672C\u4F7F\u7528\u7684\u5B57\u4F53\u3002</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button\">\n\t\t\t\t\t<input style=\"width:180px;margin-right:10px\" id=\"font-setting-blhxfy\" oninput=\"window.blhxfy.sendEvent('setting', 'font', this.value)\" type=\"text\" value=\"\" placeholder=\"\u8BF7\u8F93\u5165\u5B57\u4F53\">\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"font-bold-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'font-bold', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label style=\"top:2px\" for=\"font-bold-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u52A0\u7C97</label>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n\t\t\t<div class=\"txt-setting-lead\">\n        \u203B\u683C\u5F0F\u540CCSS\u7684font-family\u3002\u586B none \u5219\u4E0D\u4FEE\u6539\u5B57\u4F53\uFF0C\u663E\u793A\u6E38\u620F\u9ED8\u8BA4\u5B57\u4F53\u6548\u679C\u3002\n      </div>\n\n      <div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">\u6218\u6597\u754C\u9762\u7684\u6280\u80FD\u7FFB\u8BD1</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u6FC0\u6D3B\u540E\u5728\u6C49\u5316\u6218\u6597\u754C\u9762\u7684\u6280\u80FD\u6309\u94AE</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button-l\">\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"battle-trans-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'battle-trans', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"battle-trans-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u542F\u7528</label>\n\t\t\t\t\t</div>\n        </div>\n\t\t\t</div>\n\n\t\t\t<div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">\u5267\u60C5CSV\u6587\u4EF6\u5FEB\u6377\u4E0B\u8F7D</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u6FC0\u6D3B\u540E\u5728 SKIP \u7684\u65F6\u5019\u81EA\u52A8\u4E0B\u8F7D\u5267\u60C5CSV</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button-l\">\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"auto-download-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'auto-download', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"auto-download-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u81EA\u52A8\u4E0B\u8F7DCSV</label>\n\t\t\t\t\t</div>\n        </div>\n\t\t\t</div>\n\n\t\t\t<div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">BGM\u8BBE\u7F6E</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u6FC0\u6D3B\u540E\u5728\u6D4F\u89C8\u5668\u5931\u53BB\u7126\u70B9\u540E\u7EE7\u7EED\u64AD\u653E\u6E38\u620F\u58F0\u97F3</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button-l\">\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"keep-bgm-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'keep-bgm', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"keep-bgm-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u4FDD\u6301BGM\u64AD\u653E</label>\n\t\t\t\t\t</div>\n        </div>\n      </div>\n\n\t\t\t<div class=\"prt-setting-article\">\n\t\t\t\t<div class=\"txt-article-title\">UI\u8BBE\u7F6E</div>\n\t\t\t\t<ul class=\"txt-article-lead\">\n\t\t\t\t\t<li>\u53EF\u4EE5\u9690\u85CFMobage\u4FA7\u8FB9\u680F\uFF08PC\u7F51\u9875\uFF09/\u663E\u793A\u5E95\u90E8\u5DE5\u5177\u680F\uFF08\u624B\u673A\u6D4F\u89C8\u5668\u4E2D\uFF09</li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"prt-button\">\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"remove-scroller-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'remove-scroller', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"remove-scroller-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u9690\u85CF\u6EDA\u52A8\u6761</label>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"hide-sidebar-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'hide-sidebar', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"hide-sidebar-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u9690\u85CF\u4FA7\u8FB9\u680F</label>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<input id=\"bottom-toolbar-setting-blhxfy\" onchange=\"window.blhxfy.sendEvent('setting', 'bottom-toolbar', this.checked)\" type=\"checkbox\" value=\"\">\n\t\t\t\t\t\t<label for=\"bottom-toolbar-setting-blhxfy\" class=\"btn-usual-setting-new adjust-font-s\">\u5E95\u90E8\u5DE5\u5177\u680F</label>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\n      <div class=\"txt-setting-lead\">\n        \u203B\u4FEE\u6539\u7684\u8BBE\u7F6E\u5728\u5237\u65B0\u9875\u9762\u540E\u751F\u6548\n      </div>\n\t\t</div>\n\t</div>\n\n\t<div class=\"prt-lead-link\">\n\t\t<div class=\"lis-lead-prev\" data-href=\"setting\"><div class=\"atx-lead-link\">\u8FD4\u56DE\u8BBE\u7F6E</div></div>\n\t\t<div class=\"lis-lead-prev\" data-href=\"mypage\"><div class=\"atx-lead-link\">\u8FD4\u56DE\u9996\u9875</div></div>\n\t</div>\n</div>\n</div>\n";
   var templateForWheel = "\n<style>\n#blhxfy-setting-modal {\n\theight: 100%;\n\toverflow: auto;\n}\n</style>\n";
 
   var wheelStopPg = function wheelStopPg(e) {
@@ -14947,27 +15014,12 @@
     return _transLangMsg.apply(this, arguments);
   }
 
-  var ENDS_WITH = 'endsWith';
-  var $endsWith = ''[ENDS_WITH];
-
-  _export(_export.P + _export.F * _failsIsRegexp(ENDS_WITH), 'String', {
-    endsWith: function endsWith(searchString /* , endPosition = @length */) {
-      var that = _stringContext(this, searchString, ENDS_WITH);
-      var endPosition = arguments.length > 1 ? arguments[1] : undefined;
-      var len = _toLength(that.length);
-      var end = endPosition === undefined ? len : Math.min(_toLength(endPosition), len);
-      var search = String(searchString);
-      return $endsWith
-        ? $endsWith.call(that, search, end)
-        : that.slice(end - search.length, end) === search;
-    }
-  });
-
   var skillMap = new Map();
   var skillKeys = [['special_skill', 'special'], ['action_ability1', 'skill-1'], ['action_ability2', 'skill-2'], ['action_ability3', 'skill-3'], ['action_ability4', 'skill-4'], ['support_ability1', 'support-1'], ['support_ability2', 'support-2'], ['support_ability_of_npczenith', 'skill-lb']];
   var state = {
     status: 'init',
     cStatus: 'init',
+    locSkMap: false,
     skillMap: skillMap,
     skillKeys: skillKeys,
     skillData: null,
@@ -15034,16 +15086,192 @@
     };
   }();
 
+  var saveSkillMap =
+  /*#__PURE__*/
+  function () {
+    var _ref2 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee2(skillMap) {
+      var arr;
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              arr = _toConsumableArray(skillMap).slice(-20);
+              setLocalData('skill-npc', JSON.stringify(arr));
+
+            case 2:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, this);
+    }));
+
+    return function saveSkillMap(_x) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+
+  var getSkillMap =
+  /*#__PURE__*/
+  function () {
+    var _ref3 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee3() {
+      var str, arr, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, _step$value, key, item, _key;
+
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              _context3.next = 2;
+              return getLocalData('skill-npc');
+
+            case 2:
+              str = _context3.sent;
+              _context3.prev = 3;
+              arr = JSON.parse(str);
+              state.skillMap = new Map(arr);
+              _iteratorNormalCompletion = true;
+              _didIteratorError = false;
+              _iteratorError = undefined;
+              _context3.prev = 9;
+
+              for (_iterator = state.skillMap[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                _step$value = _slicedToArray(_step.value, 2), key = _step$value[0], item = _step$value[1];
+
+                for (_key in item) {
+                  item[_key].name = filter(trim(item[_key].name));
+                  item[_key].detail = filter(trim(item[_key].detail));
+                }
+              }
+
+              _context3.next = 17;
+              break;
+
+            case 13:
+              _context3.prev = 13;
+              _context3.t0 = _context3["catch"](9);
+              _didIteratorError = true;
+              _iteratorError = _context3.t0;
+
+            case 17:
+              _context3.prev = 17;
+              _context3.prev = 18;
+
+              if (!_iteratorNormalCompletion && _iterator.return != null) {
+                _iterator.return();
+              }
+
+            case 20:
+              _context3.prev = 20;
+
+              if (!_didIteratorError) {
+                _context3.next = 23;
+                break;
+              }
+
+              throw _iteratorError;
+
+            case 23:
+              return _context3.finish(20);
+
+            case 24:
+              return _context3.finish(17);
+
+            case 25:
+              state.locSkMap = true;
+              _context3.next = 30;
+              break;
+
+            case 28:
+              _context3.prev = 28;
+              _context3.t1 = _context3["catch"](3);
+
+            case 30:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3, this, [[3, 28], [9, 13, 17, 25], [18,, 20, 24]]);
+    }));
+
+    return function getSkillMap() {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+
+  var saveSkillPath =
+  /*#__PURE__*/
+  function () {
+    var _ref4 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee4(skillData) {
+      return regeneratorRuntime.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              setLocalData('skill-path', JSON.stringify(skillData));
+
+            case 1:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4, this);
+    }));
+
+    return function saveSkillPath(_x2) {
+      return _ref4.apply(this, arguments);
+    };
+  }();
+
+  var getSkillPath =
+  /*#__PURE__*/
+  function () {
+    var _ref5 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee5() {
+      var str, data;
+      return regeneratorRuntime.wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              _context5.next = 2;
+              return getLocalData('skill-path');
+
+            case 2:
+              str = _context5.sent;
+
+              try {
+                data = JSON.parse(str);
+                state.skillData = data;
+              } catch (e) {}
+
+            case 4:
+            case "end":
+              return _context5.stop();
+          }
+        }
+      }, _callee5, this);
+    }));
+
+    return function getSkillPath() {
+      return _ref5.apply(this, arguments);
+    };
+  }();
+
   var setSkillMap = function setSkillMap(list) {
     var stable = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
     var npcId, active, idArr;
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
 
     try {
-      for (var _iterator = list[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var row = _step.value;
+      for (var _iterator2 = list[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var row = _step2.value;
 
         if (row.id === 'npc') {
           idArr = row.detail.split('|');
@@ -15051,36 +15279,6 @@
           if (row.name !== '0') {
             active = true;
           }
-        }
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return != null) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-
-    if (!idArr.length || !idArr[0]) return;
-    npcId = idArr[1] || idArr[0];
-    var skillData = {};
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-      for (var _iterator2 = list[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var _row = _step2.value;
-
-        if (stable || active) {
-          skillData[_row.id] = _row;
         }
       }
     } catch (err) {
@@ -15098,64 +15296,113 @@
       }
     }
 
+    if (!idArr.length || !idArr[0]) return;
+    npcId = idArr[1] || idArr[0];
+    var skillData = {};
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+      for (var _iterator3 = list[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        var _row = _step3.value;
+
+        if (stable || active) {
+          skillData[_row.id] = _row;
+        }
+      }
+    } catch (err) {
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+          _iterator3.return();
+        }
+      } finally {
+        if (_didIteratorError3) {
+          throw _iteratorError3;
+        }
+      }
+    }
+
     state.skillMap.set(npcId, skillData);
+    saveSkillMap(state.skillMap);
   };
 
   var getSkillData =
   /*#__PURE__*/
   function () {
-    var _ref2 = _asyncToGenerator(
+    var _ref6 = _asyncToGenerator(
     /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(npcId) {
+    regeneratorRuntime.mark(function _callee6(npcId) {
       var csvName, csvData, list;
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      return regeneratorRuntime.wrap(function _callee6$(_context6) {
         while (1) {
-          switch (_context2.prev = _context2.next) {
+          switch (_context6.prev = _context6.next) {
             case 0:
-              _context2.next = 2;
-              return getCommSkillMap();
-
-            case 2:
-              if (state.skillData) {
-                _context2.next = 6;
+              if (state.locSkMap) {
+                _context6.next = 3;
                 break;
               }
 
-              _context2.next = 5;
-              return fetchWithHash('/blhxfy/data/skill.json');
+              _context6.next = 3;
+              return getSkillMap();
+
+            case 3:
+              if (!state.skillMap.has(npcId)) {
+                _context6.next = 5;
+                break;
+              }
+
+              return _context6.abrupt("return", state);
 
             case 5:
-              state.skillData = _context2.sent;
+              _context6.next = 7;
+              return getSkillPath();
 
-            case 6:
+            case 7:
+              if (state.skillData) {
+                _context6.next = 12;
+                break;
+              }
+
+              _context6.next = 10;
+              return fetchWithHash('/blhxfy/data/skill.json');
+
+            case 10:
+              state.skillData = _context6.sent;
+              saveSkillPath(state.skillData);
+
+            case 12:
               csvName = state.skillData[npcId];
 
               if (!csvName) {
-                _context2.next = 13;
+                _context6.next = 19;
                 break;
               }
 
-              _context2.next = 10;
+              _context6.next = 16;
               return fetchWithHash("/blhxfy/data/skill/".concat(csvName));
 
-            case 10:
-              csvData = _context2.sent;
+            case 16:
+              csvData = _context6.sent;
               list = parseCsv(filter(csvData));
               setSkillMap(list);
 
-            case 13:
-              return _context2.abrupt("return", state);
+            case 19:
+              return _context6.abrupt("return", state);
 
-            case 14:
+            case 20:
             case "end":
-              return _context2.stop();
+              return _context6.stop();
           }
         }
-      }, _callee2, this);
+      }, _callee6, this);
     }));
 
-    return function getSkillData(_x) {
-      return _ref2.apply(this, arguments);
+    return function getSkillData(_x3) {
+      return _ref6.apply(this, arguments);
     };
   }();
 
@@ -15442,20 +15689,6 @@
 
     autoTransCache.set(comment, result);
     return result;
-  };
-
-  var getPlusStr = function getPlusStr(str) {
-    var plusStr = '';
-    var plusStr2 = '';
-    var _str = str;
-
-    while (_str.endsWith('+') || _str.endsWith('＋')) {
-      plusStr += '＋';
-      plusStr2 += '+';
-      _str = _str.slice(0, _str.length - 1);
-    }
-
-    return [plusStr, plusStr2];
   };
 
   var parseBuff =
@@ -15811,6 +16044,10 @@
               }
 
             case 70:
+              _context2.next = 72;
+              return getCommSkillMap();
+
+            case 72:
               keys.forEach(function (item) {
                 if (!translated.get(item[0])) {
                   var skill = data[item[0]];
@@ -15822,7 +16059,7 @@
               });
               return _context2.abrupt("return", data);
 
-            case 72:
+            case 74:
             case "end":
               return _context2.stop();
           }
@@ -15850,33 +16087,56 @@
           switch (_context.prev = _context.next) {
             case 0:
               if (loaded$3) {
-                _context.next = 7;
+                _context.next = 12;
                 break;
               }
 
               _context.next = 3;
-              return fetchWithHash('/blhxfy/data/job-skill.csv');
+              return getLocalData('job-skill');
 
             case 3:
               csv = _context.sent;
+
+              if (csv) {
+                _context.next = 9;
+                break;
+              }
+
+              _context.next = 7;
+              return fetchWithHash('/blhxfy/data/job-skill.csv');
+
+            case 7:
+              csv = _context.sent;
+              setLocalData('job-skill', csv);
+
+            case 9:
               list = parseCsv(csv);
               list.forEach(function (item) {
                 if (item && item.id) {
                   var _id = trim(item.id);
 
-                  if (_id) skillMap$1.set(_id, {
-                    name: filter(trim(item.name)),
-                    detail: filter(trim(item.detail))
-                  });
+                  var _en = trim(item.en);
+
+                  var _ja = trim(item.ja);
+
+                  if (_id) {
+                    var value = {
+                      name: filter(trim(item.name)),
+                      detail: filter(trim(item.detail))
+                    };
+                    skillMap$1.set(_id, value);
+                    if (_ja) skillMap$1.set(_ja, value);
+                    if (_en) skillMap$1.set(_en, value);
+                  }
                 }
               });
               loaded$3 = true;
 
-            case 7:
+            case 12:
               trans = skillMap$1.get(id);
               return _context.abrupt("return", trans);
 
-            case 9:
+            case 14:
             case "end":
               return _context.stop();
           }
@@ -17056,6 +17316,422 @@
     return _transChat.apply(this, arguments);
   }
 
+  var skillTemp = new Map();
+  var posMap = new Map();
+  var timer = null;
+  var count = 0;
+  var observered = false;
+  var obConfig = {
+    attributes: true,
+    subtree: true
+  };
+
+  var mutationCallback = function mutationCallback(mutationsList) {
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = mutationsList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var mutation = _step.value;
+        var type = mutation.type;
+        var attr = mutation.attributeName;
+        var target = mutation.target;
+
+        if (target.classList.contains('lis-ability') && type === 'attributes' && attr === 'title') {
+          var title = target.title;
+
+          if (title && title.endsWith('turn(s)')) {
+            viraSkillTitle();
+          }
+        }
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+  };
+
+  var viraSkillTitleFunc = function viraSkillTitleFunc() {
+    var list = $('.lis-ability');
+
+    if (list.length) {
+      count = 0;
+
+      if (!observered) {
+        var targetNode = document.querySelector('.prt-command');
+        var observer = new MutationObserver(mutationCallback);
+        observer.observe(targetNode, obConfig);
+        observered = true;
+      }
+
+      list.each(function () {
+        var $elem = $(this);
+        var title = $elem.attr('title');
+        if (!title) return;
+        var name = title.split('\n')[0];
+        var trans = skillTemp.get(name);
+
+        if (trans) {
+          var _getPlusStr = getPlusStr(name),
+              _getPlusStr2 = _slicedToArray(_getPlusStr, 1),
+              plus1 = _getPlusStr2[0];
+
+          var sName = trans.name + plus1;
+          var detail = removeHtmlTag(trans.detail.replace(/<br\s?\/?>/gi, '\n'));
+          $elem.attr('title', title.replace(/^([\s\S]+)Cooldown:\s(\d+)\sturn\(s\)$/, "".concat(sName, "\n").concat(detail, "\n\u4F7F\u7528\u95F4\u9694\uFF1A$2 \u56DE\u5408")));
+        } else {
+          $elem.attr('title', title.replace(/^([\s\S]+)Cooldown:\s(\d+)\sturn\(s\)$/, "$1\u4F7F\u7528\u95F4\u9694\uFF1A$2 \u56DE\u5408"));
+        }
+      });
+    } else if (count < 20) {
+      count++;
+      viraSkillTitle();
+    }
+  };
+
+  var viraSkillTitle = function viraSkillTitle() {
+    clearTimeout(timer);
+    viraSkillTitleFunc();
+    timer = setTimeout(viraSkillTitleFunc, 500);
+  };
+
+  var collectNpcSkill = function collectNpcSkill(skillData) {
+    for (var key in skillData) {
+      if (/(skill|special)-\D.*/.test(key)) {
+        var rgs = key.match(/(skill|special)-(\D.*)/);
+
+        if (rgs && rgs[2] && !skillTemp.has(rgs[2])) {
+          skillTemp.set(rgs[2], skillData[key]);
+        }
+      }
+    }
+  };
+
+  var battle =
+  /*#__PURE__*/
+  function () {
+    var _battle = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data, mode) {
+      var ability, scenario, spms, abKey, item, key, arr, skill, name, trans, npcId, state, skillData, index, _key, _arr, _skill, _name, _trans, _getPlusStr3, _getPlusStr4, plus1, plus2, _trans2, param, _index, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _item, _npcId, _state, _skillData, _name2, _trans3, _getPlusStr5, _getPlusStr6, _plus, _plus2, _trans4, scKey, _item2, _trans5, _getPlusStr7, _getPlusStr8, _plus3, _trans6, _getPlusStr9, _getPlusStr10, _plus4, _trans7, _getPlusStr11, _getPlusStr12, _plus5;
+
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (config.battleTrans) {
+                _context.next = 2;
+                break;
+              }
+
+              return _context.abrupt("return", data);
+
+            case 2:
+              if (mode === 'result') {
+                if (isObject_1(data.status)) {
+                  ability = data.status.ability;
+                  spms = data.status.skip_special_motion_setting;
+                }
+
+                if (isObject_1(data.scenario)) scenario = data.scenario;
+              } else {
+                ability = data.ability;
+                spms = data.skip_special_motion_setting;
+                data.temporary_potion_all_name = '群体回复药水';
+                data.temporary_potion_one_name = '治疗药水';
+              }
+
+              if (isArray_1(spms)) {
+                spms.forEach(function (item) {
+                  posMap.set(item.pos, item.setting_id);
+                });
+              } // translate skill
+
+
+              if (!isObject_1(ability)) {
+                _context.next = 36;
+                break;
+              }
+
+              _context.t0 = regeneratorRuntime.keys(ability);
+
+            case 6:
+              if ((_context.t1 = _context.t0()).done) {
+                _context.next = 36;
+                break;
+              }
+
+              abKey = _context.t1.value;
+              item = ability[abKey];
+
+              if (!(item && isObject_1(item.list))) {
+                _context.next = 34;
+                break;
+              }
+
+              if (!(item.mode === 'player')) {
+                _context.next = 27;
+                break;
+              }
+
+              _context.t2 = regeneratorRuntime.keys(item.list);
+
+            case 12:
+              if ((_context.t3 = _context.t2()).done) {
+                _context.next = 25;
+                break;
+              }
+
+              key = _context.t3.value;
+              arr = item.list[key];
+              skill = arr[0];
+
+              if (!(skill && skill['ability-name'])) {
+                _context.next = 23;
+                break;
+              }
+
+              name = skill['ability-name'];
+              _context.next = 20;
+              return getSkillData$1(name);
+
+            case 20:
+              trans = _context.sent;
+
+              if (trans) {
+                if (!skillTemp.has(name)) skillTemp.set(name, trans);
+                skill['ability-name'] = trans.name;
+                skill['text-data'] = trans.detail;
+              }
+
+              skill['duration-type'] = replaceTurn(skill['duration-type']);
+
+            case 23:
+              _context.next = 12;
+              break;
+
+            case 25:
+              _context.next = 34;
+              break;
+
+            case 27:
+              if (!(item.mode === 'npc')) {
+                _context.next = 34;
+                break;
+              }
+
+              npcId = posMap.get(item.pos);
+              _context.next = 31;
+              return getSkillData(npcId);
+
+            case 31:
+              state = _context.sent;
+              skillData = state.skillMap.get(npcId);
+
+              if (skillData && isObject_1(item.list)) {
+                collectNpcSkill(skillData);
+                index = 0;
+
+                for (_key in item.list) {
+                  index++;
+                  _arr = item.list[_key];
+                  _skill = _arr[0];
+
+                  if (_skill && _skill['ability-name']) {
+                    _name = _skill['ability-name'];
+
+                    if (skillData["skill-".concat(_name)]) {
+                      _trans = skillData["skill-".concat(_name)];
+
+                      if (_trans) {
+                        if (!skillTemp.has(_name)) skillTemp.set(_name, _trans);
+                        _skill['ability-name'] = _trans.name;
+                        _skill['text-data'] = _trans.detail;
+                      }
+                    } else {
+                      _getPlusStr3 = getPlusStr(_name), _getPlusStr4 = _slicedToArray(_getPlusStr3, 2), plus1 = _getPlusStr4[0], plus2 = _getPlusStr4[1];
+                      _trans2 = skillData["skill-".concat(index).concat(plus2)];
+                      if (!_trans2) _trans2 = skillData["skill-".concat(index)];
+
+                      if (_trans2) {
+                        if (!skillTemp.has(_name)) skillTemp.set(_name, _trans2);
+                        _skill['ability-name'] = "".concat(_trans2.name).concat(plus1);
+                        _skill['text-data'] = _trans2.detail;
+                      }
+
+                      _skill['duration-type'] = replaceTurn(_skill['duration-type']);
+                    }
+                  }
+                }
+              }
+
+            case 34:
+              _context.next = 6;
+              break;
+
+            case 36:
+              if (!(mode !== 'result' && data.player && isArray_1(data.player.param))) {
+                _context.next = 70;
+                break;
+              }
+
+              param = data.player.param;
+              _index = 0;
+              _iteratorNormalCompletion2 = true;
+              _didIteratorError2 = false;
+              _iteratorError2 = undefined;
+              _context.prev = 42;
+              _iterator2 = param[Symbol.iterator]();
+
+            case 44:
+              if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
+                _context.next = 56;
+                break;
+              }
+
+              _item = _step2.value;
+              _npcId = posMap.get(_index);
+              _index++;
+              _context.next = 50;
+              return getSkillData(_npcId);
+
+            case 50:
+              _state = _context.sent;
+              _skillData = _state.skillMap.get(_npcId);
+
+              if (_skillData) {
+                collectNpcSkill(_skillData);
+
+                if (_item['special_skill']) {
+                  _name2 = _item['special_skill'];
+
+                  if (_skillData["special-".concat(_name2)]) {
+                    _trans3 = _skillData["special-".concat(_name2)];
+
+                    if (_trans3) {
+                      if (!skillTemp.has(_name2)) skillTemp.set(_name2, _trans3);
+                      _item['special_skill'] = _trans3.name;
+                      _item['special_comment'] = _trans3.detail;
+                    }
+                  } else {
+                    _getPlusStr5 = getPlusStr(_name2), _getPlusStr6 = _slicedToArray(_getPlusStr5, 2), _plus = _getPlusStr6[0], _plus2 = _getPlusStr6[1];
+                    _trans4 = _skillData["special".concat(_plus2)];
+                    if (!_trans4) _trans4 = _skillData['special'];
+
+                    if (_trans4) {
+                      if (!skillTemp.has(_name2)) skillTemp.set(_name2, _trans4);
+                      _item['special_skill'] = "".concat(_trans4.name).concat(_plus);
+                      _item['special_comment'] = _trans4.detail;
+                    }
+                  }
+                }
+              }
+
+            case 53:
+              _iteratorNormalCompletion2 = true;
+              _context.next = 44;
+              break;
+
+            case 56:
+              _context.next = 62;
+              break;
+
+            case 58:
+              _context.prev = 58;
+              _context.t4 = _context["catch"](42);
+              _didIteratorError2 = true;
+              _iteratorError2 = _context.t4;
+
+            case 62:
+              _context.prev = 62;
+              _context.prev = 63;
+
+              if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                _iterator2.return();
+              }
+
+            case 65:
+              _context.prev = 65;
+
+              if (!_didIteratorError2) {
+                _context.next = 68;
+                break;
+              }
+
+              throw _iteratorError2;
+
+            case 68:
+              return _context.finish(65);
+
+            case 69:
+              return _context.finish(62);
+
+            case 70:
+              // translate scenario
+              if (scenario) {
+                for (scKey in scenario) {
+                  _item2 = scenario[scKey];
+
+                  if (_item2 && _item2.name) {
+                    if (_item2.cmd === 'ability') {
+                      _trans5 = skillTemp.get(_item2.name);
+                      _getPlusStr7 = getPlusStr(_item2.name), _getPlusStr8 = _slicedToArray(_getPlusStr7, 1), _plus3 = _getPlusStr8[0];
+
+                      if (_trans5) {
+                        _item2.name = _trans5.name + _plus3;
+                        _item2.comment = _trans5.detail;
+                      }
+                    } else if (_item2.cmd === 'special_npc') {
+                      _trans6 = skillTemp.get(_item2.name);
+                      _getPlusStr9 = getPlusStr(_item2.name), _getPlusStr10 = _slicedToArray(_getPlusStr9, 1), _plus4 = _getPlusStr10[0];
+
+                      if (_trans6) {
+                        _item2.name = _trans6.name + _plus4;
+                      }
+                    } else if (_item2.cmd === 'special_change') {
+                      _trans7 = skillTemp.get(_item2.name);
+                      _getPlusStr11 = getPlusStr(_item2.name), _getPlusStr12 = _slicedToArray(_getPlusStr11, 1), _plus5 = _getPlusStr12[0];
+
+                      if (_trans7) {
+                        _item2.name = _trans7.name + _plus5;
+                        _item2.text = _trans7.detail;
+                      }
+                    }
+                  }
+                }
+              }
+
+              viraSkillTitle();
+              return _context.abrupt("return", data);
+
+            case 73:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this, [[42, 58, 62, 70], [63,, 65, 69]]);
+    }));
+
+    function battle(_x, _x2) {
+      return _battle.apply(this, arguments);
+    }
+
+    return battle;
+  }();
+
+  var transBattle = race(battle);
+
   var replaceTime = function replaceTime(str) {
     if (!str) return str;
     return str.replace('時間', '小时');
@@ -17448,7 +18124,7 @@
               }
 
               if (!(apiHosts.indexOf(hostname) !== -1)) {
-                _context.next = 81;
+                _context.next = 90;
                 break;
               }
 
@@ -17463,7 +18139,7 @@
 
             case 11:
               data = _context.sent;
-              _context.next = 79;
+              _context.next = 88;
               break;
 
             case 14:
@@ -17520,7 +18196,7 @@
 
             case 37:
               data = _context.sent;
-              _context.next = 79;
+              _context.next = 88;
               break;
 
             case 40:
@@ -17534,7 +18210,7 @@
 
             case 43:
               data = _context.sent;
-              _context.next = 79;
+              _context.next = 88;
               break;
 
             case 46:
@@ -17548,7 +18224,7 @@
 
             case 49:
               data = _context.sent;
-              _context.next = 79;
+              _context.next = 88;
               break;
 
             case 52:
@@ -17562,7 +18238,7 @@
 
             case 55:
               data = _context.sent;
-              _context.next = 79;
+              _context.next = 88;
               break;
 
             case 58:
@@ -17575,12 +18251,12 @@
               return showVoiceSub(data, pathname, 'list');
 
             case 61:
-              _context.next = 79;
+              _context.next = 88;
               break;
 
             case 63:
-              if (!pathname.includes('/rest/multiraid/start.json')) {
-                _context.next = 69;
+              if (!/\/rest\/(multi)?raid\/start\.json/.test(pathname)) {
+                _context.next = 72;
                 break;
               }
 
@@ -17589,46 +18265,65 @@
 
             case 66:
               data = _context.sent;
-              _context.next = 79;
-              break;
+              _context.next = 69;
+              return transBattle(data);
 
             case 69:
-              if (!/\/rest\/.*?raid\/condition\/\d+\/\d\/\d\.json/.test(pathname)) {
-                _context.next = 74;
-                break;
-              }
-
-              _context.next = 72;
-              return transBuff(data.condition);
-
-            case 72:
-              _context.next = 79;
+              data = _context.sent;
+              _context.next = 88;
               break;
 
-            case 74:
-              if (!pathname.includes('/user/status')) {
+            case 72:
+              if (!(/\/rest\/(multi)?raid\/ability_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/temporary_item_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/normal_attack_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/summon_result\.json/.test(pathname))) {
                 _context.next = 78;
                 break;
               }
 
-              data = replaceHour(data, 'user');
-              _context.next = 79;
+              _context.next = 75;
+              return transBattle(data, 'result');
+
+            case 75:
+              data = _context.sent;
+              _context.next = 88;
               break;
 
             case 78:
-              return _context.abrupt("return");
+              if (!/\/rest\/.*?raid\/condition\/\d+\/\d\/\d\.json/.test(pathname)) {
+                _context.next = 83;
+                break;
+              }
 
-            case 79:
-              _context.next = 82;
-              break;
+              _context.next = 81;
+              return transBuff(data.condition);
 
             case 81:
-              return _context.abrupt("return");
-
-            case 82:
-              state.result = isJSON ? JSON.stringify(data) : data;
+              _context.next = 88;
+              break;
 
             case 83:
+              if (!pathname.includes('/user/status')) {
+                _context.next = 87;
+                break;
+              }
+
+              data = replaceHour(data, 'user');
+              _context.next = 88;
+              break;
+
+            case 87:
+              return _context.abrupt("return");
+
+            case 88:
+              _context.next = 91;
+              break;
+
+            case 90:
+              return _context.abrupt("return");
+
+            case 91:
+              state.result = isJSON ? JSON.stringify(data) : data;
+
+            case 92:
             case "end":
               return _context.stop();
           }
@@ -18235,7 +18930,7 @@
     localStorage.setItem('blhxfy:setting', JSON.stringify(data));
   };
 
-  var keyMap = new Map([['origin', 'origin'], ['auto-download', 'autoDownload'], ['bottom-toolbar', 'bottomToolbar'], ['username', 'displayName'], ['remove-scroller', 'removeScroller'], ['hide-sidebar', 'hideSidebar'], ['trans-ja', 'transJa'], ['trans-en', 'transEn'], ['keep-bgm', 'keepBgm'], ['trans-api', 'transApi'], ['font', 'font'], ['font-bold', 'fontBold'], ['plain-text', 'plainText']]);
+  var keyMap = new Map([['origin', 'origin'], ['auto-download', 'autoDownload'], ['bottom-toolbar', 'bottomToolbar'], ['username', 'displayName'], ['remove-scroller', 'removeScroller'], ['hide-sidebar', 'hideSidebar'], ['trans-ja', 'transJa'], ['trans-en', 'transEn'], ['keep-bgm', 'keepBgm'], ['trans-api', 'transApi'], ['font', 'font'], ['font-bold', 'fontBold'], ['plain-text', 'plainText'], ['battle-trans', 'battleTrans']]);
 
   var setting = function setting(type, value) {
     if (type === 'show') {

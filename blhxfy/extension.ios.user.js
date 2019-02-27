@@ -5514,6 +5514,32 @@
 	  return true;
 	};
 
+	const getPlusStr = str => {
+	  let plusStr = '';
+	  let plusStr2 = '';
+	  let _str = str;
+
+	  while (_str.endsWith('+') || _str.endsWith('＋')) {
+	    plusStr += '＋';
+	    plusStr2 += '+';
+	    _str = _str.slice(0, _str.length - 1);
+	  }
+
+	  return [plusStr, plusStr2, _str];
+	};
+
+	const race = func => {
+	  return function (...args) {
+	    const promise1 = func(...args);
+	    const promise2 = new Promise(rev => {
+	      setTimeout(() => {
+	        rev(args[0]);
+	      }, 300);
+	    });
+	    return Promise.race([promise1, promise2]);
+	  };
+	};
+
 	/** Detect free variable `global` from Node.js. */
 	var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
 
@@ -5825,7 +5851,7 @@
 	  return str;
 	};
 
-	var version = "1.6.6";
+	var version = "1.7.0";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -5844,6 +5870,7 @@
 	  bottomToolbar: false,
 	  removeScroller: true,
 	  hideSidebar: false,
+	  battleTrans: true,
 	  localHash: '',
 	  transJa: true,
 	  transEn: true,
@@ -5863,7 +5890,7 @@
 	    config.origin = origin.trim();
 	  }
 
-	  const keys = ['autoDownload', 'bottomToolbar', 'displayName', 'removeScroller', 'hideSidebar', 'transJa', 'transEn', 'keepBgm', 'transApi', 'font', 'fontBold', 'plainText'];
+	  const keys = ['autoDownload', 'bottomToolbar', 'displayName', 'removeScroller', 'hideSidebar', 'transJa', 'transEn', 'keepBgm', 'transApi', 'font', 'fontBold', 'plainText', 'battleTrans'];
 	  keys.forEach(key => {
 	    let value = setting[key];
 	    if (isString_1(value)) value = filter(value.trim());
@@ -8063,6 +8090,19 @@
       </div>
 
       <div class="prt-setting-article">
+				<div class="txt-article-title">战斗界面的技能翻译</div>
+				<ul class="txt-article-lead">
+					<li>激活后在汉化战斗界面的技能按钮</li>
+				</ul>
+				<div class="prt-button-l">
+					<div>
+						<input id="battle-trans-setting-blhxfy" onchange="window.blhxfy.sendEvent('setting', 'battle-trans', this.checked)" type="checkbox" value="">
+						<label for="battle-trans-setting-blhxfy" class="btn-usual-setting-new adjust-font-s">启用</label>
+					</div>
+        </div>
+			</div>
+
+			<div class="prt-setting-article">
 				<div class="txt-article-title">剧情CSV文件快捷下载</div>
 				<ul class="txt-article-lead">
 					<li>激活后在 SKIP 的时候自动下载剧情CSV</li>
@@ -11606,6 +11646,7 @@ ${extraHtml}
 	const state = {
 	  status: 'init',
 	  cStatus: 'init',
+	  locSkMap: false,
 	  skillMap,
 	  skillKeys,
 	  skillData: null,
@@ -11635,6 +11676,42 @@ ${extraHtml}
 	  state.cStatus = 'loaded';
 	};
 
+	const saveSkillMap = async skillMap => {
+	  const arr = [...skillMap].slice(-20);
+	  setLocalData('skill-npc', JSON.stringify(arr));
+	};
+
+	const getSkillMap = async () => {
+	  const str = await getLocalData('skill-npc');
+
+	  try {
+	    const arr = JSON.parse(str);
+	    state.skillMap = new Map(arr);
+
+	    for (let [key, item] of state.skillMap) {
+	      for (let _key in item) {
+	        item[_key].name = filter(trim(item[_key].name));
+	        item[_key].detail = filter(trim(item[_key].detail));
+	      }
+	    }
+
+	    state.locSkMap = true;
+	  } catch (e) {}
+	};
+
+	const saveSkillPath = async skillData => {
+	  setLocalData('skill-path', JSON.stringify(skillData));
+	};
+
+	const getSkillPath = async () => {
+	  const str = await getLocalData('skill-path');
+
+	  try {
+	    const data = JSON.parse(str);
+	    state.skillData = data;
+	  } catch (e) {}
+	};
+
 	const setSkillMap = (list, stable = true) => {
 	  let npcId, active, idArr;
 
@@ -11659,13 +11736,17 @@ ${extraHtml}
 	  }
 
 	  state.skillMap.set(npcId, skillData);
+	  saveSkillMap(state.skillMap);
 	};
 
 	const getSkillData = async npcId => {
-	  await getCommSkillMap();
+	  if (!state.locSkMap) await getSkillMap();
+	  if (state.skillMap.has(npcId)) return state;
+	  await getSkillPath();
 
 	  if (!state.skillData) {
 	    state.skillData = await fetchWithHash('/blhxfy/data/skill.json');
+	    saveSkillPath(state.skillData);
 	  }
 
 	  const csvName = state.skillData[npcId];
@@ -11828,20 +11909,6 @@ ${extraHtml}
 	  return result;
 	};
 
-	const getPlusStr = str => {
-	  let plusStr = '';
-	  let plusStr2 = '';
-	  let _str = str;
-
-	  while (_str.endsWith('+') || _str.endsWith('＋')) {
-	    plusStr += '＋';
-	    plusStr2 += '+';
-	    _str = _str.slice(0, _str.length - 1);
-	  }
-
-	  return [plusStr, plusStr2];
-	};
-
 	const parseBuff = async data => {
 	  for (let item of skillKeys) {
 	    const key = item[0];
@@ -11967,6 +12034,7 @@ ${extraHtml}
 	    }
 	  }
 
+	  await getCommSkillMap();
 	  keys.forEach(item => {
 	    if (!translated.get(item[0])) {
 	      const skill = data[item[0]];
@@ -11984,16 +12052,31 @@ ${extraHtml}
 
 	const getSkillData$1 = async id => {
 	  if (!loaded$3) {
-	    const csv = await fetchWithHash('/blhxfy/data/job-skill.csv');
+	    let csv = await getLocalData('job-skill');
+
+	    if (!csv) {
+	      csv = await fetchWithHash('/blhxfy/data/job-skill.csv');
+	      setLocalData('job-skill', csv);
+	    }
+
 	    const list = parseCsv(csv);
 	    list.forEach(item => {
 	      if (item && item.id) {
 	        const _id = trim(item.id);
 
-	        if (_id) skillMap$1.set(_id, {
-	          name: filter(trim(item.name)),
-	          detail: filter(trim(item.detail))
-	        });
+	        const _en = trim(item.en);
+
+	        const _ja = trim(item.ja);
+
+	        if (_id) {
+	          const value = {
+	            name: filter(trim(item.name)),
+	            detail: filter(trim(item.detail))
+	          };
+	          skillMap$1.set(_id, value);
+	          if (_ja) skillMap$1.set(_ja, value);
+	          if (_en) skillMap$1.set(_en, value);
+	        }
 	      }
 	    });
 	    loaded$3 = true;
@@ -12433,6 +12516,262 @@ ${extraHtml}
 	  return data;
 	}
 
+	const skillTemp = new Map();
+	const posMap = new Map();
+	let timer = null;
+	let count = 0;
+	let observered = false;
+	let obConfig = {
+	  attributes: true,
+	  subtree: true
+	};
+
+	const mutationCallback = mutationsList => {
+	  for (let mutation of mutationsList) {
+	    const type = mutation.type;
+	    const attr = mutation.attributeName;
+	    const target = mutation.target;
+
+	    if (target.classList.contains('lis-ability') && type === 'attributes' && attr === 'title') {
+	      const title = target.title;
+
+	      if (title && title.endsWith('turn(s)')) {
+	        viraSkillTitle();
+	      }
+	    }
+	  }
+	};
+
+	const viraSkillTitleFunc = () => {
+	  const list = $('.lis-ability');
+
+	  if (list.length) {
+	    count = 0;
+
+	    if (!observered) {
+	      const targetNode = document.querySelector('.prt-command');
+	      const observer = new MutationObserver(mutationCallback);
+	      observer.observe(targetNode, obConfig);
+	      observered = true;
+	    }
+
+	    list.each(function () {
+	      const $elem = $(this);
+	      const title = $elem.attr('title');
+	      if (!title) return;
+	      const name = title.split('\n')[0];
+	      const trans = skillTemp.get(name);
+
+	      if (trans) {
+	        const [plus1] = getPlusStr(name);
+	        const sName = trans.name + plus1;
+	        const detail = removeHtmlTag(trans.detail.replace(/<br\s?\/?>/gi, '\n'));
+	        $elem.attr('title', title.replace(/^([\s\S]+)Cooldown:\s(\d+)\sturn\(s\)$/, `${sName}\n${detail}\n使用间隔：$2 回合`));
+	      } else {
+	        $elem.attr('title', title.replace(/^([\s\S]+)Cooldown:\s(\d+)\sturn\(s\)$/, `$1使用间隔：$2 回合`));
+	      }
+	    });
+	  } else if (count < 20) {
+	    count++;
+	    viraSkillTitle();
+	  }
+	};
+
+	const viraSkillTitle = () => {
+	  clearTimeout(timer);
+	  viraSkillTitleFunc();
+	  timer = setTimeout(viraSkillTitleFunc, 500);
+	};
+
+	const collectNpcSkill = skillData => {
+	  for (let key in skillData) {
+	    if (/(skill|special)-\D.*/.test(key)) {
+	      const rgs = key.match(/(skill|special)-(\D.*)/);
+
+	      if (rgs && rgs[2] && !skillTemp.has(rgs[2])) {
+	        skillTemp.set(rgs[2], skillData[key]);
+	      }
+	    }
+	  }
+	};
+
+	const battle = async function battle(data, mode) {
+	  if (!config.battleTrans) return data;
+	  let ability;
+	  let scenario;
+	  let spms;
+
+	  if (mode === 'result') {
+	    if (isObject_1(data.status)) {
+	      ability = data.status.ability;
+	      spms = data.status.skip_special_motion_setting;
+	    }
+
+	    if (isObject_1(data.scenario)) scenario = data.scenario;
+	  } else {
+	    ability = data.ability;
+	    spms = data.skip_special_motion_setting;
+	    data.temporary_potion_all_name = '群体回复药水';
+	    data.temporary_potion_one_name = '治疗药水';
+	  }
+
+	  if (isArray_1(spms)) {
+	    spms.forEach(item => {
+	      posMap.set(item.pos, item.setting_id);
+	    });
+	  } // translate skill
+
+
+	  if (isObject_1(ability)) {
+	    for (let abKey in ability) {
+	      let item = ability[abKey];
+
+	      if (item && isObject_1(item.list)) {
+	        if (item.mode === 'player') {
+	          for (let key in item.list) {
+	            let arr = item.list[key];
+	            let skill = arr[0];
+
+	            if (skill && skill['ability-name']) {
+	              const name = skill['ability-name'];
+	              const trans = await getSkillData$1(name);
+
+	              if (trans) {
+	                if (!skillTemp.has(name)) skillTemp.set(name, trans);
+	                skill['ability-name'] = trans.name;
+	                skill['text-data'] = trans.detail;
+	              }
+
+	              skill['duration-type'] = replaceTurn(skill['duration-type']);
+	            }
+	          }
+	        } else if (item.mode === 'npc') {
+	          const npcId = posMap.get(item.pos);
+	          const state = await getSkillData(npcId);
+	          const skillData = state.skillMap.get(npcId);
+
+	          if (skillData && isObject_1(item.list)) {
+	            collectNpcSkill(skillData);
+	            let index = 0;
+
+	            for (let key in item.list) {
+	              index++;
+	              let arr = item.list[key];
+	              let skill = arr[0];
+
+	              if (skill && skill['ability-name']) {
+	                const name = skill['ability-name'];
+
+	                if (skillData[`skill-${name}`]) {
+	                  const trans = skillData[`skill-${name}`];
+
+	                  if (trans) {
+	                    if (!skillTemp.has(name)) skillTemp.set(name, trans);
+	                    skill['ability-name'] = trans.name;
+	                    skill['text-data'] = trans.detail;
+	                  }
+	                } else {
+	                  const [plus1, plus2] = getPlusStr(name);
+	                  let trans = skillData[`skill-${index}${plus2}`];
+	                  if (!trans) trans = skillData[`skill-${index}`];
+
+	                  if (trans) {
+	                    if (!skillTemp.has(name)) skillTemp.set(name, trans);
+	                    skill['ability-name'] = `${trans.name}${plus1}`;
+	                    skill['text-data'] = trans.detail;
+	                  }
+
+	                  skill['duration-type'] = replaceTurn(skill['duration-type']);
+	                }
+	              }
+	            }
+	          }
+	        }
+	      }
+	    }
+	  } // translate speciall skill
+
+
+	  if (mode !== 'result' && data.player && isArray_1(data.player.param)) {
+	    const param = data.player.param;
+	    let index = 0;
+
+	    for (let item of param) {
+	      const npcId = posMap.get(index);
+	      index++;
+	      const state = await getSkillData(npcId);
+	      const skillData = state.skillMap.get(npcId);
+
+	      if (skillData) {
+	        collectNpcSkill(skillData);
+
+	        if (item['special_skill']) {
+	          const name = item['special_skill'];
+
+	          if (skillData[`special-${name}`]) {
+	            const trans = skillData[`special-${name}`];
+
+	            if (trans) {
+	              if (!skillTemp.has(name)) skillTemp.set(name, trans);
+	              item['special_skill'] = trans.name;
+	              item['special_comment'] = trans.detail;
+	            }
+	          } else {
+	            const [plus1, plus2] = getPlusStr(name);
+	            let trans = skillData[`special${plus2}`];
+	            if (!trans) trans = skillData['special'];
+
+	            if (trans) {
+	              if (!skillTemp.has(name)) skillTemp.set(name, trans);
+	              item['special_skill'] = `${trans.name}${plus1}`;
+	              item['special_comment'] = trans.detail;
+	            }
+	          }
+	        }
+	      }
+	    }
+	  } // translate scenario
+
+
+	  if (scenario) {
+	    for (let scKey in scenario) {
+	      let item = scenario[scKey];
+
+	      if (item && item.name) {
+	        if (item.cmd === 'ability') {
+	          const trans = skillTemp.get(item.name);
+	          const [plus1] = getPlusStr(item.name);
+
+	          if (trans) {
+	            item.name = trans.name + plus1;
+	            item.comment = trans.detail;
+	          }
+	        } else if (item.cmd === 'special_npc') {
+	          const trans = skillTemp.get(item.name);
+	          const [plus1] = getPlusStr(item.name);
+
+	          if (trans) {
+	            item.name = trans.name + plus1;
+	          }
+	        } else if (item.cmd === 'special_change') {
+	          const trans = skillTemp.get(item.name);
+	          const [plus1] = getPlusStr(item.name);
+
+	          if (trans) {
+	            item.name = trans.name + plus1;
+	            item.text = trans.detail;
+	          }
+	        }
+	      }
+	    }
+	  }
+
+	  viraSkillTitle();
+	  return data;
+	};
+
+	var transBattle = race(battle);
+
 	const replaceTime = str => {
 	  if (!str) return str;
 	  return str.replace('時間', '小时');
@@ -12689,8 +13028,11 @@ ${extraHtml}
 	      data = await transIslandInfo(data, pathname);
 	    } else if (pathname.includes('/rest/sound/mypage_voice')) {
 	      await showVoiceSub(data, pathname, 'list');
-	    } else if (pathname.includes('/rest/multiraid/start.json')) {
+	    } else if (/\/rest\/(multi)?raid\/start\.json/.test(pathname)) {
 	      data = await transChat(data);
+	      data = await transBattle(data);
+	    } else if (/\/rest\/(multi)?raid\/ability_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/temporary_item_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/normal_attack_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/summon_result\.json/.test(pathname)) {
+	      data = await transBattle(data, 'result');
 	    } else if (/\/rest\/.*?raid\/condition\/\d+\/\d\/\d\.json/.test(pathname)) {
 	      await transBuff(data.condition);
 	    } else if (pathname.includes('/user/status')) {
@@ -13258,7 +13600,7 @@ ${extraHtml}
 	  localStorage.setItem('blhxfy:setting', JSON.stringify(data));
 	};
 
-	const keyMap = new Map([['origin', 'origin'], ['auto-download', 'autoDownload'], ['bottom-toolbar', 'bottomToolbar'], ['username', 'displayName'], ['remove-scroller', 'removeScroller'], ['hide-sidebar', 'hideSidebar'], ['trans-ja', 'transJa'], ['trans-en', 'transEn'], ['keep-bgm', 'keepBgm'], ['trans-api', 'transApi'], ['font', 'font'], ['font-bold', 'fontBold'], ['plain-text', 'plainText']]);
+	const keyMap = new Map([['origin', 'origin'], ['auto-download', 'autoDownload'], ['bottom-toolbar', 'bottomToolbar'], ['username', 'displayName'], ['remove-scroller', 'removeScroller'], ['hide-sidebar', 'hideSidebar'], ['trans-ja', 'transJa'], ['trans-en', 'transEn'], ['keep-bgm', 'keepBgm'], ['trans-api', 'transApi'], ['font', 'font'], ['font-bold', 'fontBold'], ['plain-text', 'plainText'], ['battle-trans', 'battleTrans']]);
 
 	const setting = (type, value) => {
 	  if (type === 'show') {
