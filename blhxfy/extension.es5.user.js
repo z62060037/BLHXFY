@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.7.0
+// @version      1.7.1
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -8947,7 +8947,7 @@
     return str;
   };
 
-  var version = "1.7.0";
+  var version = "1.7.1";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -15598,20 +15598,22 @@
     };
   }();
 
-  var elemtRE = '([光闇水火風土]|light|dark|water|wind|earth|fire)';
+  var elemtRE = '([光闇水火風土無]|light|dark|water|wind|earth|fire|plain)';
   var elemtMap = {
     light: '光',
     '光': '光',
-    'dark': '暗',
+    dark: '暗',
     '闇': '暗',
-    'water': '水',
+    water: '水',
     '水': '水',
     wind: '风',
     '風': '风',
-    'earth': '土',
+    earth: '土',
     '土': '土',
-    'fire': '火',
-    '火': '火'
+    fire: '火',
+    '火': '火',
+    plain: '无',
+    '無': '无'
   };
   var numRE = '(\\d{1,4})';
   var percentRE = '(\\d{1,4}%)';
@@ -15661,7 +15663,14 @@
             return _trans;
           });
         } else if (type === '2') {
-          result = result.replace(key, trans);
+          var res,
+              i = 0;
+
+          while (res !== result && i < 10) {
+            res = result;
+            result = result.replace(key, trans);
+            i++;
+          }
         } else if (type === '3') {
           result = result.replace("(".concat(key, ")"), "(".concat(trans, ")"));
         }
