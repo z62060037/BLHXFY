@@ -5851,7 +5851,7 @@
 	  return str;
 	};
 
-	var version = "1.7.1";
+	var version = "1.7.2";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -11862,8 +11862,8 @@ ${extraHtml}
 	  plain: '无',
 	  '無': '无'
 	};
-	const numRE = '(\\d{1,4})';
-	const percentRE = '(\\d{1,4}%)';
+	const numRE = '(\\d{1,10}\\.?\\d{0,4}?)';
+	const percentRE = '(\\d{1,10}\\.?\\d{0,4}?[%％])';
 
 	const parseRegExp = str => {
 	  return str.replace(/\(/g, '\\(').replace(/\)/g, '\\)').replace(/\$elemt/g, elemtRE).replace(/\$num/g, numRE).replace(/\$percent/g, percentRE);

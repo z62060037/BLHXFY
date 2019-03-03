@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.7.1
+// @version      1.7.2
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -8947,7 +8947,7 @@
     return str;
   };
 
-  var version = "1.7.1";
+  var version = "1.7.2";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -15615,8 +15615,8 @@
     plain: '无',
     '無': '无'
   };
-  var numRE = '(\\d{1,4})';
-  var percentRE = '(\\d{1,4}%)';
+  var numRE = '(\\d{1,10}\\.?\\d{0,4}?)';
+  var percentRE = '(\\d{1,10}\\.?\\d{0,4}?[%％])';
 
   var parseRegExp = function parseRegExp(str) {
     return str.replace(/\(/g, '\\(').replace(/\)/g, '\\)').replace(/\$elemt/g, elemtRE).replace(/\$num/g, numRE).replace(/\$percent/g, percentRE);
