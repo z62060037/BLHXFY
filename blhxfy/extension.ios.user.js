@@ -182,14 +182,16 @@
 	  return hasOwnProperty.call(it, key);
 	};
 
+	var _functionToString = _shared('native-function-to-string', Function.toString);
+
 	var _redefine = createCommonjsModule(function (module) {
 	var SRC = _uid('src');
+
 	var TO_STRING = 'toString';
-	var $toString = Function[TO_STRING];
-	var TPL = ('' + $toString).split(TO_STRING);
+	var TPL = ('' + _functionToString).split(TO_STRING);
 
 	_core.inspectSource = function (it) {
-	  return $toString.call(it);
+	  return _functionToString.call(it);
 	};
 
 	(module.exports = function (O, key, val, safe) {
@@ -209,7 +211,7 @@
 	  }
 	// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
 	})(Function.prototype, TO_STRING, function toString() {
-	  return typeof this == 'function' && this[SRC] || $toString.call(this);
+	  return typeof this == 'function' && this[SRC] || _functionToString.call(this);
 	});
 	});
 
@@ -1568,7 +1570,7 @@
 	    // Browser globals (root is window)
 	    root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
 	  }
-	}(commonjsGlobal, function (punycode$$1, IPv6$$1, SLD, root) {
+	}(commonjsGlobal, function (punycode, IPv6, SLD, root) {
 	  /*global location, escape, unescape */
 	  // FIXME: v2.0.0 renamce non-camelCase properties to uppercase
 	  /*jshint camelcase: false */
@@ -2619,10 +2621,10 @@
 	      throw new TypeError('Hostname cannot be empty, if protocol is ' + protocol);
 	    } else if (v && v.match(URI.invalid_hostname_characters)) {
 	      // test punycode
-	      if (!punycode$$1) {
+	      if (!punycode) {
 	        throw new TypeError('Hostname "' + v + '" contains characters other than [A-Z0-9.-:_] and Punycode.js is not available');
 	      }
-	      if (punycode$$1.toASCII(v).match(URI.invalid_hostname_characters)) {
+	      if (punycode.toASCII(v).match(URI.invalid_hostname_characters)) {
 	        throw new TypeError('Hostname "' + v + '" contains characters other than [A-Z0-9.-:_]');
 	      }
 	    }
@@ -2809,7 +2811,7 @@
 	    var name = false;
 	    var sld = false;
 	    var idn = false;
-	    var punycode$$1 = false;
+	    var punycode = false;
 	    var relative = !this._parts.urn;
 
 	    if (this._parts.hostname) {
@@ -2820,7 +2822,7 @@
 	      name = !ip;
 	      sld = name && SLD && SLD.has(this._parts.hostname);
 	      idn = name && URI.idn_expression.test(this._parts.hostname);
-	      punycode$$1 = name && URI.punycode_expression.test(this._parts.hostname);
+	      punycode = name && URI.punycode_expression.test(this._parts.hostname);
 	    }
 
 	    switch (what.toLowerCase()) {
@@ -2861,7 +2863,7 @@
 	        return !!this._parts.urn;
 
 	      case 'punycode':
-	        return punycode$$1;
+	        return punycode;
 	    }
 
 	    return null;
@@ -3490,10 +3492,10 @@
 	  };
 	  p.normalizeHostname = function(build) {
 	    if (this._parts.hostname) {
-	      if (this.is('IDN') && punycode$$1) {
-	        this._parts.hostname = punycode$$1.toASCII(this._parts.hostname);
-	      } else if (this.is('IPv6') && IPv6$$1) {
-	        this._parts.hostname = IPv6$$1.best(this._parts.hostname);
+	      if (this.is('IDN') && punycode) {
+	        this._parts.hostname = punycode.toASCII(this._parts.hostname);
+	      } else if (this.is('IPv6') && IPv6) {
+	        this._parts.hostname = IPv6.best(this._parts.hostname);
 	      }
 
 	      this._parts.hostname = this._parts.hostname.toLowerCase();
@@ -3652,8 +3654,8 @@
 	    }
 
 	    if (uri._parts.hostname) {
-	      if (uri.is('punycode') && punycode$$1) {
-	        t += punycode$$1.toUnicode(uri._parts.hostname);
+	      if (uri.is('punycode') && punycode) {
+	        t += punycode.toUnicode(uri._parts.hostname);
 	        if (uri._parts.port) {
 	          t += ':' + uri._parts.port;
 	        }
@@ -4331,7 +4333,7 @@
 
 	var html$1 = freeze$2(['accept', 'action', 'align', 'alt', 'autocomplete', 'background', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'coords', 'crossorigin', 'datetime', 'default', 'dir', 'disabled', 'download', 'enctype', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'integrity', 'ismap', 'label', 'lang', 'list', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'multiple', 'name', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'type', 'usemap', 'valign', 'value', 'width', 'xmlns']);
 
-	var svg$1 = freeze$2(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'specularconstant', 'specularexponent', 'spreadmethod', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'tabindex', 'targetx', 'targety', 'transform', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
+	var svg$1 = freeze$2(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'specularconstant', 'specularexponent', 'spreadmethod', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'tabindex', 'targetx', 'targety', 'transform', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'version', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
 
 	var mathMl$1 = freeze$2(['accent', 'accentunder', 'align', 'bevelled', 'close', 'columnsalign', 'columnlines', 'columnspan', 'denomalign', 'depth', 'dir', 'display', 'displaystyle', 'fence', 'frame', 'height', 'href', 'id', 'largeop', 'length', 'linethickness', 'lspace', 'lquote', 'mathbackground', 'mathcolor', 'mathsize', 'mathvariant', 'maxsize', 'minsize', 'movablelimits', 'notation', 'numalign', 'open', 'rowalign', 'rowlines', 'rowspacing', 'rowspan', 'rspace', 'rquote', 'scriptlevel', 'scriptminsize', 'scriptsizemultiplier', 'selection', 'separator', 'separators', 'stretchy', 'subscriptshift', 'supscriptshift', 'symmetric', 'voffset', 'width', 'xmlns']);
 
@@ -4357,30 +4359,39 @@
 	    // Prevent prototype setters from intercepting set as a this value.
 	    setPrototypeOf(set, null);
 	  }
+
 	  var l = array.length;
 	  while (l--) {
 	    var element = array[l];
 	    if (typeof element === 'string') {
 	      var lcElement = element.toLowerCase();
 	      if (lcElement !== element) {
-	        array[l] = lcElement;
+	        // Config presets (e.g. tags.js, attrs.js) are immutable.
+	        if (!Object.isFrozen(array)) {
+	          array[l] = lcElement;
+	        }
+
 	        element = lcElement;
 	      }
 	    }
+
 	    set[element] = true;
 	  }
+
 	  return set;
 	}
 
 	/* Shallow clone an object */
 	function clone(object) {
 	  var newObject = {};
+
 	  var property = void 0;
 	  for (property in object) {
 	    if (apply$1(hasOwnProperty$1, object, [property])) {
 	      newObject[property] = object[property];
 	    }
 	  }
+
 	  return newObject;
 	}
 
@@ -4448,7 +4459,7 @@
 	        return html$$1;
 	      }
 	    });
-	  } catch (e) {
+	  } catch (error) {
 	    // Policy creation failed (most likely another DOMPurify script has
 	    // already run). Skip creating the policy, as this will only cause errors
 	    // if TT are enforced.
@@ -4468,7 +4479,7 @@
 	   * Version label, exposed for easier checks
 	   * if DOMPurify is up to date or not
 	   */
-	  DOMPurify.version = '1.0.9';
+	  DOMPurify.version = '1.0.10';
 
 	  /**
 	   * Array of elements that DOMPurify removed during sanitation.
@@ -4647,6 +4658,7 @@
 	    if (!cfg || (typeof cfg === 'undefined' ? 'undefined' : _typeof(cfg)) !== 'object') {
 	      cfg = {};
 	    }
+
 	    /* Set configuration parameters */
 	    ALLOWED_TAGS = 'ALLOWED_TAGS' in cfg ? addToSet({}, cfg.ALLOWED_TAGS) : DEFAULT_ALLOWED_TAGS;
 	    ALLOWED_ATTR = 'ALLOWED_ATTR' in cfg ? addToSet({}, cfg.ALLOWED_ATTR) : DEFAULT_ALLOWED_ATTR;
@@ -4685,16 +4697,19 @@
 	        addToSet(ALLOWED_TAGS, html);
 	        addToSet(ALLOWED_ATTR, html$1);
 	      }
+
 	      if (USE_PROFILES.svg === true) {
 	        addToSet(ALLOWED_TAGS, svg);
 	        addToSet(ALLOWED_ATTR, svg$1);
 	        addToSet(ALLOWED_ATTR, xml);
 	      }
+
 	      if (USE_PROFILES.svgFilters === true) {
 	        addToSet(ALLOWED_TAGS, svgFilters);
 	        addToSet(ALLOWED_ATTR, svg$1);
 	        addToSet(ALLOWED_ATTR, xml);
 	      }
+
 	      if (USE_PROFILES.mathMl === true) {
 	        addToSet(ALLOWED_TAGS, mathMl);
 	        addToSet(ALLOWED_ATTR, mathMl$1);
@@ -4707,14 +4722,18 @@
 	      if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) {
 	        ALLOWED_TAGS = clone(ALLOWED_TAGS);
 	      }
+
 	      addToSet(ALLOWED_TAGS, cfg.ADD_TAGS);
 	    }
+
 	    if (cfg.ADD_ATTR) {
 	      if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) {
 	        ALLOWED_ATTR = clone(ALLOWED_ATTR);
 	      }
+
 	      addToSet(ALLOWED_ATTR, cfg.ADD_ATTR);
 	    }
+
 	    if (cfg.ADD_URI_SAFE_ATTR) {
 	      addToSet(URI_SAFE_ATTRIBUTES, cfg.ADD_URI_SAFE_ATTR);
 	    }
@@ -4752,7 +4771,7 @@
 	    DOMPurify.removed.push({ element: node });
 	    try {
 	      node.parentNode.removeChild(node);
-	    } catch (err) {
+	    } catch (error) {
 	      node.outerHTML = emptyHTML;
 	    }
 	  };
@@ -4769,12 +4788,13 @@
 	        attribute: node.getAttributeNode(name),
 	        from: node
 	      });
-	    } catch (err) {
+	    } catch (error) {
 	      DOMPurify.removed.push({
 	        attribute: null,
 	        from: node
 	      });
 	    }
+
 	    node.removeAttribute(name);
 	  };
 
@@ -4804,7 +4824,7 @@
 	    if (useDOMParser) {
 	      try {
 	        doc = new DOMParser().parseFromString(dirty, 'text/html');
-	      } catch (err) {}
+	      } catch (error) {}
 	    }
 
 	    /* Remove title to fix a mXSS bug in older MS Edge */
@@ -4847,15 +4867,16 @@
 	        if (doc.querySelector('svg img')) {
 	          useDOMParser = true;
 	        }
-	      } catch (err) {}
+	      } catch (error) {}
 	    })();
+
 	    (function () {
 	      try {
 	        var doc = _initDocument('<x/><title>&lt;/title&gt;&lt;img&gt;');
 	        if (doc.querySelector('title').innerHTML.match(/<\/title/)) {
 	          removeTitle = true;
 	        }
-	      } catch (err) {}
+	      } catch (error) {}
 	    })();
 	  }
 
@@ -4881,9 +4902,11 @@
 	    if (elm instanceof Text || elm instanceof Comment) {
 	      return false;
 	    }
+
 	    if (typeof elm.nodeName !== 'string' || typeof elm.textContent !== 'string' || typeof elm.removeChild !== 'function' || !(elm.attributes instanceof NamedNodeMap) || typeof elm.removeAttribute !== 'function' || typeof elm.setAttribute !== 'function') {
 	      return true;
 	    }
+
 	    return false;
 	  };
 
@@ -4925,6 +4948,7 @@
 	   * @param   {Node} currentNode to check for permission to exist
 	   * @return  {Boolean} true if node was killed, false if left alive
 	   */
+	  // eslint-disable-next-line complexity
 	  var _sanitizeElements = function _sanitizeElements(currentNode) {
 	    var content = void 0;
 
@@ -4953,8 +4977,20 @@
 	        try {
 	          var htmlToInsert = currentNode.innerHTML;
 	          currentNode.insertAdjacentHTML('AfterEnd', trustedTypesPolicy ? trustedTypesPolicy.createHTML(htmlToInsert) : htmlToInsert);
-	        } catch (err) {}
+	        } catch (error) {}
 	      }
+
+	      _forceRemove(currentNode);
+	      return true;
+	    }
+
+	    /* Remove in case a noscript/noembed XSS is suspected */
+	    if (tagName === 'noscript' && currentNode.innerHTML.match(/<\/noscript/i)) {
+	      _forceRemove(currentNode);
+	      return true;
+	    }
+
+	    if (tagName === 'noembed' && currentNode.innerHTML.match(/<\/noembed/i)) {
 	      _forceRemove(currentNode);
 	      return true;
 	    }
@@ -4995,16 +5031,11 @@
 	   * @param  {string} value Attribute value.
 	   * @return {Boolean} Returns true if `value` is valid, otherwise false.
 	   */
+	  // eslint-disable-next-line complexity
 	  var _isValidAttribute = function _isValidAttribute(lcTag, lcName, value) {
 	    /* Make sure attribute cannot clobber */
 	    if (SANITIZE_DOM && (lcName === 'id' || lcName === 'name') && (value in document || value in formElement)) {
 	      return false;
-	    }
-
-	    /* Sanitize attribute content to be template-safe */
-	    if (SAFE_FOR_TEMPLATES) {
-	      value = value.replace(MUSTACHE_EXPR$$1, ' ');
-	      value = value.replace(ERB_EXPR$$1, ' ');
 	    }
 
 	    /* Allow valid data-* attributes: At least one character after "-"
@@ -5018,6 +5049,7 @@
 	    } else if (URI_SAFE_ATTRIBUTES[lcName]) ; else if (IS_ALLOWED_URI$$1.test(value.replace(ATTR_WHITESPACE$$1, ''))) ; else if ((lcName === 'src' || lcName === 'xlink:href') && lcTag !== 'script' && value.indexOf('data:') === 0 && DATA_URI_TAGS[lcTag]) ; else if (ALLOW_UNKNOWN_PROTOCOLS && !IS_SCRIPT_OR_DATA$$1.test(value.replace(ATTR_WHITESPACE$$1, ''))) ; else if (!value) ; else {
 	      return false;
 	    }
+
 	    return true;
 	  };
 
@@ -5029,9 +5061,8 @@
 	   * @protect removeAttribute
 	   * @protect setAttribute
 	   *
-	   * @param  {Node} node to sanitize
+	   * @param  {Node} currentNode to sanitize
 	   */
-	  // eslint-disable-next-line complexity
 	  var _sanitizeAttributes = function _sanitizeAttributes(currentNode) {
 	    var attr = void 0;
 	    var value = void 0;
@@ -5098,12 +5129,19 @@
 	        if (name === 'id') {
 	          currentNode.setAttribute(name, '');
 	        }
+
 	        _removeAttribute(name, currentNode);
 	      }
 
 	      /* Did the hooks approve of the attribute? */
 	      if (!hookEvent.keepAttr) {
 	        continue;
+	      }
+
+	      /* Sanitize attribute content to be template-safe */
+	      if (SAFE_FOR_TEMPLATES) {
+	        value = value.replace(MUSTACHE_EXPR$$1, ' ');
+	        value = value.replace(ERB_EXPR$$1, ' ');
 	      }
 
 	      /* Is `value` valid for this attribute? */
@@ -5120,8 +5158,9 @@
 	          /* Fallback to setAttribute() for browser-unrecognized namespaces e.g. "x-schema". */
 	          currentNode.setAttribute(name, value);
 	        }
+
 	        DOMPurify.removed.pop();
-	      } catch (err) {}
+	      } catch (error) {}
 	    }
 
 	    /* Execute a hook if present */
@@ -5202,10 +5241,12 @@
 	        if (typeof dirty === 'string') {
 	          return window.toStaticHTML(dirty);
 	        }
+
 	        if (_isNode(dirty)) {
 	          return window.toStaticHTML(dirty.outerHTML);
 	        }
 	      }
+
 	      return dirty;
 	    }
 
@@ -5226,11 +5267,12 @@
 	        /* Node is already a body, use as is */
 	        body = importedNode;
 	      } else {
+	        // eslint-disable-next-line unicorn/prefer-node-append
 	        body.appendChild(importedNode);
 	      }
 	    } else {
 	      /* Exit directly if we have nothing to do */
-	      if (!RETURN_DOM && !WHOLE_DOCUMENT && dirty.indexOf('<') === -1) {
+	      if (!RETURN_DOM && !SAFE_FOR_TEMPLATES && !WHOLE_DOCUMENT && dirty.indexOf('<') === -1) {
 	        return trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
 	      }
 
@@ -5287,6 +5329,7 @@
 	        returnNode = createDocumentFragment.call(body.ownerDocument);
 
 	        while (body.firstChild) {
+	          // eslint-disable-next-line unicorn/prefer-node-append
 	          returnNode.appendChild(body.firstChild);
 	        }
 	      } else {
@@ -5306,6 +5349,13 @@
 	    }
 
 	    var serializedHTML = WHOLE_DOCUMENT ? body.outerHTML : body.innerHTML;
+
+	    /* Sanitize final string template-safe */
+	    if (SAFE_FOR_TEMPLATES) {
+	      serializedHTML = serializedHTML.replace(MUSTACHE_EXPR$$1, ' ');
+	      serializedHTML = serializedHTML.replace(ERB_EXPR$$1, ' ');
+	    }
+
 	    return trustedTypesPolicy ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
 	  };
 
@@ -5345,6 +5395,7 @@
 	    if (!CONFIG) {
 	      _parseConfig({});
 	    }
+
 	    var lcTag = tag.toLowerCase();
 	    var lcName = attr.toLowerCase();
 	    return _isValidAttribute(lcTag, lcName, value);
@@ -5361,6 +5412,7 @@
 	    if (typeof hookFunction !== 'function') {
 	      return;
 	    }
+
 	    hooks[entryPoint] = hooks[entryPoint] || [];
 	    hooks[entryPoint].push(hookFunction);
 	  };
@@ -5587,10 +5639,11 @@
 
 	  try {
 	    value[symToStringTag] = undefined;
+	    var unmasked = true;
 	  } catch (e) {}
 
 	  var result = nativeObjectToString.call(value);
-	  {
+	  if (unmasked) {
 	    if (isOwn) {
 	      value[symToStringTag] = tag;
 	    } else {
@@ -5844,14 +5897,14 @@
 	const whiteList = ['需要<%= quest_ap - sp %><%= point_name %>来开始。', '使用道具恢复<%= point_name %>？', `来自<span class='txt-request-name'><%= n.attributes.called_user_name %></span>的救援请求`, `来自<span class='txt-request-name'><%= raid['called_user_name'] %></span>的救援请求`, '还剩<%= can_quest_start_count %>回挑战（一共<%= max_quest_start_count %>回）', '<%= set_user.name %> Rank <%= set_user.rank %> 选择任务', '更改第<%= stamp.priority %>个表情', '<%= title %>'];
 
 	const filter = str => {
-	  if (!whiteList.includes(str)) {
+	  if (!whiteList.includes(str) && /[><]/.test(str)) {
 	    return purify.sanitize(str);
 	  }
 
 	  return str;
 	};
 
-	var version = "1.7.3";
+	var version = "1.7.4";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -11605,14 +11658,16 @@ ${extraHtml}
 
 	    const list = parseCsv(langMsg);
 	    list.forEach(item => {
+	      let trans = filter(item.trans);
+
 	      if (trim(item.id)) {
 	        item.en && langMsgMap.set(`${item.id}${item.en}`, {
-	          trans: filter(item.trans),
+	          trans,
 	          en: item.en,
 	          jp: item.jp
 	        });
 	        item.jp && langMsgMap.set(`${item.jp}`, {
-	          trans: filter(item.trans),
+	          trans,
 	          en: item.en,
 	          jp: item.jp
 	        });
@@ -11641,12 +11696,313 @@ ${extraHtml}
 	  return data;
 	}
 
+	/**
+	 * Gets the timestamp of the number of milliseconds that have elapsed since
+	 * the Unix epoch (1 January 1970 00:00:00 UTC).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 2.4.0
+	 * @category Date
+	 * @returns {number} Returns the timestamp.
+	 * @example
+	 *
+	 * _.defer(function(stamp) {
+	 *   console.log(_.now() - stamp);
+	 * }, _.now());
+	 * // => Logs the number of milliseconds it took for the deferred invocation.
+	 */
+	var now = function() {
+	  return _root.Date.now();
+	};
+
+	var now_1 = now;
+
+	/** `Object#toString` result references. */
+	var symbolTag$2 = '[object Symbol]';
+
+	/**
+	 * Checks if `value` is classified as a `Symbol` primitive or object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+	 * @example
+	 *
+	 * _.isSymbol(Symbol.iterator);
+	 * // => true
+	 *
+	 * _.isSymbol('abc');
+	 * // => false
+	 */
+	function isSymbol(value) {
+	  return typeof value == 'symbol' ||
+	    (isObjectLike_1(value) && _baseGetTag(value) == symbolTag$2);
+	}
+
+	var isSymbol_1 = isSymbol;
+
+	/** Used as references for various `Number` constants. */
+	var NAN = 0 / 0;
+
+	/** Used to match leading and trailing whitespace. */
+	var reTrim = /^\s+|\s+$/g;
+
+	/** Used to detect bad signed hexadecimal string values. */
+	var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+	/** Used to detect binary string values. */
+	var reIsBinary = /^0b[01]+$/i;
+
+	/** Used to detect octal string values. */
+	var reIsOctal = /^0o[0-7]+$/i;
+
+	/** Built-in method references without a dependency on `root`. */
+	var freeParseInt = parseInt;
+
+	/**
+	 * Converts `value` to a number.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to process.
+	 * @returns {number} Returns the number.
+	 * @example
+	 *
+	 * _.toNumber(3.2);
+	 * // => 3.2
+	 *
+	 * _.toNumber(Number.MIN_VALUE);
+	 * // => 5e-324
+	 *
+	 * _.toNumber(Infinity);
+	 * // => Infinity
+	 *
+	 * _.toNumber('3.2');
+	 * // => 3.2
+	 */
+	function toNumber(value) {
+	  if (typeof value == 'number') {
+	    return value;
+	  }
+	  if (isSymbol_1(value)) {
+	    return NAN;
+	  }
+	  if (isObject_1(value)) {
+	    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
+	    value = isObject_1(other) ? (other + '') : other;
+	  }
+	  if (typeof value != 'string') {
+	    return value === 0 ? value : +value;
+	  }
+	  value = value.replace(reTrim, '');
+	  var isBinary = reIsBinary.test(value);
+	  return (isBinary || reIsOctal.test(value))
+	    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+	    : (reIsBadHex.test(value) ? NAN : +value);
+	}
+
+	var toNumber_1 = toNumber;
+
+	/** Error message constants. */
+	var FUNC_ERROR_TEXT = 'Expected a function';
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeMax = Math.max,
+	    nativeMin = Math.min;
+
+	/**
+	 * Creates a debounced function that delays invoking `func` until after `wait`
+	 * milliseconds have elapsed since the last time the debounced function was
+	 * invoked. The debounced function comes with a `cancel` method to cancel
+	 * delayed `func` invocations and a `flush` method to immediately invoke them.
+	 * Provide `options` to indicate whether `func` should be invoked on the
+	 * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+	 * with the last arguments provided to the debounced function. Subsequent
+	 * calls to the debounced function return the result of the last `func`
+	 * invocation.
+	 *
+	 * **Note:** If `leading` and `trailing` options are `true`, `func` is
+	 * invoked on the trailing edge of the timeout only if the debounced function
+	 * is invoked more than once during the `wait` timeout.
+	 *
+	 * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+	 * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+	 *
+	 * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+	 * for details over the differences between `_.debounce` and `_.throttle`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Function
+	 * @param {Function} func The function to debounce.
+	 * @param {number} [wait=0] The number of milliseconds to delay.
+	 * @param {Object} [options={}] The options object.
+	 * @param {boolean} [options.leading=false]
+	 *  Specify invoking on the leading edge of the timeout.
+	 * @param {number} [options.maxWait]
+	 *  The maximum time `func` is allowed to be delayed before it's invoked.
+	 * @param {boolean} [options.trailing=true]
+	 *  Specify invoking on the trailing edge of the timeout.
+	 * @returns {Function} Returns the new debounced function.
+	 * @example
+	 *
+	 * // Avoid costly calculations while the window size is in flux.
+	 * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+	 *
+	 * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+	 * jQuery(element).on('click', _.debounce(sendMail, 300, {
+	 *   'leading': true,
+	 *   'trailing': false
+	 * }));
+	 *
+	 * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+	 * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+	 * var source = new EventSource('/stream');
+	 * jQuery(source).on('message', debounced);
+	 *
+	 * // Cancel the trailing debounced invocation.
+	 * jQuery(window).on('popstate', debounced.cancel);
+	 */
+	function debounce(func, wait, options) {
+	  var lastArgs,
+	      lastThis,
+	      maxWait,
+	      result,
+	      timerId,
+	      lastCallTime,
+	      lastInvokeTime = 0,
+	      leading = false,
+	      maxing = false,
+	      trailing = true;
+
+	  if (typeof func != 'function') {
+	    throw new TypeError(FUNC_ERROR_TEXT);
+	  }
+	  wait = toNumber_1(wait) || 0;
+	  if (isObject_1(options)) {
+	    leading = !!options.leading;
+	    maxing = 'maxWait' in options;
+	    maxWait = maxing ? nativeMax(toNumber_1(options.maxWait) || 0, wait) : maxWait;
+	    trailing = 'trailing' in options ? !!options.trailing : trailing;
+	  }
+
+	  function invokeFunc(time) {
+	    var args = lastArgs,
+	        thisArg = lastThis;
+
+	    lastArgs = lastThis = undefined;
+	    lastInvokeTime = time;
+	    result = func.apply(thisArg, args);
+	    return result;
+	  }
+
+	  function leadingEdge(time) {
+	    // Reset any `maxWait` timer.
+	    lastInvokeTime = time;
+	    // Start the timer for the trailing edge.
+	    timerId = setTimeout(timerExpired, wait);
+	    // Invoke the leading edge.
+	    return leading ? invokeFunc(time) : result;
+	  }
+
+	  function remainingWait(time) {
+	    var timeSinceLastCall = time - lastCallTime,
+	        timeSinceLastInvoke = time - lastInvokeTime,
+	        timeWaiting = wait - timeSinceLastCall;
+
+	    return maxing
+	      ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
+	      : timeWaiting;
+	  }
+
+	  function shouldInvoke(time) {
+	    var timeSinceLastCall = time - lastCallTime,
+	        timeSinceLastInvoke = time - lastInvokeTime;
+
+	    // Either this is the first call, activity has stopped and we're at the
+	    // trailing edge, the system time has gone backwards and we're treating
+	    // it as the trailing edge, or we've hit the `maxWait` limit.
+	    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+	      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
+	  }
+
+	  function timerExpired() {
+	    var time = now_1();
+	    if (shouldInvoke(time)) {
+	      return trailingEdge(time);
+	    }
+	    // Restart the timer.
+	    timerId = setTimeout(timerExpired, remainingWait(time));
+	  }
+
+	  function trailingEdge(time) {
+	    timerId = undefined;
+
+	    // Only invoke if we have `lastArgs` which means `func` has been
+	    // debounced at least once.
+	    if (trailing && lastArgs) {
+	      return invokeFunc(time);
+	    }
+	    lastArgs = lastThis = undefined;
+	    return result;
+	  }
+
+	  function cancel() {
+	    if (timerId !== undefined) {
+	      clearTimeout(timerId);
+	    }
+	    lastInvokeTime = 0;
+	    lastArgs = lastCallTime = lastThis = timerId = undefined;
+	  }
+
+	  function flush() {
+	    return timerId === undefined ? result : trailingEdge(now_1());
+	  }
+
+	  function debounced() {
+	    var time = now_1(),
+	        isInvoking = shouldInvoke(time);
+
+	    lastArgs = arguments;
+	    lastThis = this;
+	    lastCallTime = time;
+
+	    if (isInvoking) {
+	      if (timerId === undefined) {
+	        return leadingEdge(lastCallTime);
+	      }
+	      if (maxing) {
+	        // Handle invocations in a tight loop.
+	        timerId = setTimeout(timerExpired, wait);
+	        return invokeFunc(lastCallTime);
+	      }
+	    }
+	    if (timerId === undefined) {
+	      timerId = setTimeout(timerExpired, wait);
+	    }
+	    return result;
+	  }
+	  debounced.cancel = cancel;
+	  debounced.flush = flush;
+	  return debounced;
+	}
+
+	var debounce_1 = debounce;
+
 	const skillMap = new Map();
 	const skillKeys = [['special_skill', 'special'], ['action_ability1', 'skill-1'], ['action_ability2', 'skill-2'], ['action_ability3', 'skill-3'], ['action_ability4', 'skill-4'], ['support_ability1', 'support-1'], ['support_ability2', 'support-2'], ['support_ability_of_npczenith', 'skill-lb']];
 	const state = {
 	  status: 'init',
 	  cStatus: 'init',
 	  locSkMap: false,
+	  locASMap: false,
 	  skillMap,
 	  skillKeys,
 	  skillData: null,
@@ -11658,7 +12014,13 @@ ${extraHtml}
 
 	const getCommSkillMap = async () => {
 	  if (state.cStatus === 'loaded') return;
-	  const csvData = await fetchWithHash('/blhxfy/data/common-skill.csv');
+	  let csvData = await getLocalData('comm-skill');
+
+	  if (!csvData) {
+	    csvData = await fetchWithHash('/blhxfy/data/common-skill.csv');
+	    setLocalData('comm-skill', csvData);
+	  }
+
 	  const list = await parseCsv(csvData);
 	  const sortedList = sortKeywords(list, 'comment');
 	  let nounArr = [];
@@ -11708,6 +12070,26 @@ ${extraHtml}
 	  } catch (e) {}
 	};
 
+	const saveAutoTrans = debounce_1(() => {
+	  const arr = [...state.autoTransCache].slice(-80);
+	  setLocalData('auto-trans', JSON.stringify(arr));
+	}, 500);
+
+	const getAutoTrans = async () => {
+	  const str = await getLocalData('auto-trans');
+
+	  try {
+	    const arr = JSON.parse(str);
+	    state.autoTransCache = new Map(arr);
+
+	    for (let [key, item] of state.autoTransCache) {
+	      state.autoTransCache.set(key, filter(trim(item)));
+	    }
+
+	    state.locASMap = true;
+	  } catch (e) {}
+	};
+
 	const saveSkillPath = async skillData => {
 	  setLocalData('skill-path', JSON.stringify(skillData));
 	};
@@ -11750,6 +12132,7 @@ ${extraHtml}
 
 	const getSkillData = async npcId => {
 	  if (!state.locSkMap) await getSkillMap();
+	  if (!state.locASMap) await getAutoTrans();
 	  if (state.skillMap.has(npcId)) return state;
 	  await getSkillPath();
 
@@ -11928,6 +12311,7 @@ ${extraHtml}
 	  }
 
 	  autoTransCache.set(comment, result);
+	  saveAutoTrans();
 	  return result;
 	};
 
@@ -12348,7 +12732,13 @@ ${extraHtml}
 
 	const getTownData = async () => {
 	  if (!loaded$6) {
-	    const csv = await fetchWithHash('/blhxfy/data/town-info.csv');
+	    let csv = await getLocalData('town-info');
+
+	    if (!csv) {
+	      csv = await fetchWithHash('/blhxfy/data/town-info.csv');
+	      setLocalData('town-info', csv);
+	    }
+
 	    const list = parseCsv(csv);
 	    list.forEach(item => {
 	      const id = trim(item.id);
@@ -12541,7 +12931,6 @@ ${extraHtml}
 
 	const skillTemp = new Map();
 	const posMap = new Map();
-	let timer = null;
 	let count = 0;
 	let observered = false;
 	let obConfig = {
@@ -12600,11 +12989,7 @@ ${extraHtml}
 	  }
 	};
 
-	const viraSkillTitle = () => {
-	  clearTimeout(timer);
-	  viraSkillTitleFunc();
-	  timer = setTimeout(viraSkillTitleFunc, 500);
-	};
+	const viraSkillTitle = debounce_1(viraSkillTitleFunc, 500);
 
 	const collectNpcSkill = skillData => {
 	  for (let key in skillData) {
@@ -12642,8 +13027,9 @@ ${extraHtml}
 	    spms.forEach(item => {
 	      posMap.set(item.pos, item.setting_id);
 	    });
-	  } // translate skill
+	  }
 
+	  await getCommSkillMap(); // translate skill
 
 	  if (isObject_1(ability)) {
 	    for (let abKey in ability) {
@@ -12692,6 +13078,13 @@ ${extraHtml}
 	                    if (!skillTemp.has(name)) skillTemp.set(name, trans);
 	                    skill['ability-name'] = trans.name;
 	                    skill['text-data'] = trans.detail;
+	                  } else {
+	                    let detail = await transSkill(skill['text-data'], state);
+	                    skill['text-data'] = detail;
+	                    if (!skillTemp.has(name)) skillTemp.set(name, {
+	                      name,
+	                      detail
+	                    });
 	                  }
 	                } else {
 	                  const [plus1, plus2] = getPlusStr(name);
@@ -12702,10 +13095,32 @@ ${extraHtml}
 	                    if (!skillTemp.has(name)) skillTemp.set(name, trans);
 	                    skill['ability-name'] = `${trans.name}${plus1}`;
 	                    skill['text-data'] = trans.detail;
+	                  } else {
+	                    let detail = await transSkill(skill['text-data'], state);
+	                    skill['text-data'] = detail;
+	                    if (!skillTemp.has(name)) skillTemp.set(name, {
+	                      name,
+	                      detail
+	                    });
 	                  }
 
 	                  skill['duration-type'] = replaceTurn(skill['duration-type']);
 	                }
+	              }
+	            }
+	          } else {
+	            for (let key in item.list) {
+	              let arr = item.list[key];
+	              let skill = arr[0];
+
+	              if (skill && skill['ability-name'] && skill['text-data']) {
+	                const name = skill['ability-name'];
+	                const detail = await transSkill(skill['text-data'], state);
+	                skill['text-data'] = detail;
+	                if (!skillTemp.has(name)) skillTemp.set(name, {
+	                  name,
+	                  detail
+	                });
 	              }
 	            }
 	          }
@@ -12738,6 +13153,13 @@ ${extraHtml}
 	              if (!skillTemp.has(name)) skillTemp.set(name, trans);
 	              item['special_skill'] = trans.name;
 	              item['special_comment'] = trans.detail;
+	            } else {
+	              let detail = await transSkill(item['special_comment'], state);
+	              item['special_comment'] = detail;
+	              if (!skillTemp.has(name)) skillTemp.set(name, {
+	                name,
+	                detail
+	              });
 	            }
 	          } else {
 	            const [plus1, plus2] = getPlusStr(name);
@@ -12748,11 +13170,49 @@ ${extraHtml}
 	              if (!skillTemp.has(name)) skillTemp.set(name, trans);
 	              item['special_skill'] = `${trans.name}${plus1}`;
 	              item['special_comment'] = trans.detail;
+	            } else {
+	              let detail = await transSkill(item['special_comment'], state);
+	              item['special_comment'] = detail;
+	              if (!skillTemp.has(name)) skillTemp.set(name, {
+	                name,
+	                detail
+	              });
 	            }
 	          }
 	        }
+	      } else {
+	        if (item['special_skill'] && item['special_comment']) {
+	          const name = item['special_skill'];
+	          const detail = await transSkill(item['special_comment'], state);
+	          item['special_comment'] = detail;
+	          if (!skillTemp.has(name)) skillTemp.set(name, {
+	            name,
+	            detail
+	          });
+	        }
 	      }
 	    }
+	  } // translate summon
+
+
+	  if (data.summon && isArray_1(data.summon)) {
+	    for (let item of data.summon) {
+	      if (item) {
+	        if (item.comment) {
+	          item.comment = await transSkill(item.comment, state);
+	        }
+
+	        if (item.protection) {
+	          item.protection = await transSkill(item.protection, state);
+	        }
+	      }
+	    }
+	  }
+
+	  if (data.supporter && data.supporter.name) {
+	    data.supporter.comment = await transSkill(data.supporter.comment, state);
+	    data.supporter.detail = await transSkill(data.supporter.detail, state);
+	    data.supporter.protection = await transSkill(data.supporter.protection, state);
 	  } // translate scenario
 
 
@@ -13304,306 +13764,6 @@ ${extraHtml}
 	  $('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
 	});
 
-	/**
-	 * Gets the timestamp of the number of milliseconds that have elapsed since
-	 * the Unix epoch (1 January 1970 00:00:00 UTC).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 2.4.0
-	 * @category Date
-	 * @returns {number} Returns the timestamp.
-	 * @example
-	 *
-	 * _.defer(function(stamp) {
-	 *   console.log(_.now() - stamp);
-	 * }, _.now());
-	 * // => Logs the number of milliseconds it took for the deferred invocation.
-	 */
-	var now = function() {
-	  return _root.Date.now();
-	};
-
-	var now_1 = now;
-
-	/** `Object#toString` result references. */
-	var symbolTag$2 = '[object Symbol]';
-
-	/**
-	 * Checks if `value` is classified as a `Symbol` primitive or object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
-	 * @example
-	 *
-	 * _.isSymbol(Symbol.iterator);
-	 * // => true
-	 *
-	 * _.isSymbol('abc');
-	 * // => false
-	 */
-	function isSymbol(value) {
-	  return typeof value == 'symbol' ||
-	    (isObjectLike_1(value) && _baseGetTag(value) == symbolTag$2);
-	}
-
-	var isSymbol_1 = isSymbol;
-
-	/** Used as references for various `Number` constants. */
-	var NAN = 0 / 0;
-
-	/** Used to match leading and trailing whitespace. */
-	var reTrim = /^\s+|\s+$/g;
-
-	/** Used to detect bad signed hexadecimal string values. */
-	var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
-
-	/** Used to detect binary string values. */
-	var reIsBinary = /^0b[01]+$/i;
-
-	/** Used to detect octal string values. */
-	var reIsOctal = /^0o[0-7]+$/i;
-
-	/** Built-in method references without a dependency on `root`. */
-	var freeParseInt = parseInt;
-
-	/**
-	 * Converts `value` to a number.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to process.
-	 * @returns {number} Returns the number.
-	 * @example
-	 *
-	 * _.toNumber(3.2);
-	 * // => 3.2
-	 *
-	 * _.toNumber(Number.MIN_VALUE);
-	 * // => 5e-324
-	 *
-	 * _.toNumber(Infinity);
-	 * // => Infinity
-	 *
-	 * _.toNumber('3.2');
-	 * // => 3.2
-	 */
-	function toNumber(value) {
-	  if (typeof value == 'number') {
-	    return value;
-	  }
-	  if (isSymbol_1(value)) {
-	    return NAN;
-	  }
-	  if (isObject_1(value)) {
-	    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
-	    value = isObject_1(other) ? (other + '') : other;
-	  }
-	  if (typeof value != 'string') {
-	    return value === 0 ? value : +value;
-	  }
-	  value = value.replace(reTrim, '');
-	  var isBinary = reIsBinary.test(value);
-	  return (isBinary || reIsOctal.test(value))
-	    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
-	    : (reIsBadHex.test(value) ? NAN : +value);
-	}
-
-	var toNumber_1 = toNumber;
-
-	/** Error message constants. */
-	var FUNC_ERROR_TEXT = 'Expected a function';
-
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeMax = Math.max,
-	    nativeMin = Math.min;
-
-	/**
-	 * Creates a debounced function that delays invoking `func` until after `wait`
-	 * milliseconds have elapsed since the last time the debounced function was
-	 * invoked. The debounced function comes with a `cancel` method to cancel
-	 * delayed `func` invocations and a `flush` method to immediately invoke them.
-	 * Provide `options` to indicate whether `func` should be invoked on the
-	 * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
-	 * with the last arguments provided to the debounced function. Subsequent
-	 * calls to the debounced function return the result of the last `func`
-	 * invocation.
-	 *
-	 * **Note:** If `leading` and `trailing` options are `true`, `func` is
-	 * invoked on the trailing edge of the timeout only if the debounced function
-	 * is invoked more than once during the `wait` timeout.
-	 *
-	 * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
-	 * until to the next tick, similar to `setTimeout` with a timeout of `0`.
-	 *
-	 * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
-	 * for details over the differences between `_.debounce` and `_.throttle`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Function
-	 * @param {Function} func The function to debounce.
-	 * @param {number} [wait=0] The number of milliseconds to delay.
-	 * @param {Object} [options={}] The options object.
-	 * @param {boolean} [options.leading=false]
-	 *  Specify invoking on the leading edge of the timeout.
-	 * @param {number} [options.maxWait]
-	 *  The maximum time `func` is allowed to be delayed before it's invoked.
-	 * @param {boolean} [options.trailing=true]
-	 *  Specify invoking on the trailing edge of the timeout.
-	 * @returns {Function} Returns the new debounced function.
-	 * @example
-	 *
-	 * // Avoid costly calculations while the window size is in flux.
-	 * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
-	 *
-	 * // Invoke `sendMail` when clicked, debouncing subsequent calls.
-	 * jQuery(element).on('click', _.debounce(sendMail, 300, {
-	 *   'leading': true,
-	 *   'trailing': false
-	 * }));
-	 *
-	 * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
-	 * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
-	 * var source = new EventSource('/stream');
-	 * jQuery(source).on('message', debounced);
-	 *
-	 * // Cancel the trailing debounced invocation.
-	 * jQuery(window).on('popstate', debounced.cancel);
-	 */
-	function debounce(func, wait, options) {
-	  var lastArgs,
-	      lastThis,
-	      maxWait,
-	      result,
-	      timerId,
-	      lastCallTime,
-	      lastInvokeTime = 0,
-	      leading = false,
-	      maxing = false,
-	      trailing = true;
-
-	  if (typeof func != 'function') {
-	    throw new TypeError(FUNC_ERROR_TEXT);
-	  }
-	  wait = toNumber_1(wait) || 0;
-	  if (isObject_1(options)) {
-	    leading = !!options.leading;
-	    maxing = 'maxWait' in options;
-	    maxWait = maxing ? nativeMax(toNumber_1(options.maxWait) || 0, wait) : maxWait;
-	    trailing = 'trailing' in options ? !!options.trailing : trailing;
-	  }
-
-	  function invokeFunc(time) {
-	    var args = lastArgs,
-	        thisArg = lastThis;
-
-	    lastArgs = lastThis = undefined;
-	    lastInvokeTime = time;
-	    result = func.apply(thisArg, args);
-	    return result;
-	  }
-
-	  function leadingEdge(time) {
-	    // Reset any `maxWait` timer.
-	    lastInvokeTime = time;
-	    // Start the timer for the trailing edge.
-	    timerId = setTimeout(timerExpired, wait);
-	    // Invoke the leading edge.
-	    return leading ? invokeFunc(time) : result;
-	  }
-
-	  function remainingWait(time) {
-	    var timeSinceLastCall = time - lastCallTime,
-	        timeSinceLastInvoke = time - lastInvokeTime,
-	        timeWaiting = wait - timeSinceLastCall;
-
-	    return maxing
-	      ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
-	      : timeWaiting;
-	  }
-
-	  function shouldInvoke(time) {
-	    var timeSinceLastCall = time - lastCallTime,
-	        timeSinceLastInvoke = time - lastInvokeTime;
-
-	    // Either this is the first call, activity has stopped and we're at the
-	    // trailing edge, the system time has gone backwards and we're treating
-	    // it as the trailing edge, or we've hit the `maxWait` limit.
-	    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
-	      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
-	  }
-
-	  function timerExpired() {
-	    var time = now_1();
-	    if (shouldInvoke(time)) {
-	      return trailingEdge(time);
-	    }
-	    // Restart the timer.
-	    timerId = setTimeout(timerExpired, remainingWait(time));
-	  }
-
-	  function trailingEdge(time) {
-	    timerId = undefined;
-
-	    // Only invoke if we have `lastArgs` which means `func` has been
-	    // debounced at least once.
-	    if (trailing && lastArgs) {
-	      return invokeFunc(time);
-	    }
-	    lastArgs = lastThis = undefined;
-	    return result;
-	  }
-
-	  function cancel() {
-	    if (timerId !== undefined) {
-	      clearTimeout(timerId);
-	    }
-	    lastInvokeTime = 0;
-	    lastArgs = lastCallTime = lastThis = timerId = undefined;
-	  }
-
-	  function flush() {
-	    return timerId === undefined ? result : trailingEdge(now_1());
-	  }
-
-	  function debounced() {
-	    var time = now_1(),
-	        isInvoking = shouldInvoke(time);
-
-	    lastArgs = arguments;
-	    lastThis = this;
-	    lastCallTime = time;
-
-	    if (isInvoking) {
-	      if (timerId === undefined) {
-	        return leadingEdge(lastCallTime);
-	      }
-	      if (maxing) {
-	        // Handle invocations in a tight loop.
-	        timerId = setTimeout(timerExpired, wait);
-	        return invokeFunc(lastCallTime);
-	      }
-	    }
-	    if (timerId === undefined) {
-	      timerId = setTimeout(timerExpired, wait);
-	    }
-	    return result;
-	  }
-	  debounced.cancel = cancel;
-	  debounced.flush = flush;
-	  return debounced;
-	}
-
-	var debounce_1 = debounce;
-
 	const saveToLocalstorage = (key, value) => {
 	  let data;
 
@@ -13849,12 +14009,12 @@ ${extraHtml}
 	  document.body.dispatchEvent(event);
 	};
 
-	const main$1 = () => {
+	const main = () => {
 	  if (window.blhxfy) return;
 	  eventMessage();
 	  injectXHR();
 	};
 
-	main$1();
+	main();
 
 }());

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.7.3
+// @version      1.7.4
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -148,14 +148,31 @@
   });
   var _core_1 = _core.version;
 
+  var _library = false;
+
+  var _shared = createCommonjsModule(function (module) {
+  var SHARED = '__core-js_shared__';
+  var store = _global[SHARED] || (_global[SHARED] = {});
+
+  (module.exports = function (key, value) {
+    return store[key] || (store[key] = value !== undefined ? value : {});
+  })('versions', []).push({
+    version: _core.version,
+    mode: 'global',
+    copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
+  });
+  });
+
+  var _functionToString = _shared('native-function-to-string', Function.toString);
+
   var _redefine = createCommonjsModule(function (module) {
   var SRC = _uid('src');
+
   var TO_STRING = 'toString';
-  var $toString = Function[TO_STRING];
-  var TPL = ('' + $toString).split(TO_STRING);
+  var TPL = ('' + _functionToString).split(TO_STRING);
 
   _core.inspectSource = function (it) {
-    return $toString.call(it);
+    return _functionToString.call(it);
   };
 
   (module.exports = function (O, key, val, safe) {
@@ -175,7 +192,7 @@
     }
   // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
   })(Function.prototype, TO_STRING, function toString() {
-    return typeof this == 'function' && this[SRC] || $toString.call(this);
+    return typeof this == 'function' && this[SRC] || _functionToString.call(this);
   });
   });
 
@@ -212,7 +229,7 @@
 
     var Op = Object.prototype;
     var hasOwn = Op.hasOwnProperty;
-    var undefined; // More compressible than void 0.
+    var undefined$1; // More compressible than void 0.
     var $Symbol = typeof Symbol === "function" ? Symbol : {};
     var iteratorSymbol = $Symbol.iterator || "@@iterator";
     var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
@@ -519,7 +536,7 @@
     // setting context.delegate to null, and returning the ContinueSentinel.
     function maybeInvokeDelegate(delegate, context) {
       var method = delegate.iterator[context.method];
-      if (method === undefined) {
+      if (method === undefined$1) {
         // A .throw or .return when the delegate iterator has no .throw
         // method always terminates the yield* loop.
         context.delegate = null;
@@ -529,7 +546,7 @@
             // If the delegate iterator has a return method, give it a
             // chance to clean up.
             context.method = "return";
-            context.arg = undefined;
+            context.arg = undefined$1;
             maybeInvokeDelegate(delegate, context);
 
             if (context.method === "throw") {
@@ -581,7 +598,7 @@
         // outer generator.
         if (context.method !== "return") {
           context.method = "next";
-          context.arg = undefined;
+          context.arg = undefined$1;
         }
 
       } else {
@@ -693,7 +710,7 @@
               }
             }
 
-            next.value = undefined;
+            next.value = undefined$1;
             next.done = true;
 
             return next;
@@ -709,7 +726,7 @@
     runtime.values = values;
 
     function doneResult() {
-      return { value: undefined, done: true };
+      return { value: undefined$1, done: true };
     }
 
     Context.prototype = {
@@ -720,12 +737,12 @@
         this.next = 0;
         // Resetting context._sent for legacy support of Babel's
         // function.sent implementation.
-        this.sent = this._sent = undefined;
+        this.sent = this._sent = undefined$1;
         this.done = false;
         this.delegate = null;
 
         this.method = "next";
-        this.arg = undefined;
+        this.arg = undefined$1;
 
         this.tryEntries.forEach(resetTryEntry);
 
@@ -735,7 +752,7 @@
             if (name.charAt(0) === "t" &&
                 hasOwn.call(this, name) &&
                 !isNaN(+name.slice(1))) {
-              this[name] = undefined;
+              this[name] = undefined$1;
             }
           }
         }
@@ -768,7 +785,7 @@
             // If the dispatched exception was caught by a catch block,
             // then let that catch block handle the exception normally.
             context.method = "next";
-            context.arg = undefined;
+            context.arg = undefined$1;
           }
 
           return !! caught;
@@ -905,7 +922,7 @@
         if (this.method === "next") {
           // Deliberately forget the last sent value so that we don't
           // accidentally pass it on to the delegate.
-          this.arg = undefined;
+          this.arg = undefined$1;
         }
 
         return ContinueSentinel;
@@ -1029,21 +1046,6 @@
   function _nonIterableRest() {
     throw new TypeError("Invalid attempt to destructure non-iterable instance");
   }
-
-  var _library = false;
-
-  var _shared = createCommonjsModule(function (module) {
-  var SHARED = '__core-js_shared__';
-  var store = _global[SHARED] || (_global[SHARED] = {});
-
-  (module.exports = function (key, value) {
-    return store[key] || (store[key] = value !== undefined ? value : {});
-  })('versions', []).push({
-    version: _core.version,
-    mode: 'global',
-    copyright: '© 2018 Denis Pushkarev (zloirock.ru)'
-  });
-  });
 
   var _wks = createCommonjsModule(function (module) {
   var store = _shared('wks');
@@ -1794,7 +1796,7 @@
 
   var arrayFind = _arrayMethods(5);
   var arrayFindIndex = _arrayMethods(6);
-  var id$2 = 0;
+  var id$1 = 0;
 
   // fallback for uncaught frozen keys
   var uncaughtFrozenStore = function (that) {
@@ -1835,7 +1837,7 @@
       var C = wrapper(function (that, iterable) {
         _anInstance(that, C, NAME, '_i');
         that._t = NAME;      // collection type
-        that._i = id$2++;      // collection id
+        that._i = id$1++;      // collection id
         that._l = undefined; // leak store for uncaught frozen objects
         if (iterable != undefined) _forOf(iterable, IS_MAP, that[ADDER], that);
       });
@@ -2012,6 +2014,7 @@
   };
 
   var es6_weakMap = createCommonjsModule(function (module) {
+
   var each = _arrayMethods(0);
 
 
@@ -2019,12 +2022,12 @@
 
 
 
-
+  var NATIVE_WEAK_MAP = _validateCollection;
+  var IS_IE11 = !_global.ActiveXObject && 'ActiveXObject' in _global;
   var WEAK_MAP = 'WeakMap';
   var getWeak = _meta.getWeak;
   var isExtensible = Object.isExtensible;
   var uncaughtFrozenStore = _collectionWeak.ufstore;
-  var tmp = {};
   var InternalMap;
 
   var wrapper = function (get) {
@@ -2052,7 +2055,7 @@
   var $WeakMap = module.exports = _collection(WEAK_MAP, wrapper, methods, _collectionWeak, true, true);
 
   // IE11 WeakMap frozen keys fix
-  if (_fails(function () { return new $WeakMap().set((Object.freeze || Object)(tmp), 7).get(tmp) != 7; })) {
+  if (NATIVE_WEAK_MAP && IS_IE11) {
     InternalMap = _collectionWeak.getConstructor(wrapper, WEAK_MAP);
     _objectAssign(InternalMap.prototype, methods);
     _meta.NEED = true;
@@ -3099,7 +3102,7 @@
       // Browser globals (root is window)
       root.URI = factory(root.punycode, root.IPv6, root.SecondLevelDomains, root);
     }
-  }(commonjsGlobal, function (punycode$$1, IPv6$$1, SLD, root) {
+  }(commonjsGlobal, function (punycode, IPv6, SLD, root) {
     /*global location, escape, unescape */
     // FIXME: v2.0.0 renamce non-camelCase properties to uppercase
     /*jshint camelcase: false */
@@ -4150,10 +4153,10 @@
         throw new TypeError('Hostname cannot be empty, if protocol is ' + protocol);
       } else if (v && v.match(URI.invalid_hostname_characters)) {
         // test punycode
-        if (!punycode$$1) {
+        if (!punycode) {
           throw new TypeError('Hostname "' + v + '" contains characters other than [A-Z0-9.-:_] and Punycode.js is not available');
         }
-        if (punycode$$1.toASCII(v).match(URI.invalid_hostname_characters)) {
+        if (punycode.toASCII(v).match(URI.invalid_hostname_characters)) {
           throw new TypeError('Hostname "' + v + '" contains characters other than [A-Z0-9.-:_]');
         }
       }
@@ -4340,7 +4343,7 @@
       var name = false;
       var sld = false;
       var idn = false;
-      var punycode$$1 = false;
+      var punycode = false;
       var relative = !this._parts.urn;
 
       if (this._parts.hostname) {
@@ -4351,7 +4354,7 @@
         name = !ip;
         sld = name && SLD && SLD.has(this._parts.hostname);
         idn = name && URI.idn_expression.test(this._parts.hostname);
-        punycode$$1 = name && URI.punycode_expression.test(this._parts.hostname);
+        punycode = name && URI.punycode_expression.test(this._parts.hostname);
       }
 
       switch (what.toLowerCase()) {
@@ -4392,7 +4395,7 @@
           return !!this._parts.urn;
 
         case 'punycode':
-          return punycode$$1;
+          return punycode;
       }
 
       return null;
@@ -5021,10 +5024,10 @@
     };
     p.normalizeHostname = function(build) {
       if (this._parts.hostname) {
-        if (this.is('IDN') && punycode$$1) {
-          this._parts.hostname = punycode$$1.toASCII(this._parts.hostname);
-        } else if (this.is('IPv6') && IPv6$$1) {
-          this._parts.hostname = IPv6$$1.best(this._parts.hostname);
+        if (this.is('IDN') && punycode) {
+          this._parts.hostname = punycode.toASCII(this._parts.hostname);
+        } else if (this.is('IPv6') && IPv6) {
+          this._parts.hostname = IPv6.best(this._parts.hostname);
         }
 
         this._parts.hostname = this._parts.hostname.toLowerCase();
@@ -5183,8 +5186,8 @@
       }
 
       if (uri._parts.hostname) {
-        if (uri.is('punycode') && punycode$$1) {
-          t += punycode$$1.toUnicode(uri._parts.hostname);
+        if (uri.is('punycode') && punycode) {
+          t += punycode.toUnicode(uri._parts.hostname);
           if (uri._parts.port) {
             t += ':' + uri._parts.port;
           }
@@ -7377,7 +7380,7 @@
 
   var html$1 = freeze$2(['accept', 'action', 'align', 'alt', 'autocomplete', 'background', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'coords', 'crossorigin', 'datetime', 'default', 'dir', 'disabled', 'download', 'enctype', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'integrity', 'ismap', 'label', 'lang', 'list', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'multiple', 'name', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'type', 'usemap', 'valign', 'value', 'width', 'xmlns']);
 
-  var svg$1 = freeze$2(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'specularconstant', 'specularexponent', 'spreadmethod', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'tabindex', 'targetx', 'targety', 'transform', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
+  var svg$1 = freeze$2(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'specularconstant', 'specularexponent', 'spreadmethod', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'tabindex', 'targetx', 'targety', 'transform', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'version', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
 
   var mathMl$1 = freeze$2(['accent', 'accentunder', 'align', 'bevelled', 'close', 'columnsalign', 'columnlines', 'columnspan', 'denomalign', 'depth', 'dir', 'display', 'displaystyle', 'fence', 'frame', 'height', 'href', 'id', 'largeop', 'length', 'linethickness', 'lspace', 'lquote', 'mathbackground', 'mathcolor', 'mathsize', 'mathvariant', 'maxsize', 'minsize', 'movablelimits', 'notation', 'numalign', 'open', 'rowalign', 'rowlines', 'rowspacing', 'rowspan', 'rspace', 'rquote', 'scriptlevel', 'scriptminsize', 'scriptsizemultiplier', 'selection', 'separator', 'separators', 'stretchy', 'subscriptshift', 'supscriptshift', 'symmetric', 'voffset', 'width', 'xmlns']);
 
@@ -7403,30 +7406,39 @@
       // Prevent prototype setters from intercepting set as a this value.
       setPrototypeOf$1(set, null);
     }
+
     var l = array.length;
     while (l--) {
       var element = array[l];
       if (typeof element === 'string') {
         var lcElement = element.toLowerCase();
         if (lcElement !== element) {
-          array[l] = lcElement;
+          // Config presets (e.g. tags.js, attrs.js) are immutable.
+          if (!Object.isFrozen(array)) {
+            array[l] = lcElement;
+          }
+
           element = lcElement;
         }
       }
+
       set[element] = true;
     }
+
     return set;
   }
 
   /* Shallow clone an object */
   function clone(object) {
     var newObject = {};
+
     var property = void 0;
     for (property in object) {
       if (apply$1(hasOwnProperty$1, object, [property])) {
         newObject[property] = object[property];
       }
     }
+
     return newObject;
   }
 
@@ -7444,7 +7456,7 @@
   var ATTR_WHITESPACE = seal(/[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205f\u3000]/g // eslint-disable-line no-control-regex
   );
 
-  var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
   function _toConsumableArray$1(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -7473,7 +7485,7 @@
    * are not supported).
    */
   var _createTrustedTypesPolicy = function _createTrustedTypesPolicy(trustedTypes, document) {
-    if ((typeof trustedTypes === 'undefined' ? 'undefined' : _typeof$1(trustedTypes)) !== 'object' || typeof trustedTypes.createPolicy !== 'function') {
+    if ((typeof trustedTypes === 'undefined' ? 'undefined' : _typeof(trustedTypes)) !== 'object' || typeof trustedTypes.createPolicy !== 'function') {
       return null;
     }
 
@@ -7494,7 +7506,7 @@
           return html$$1;
         }
       });
-    } catch (e) {
+    } catch (error) {
       // Policy creation failed (most likely another DOMPurify script has
       // already run). Skip creating the policy, as this will only cause errors
       // if TT are enforced.
@@ -7514,7 +7526,7 @@
      * Version label, exposed for easier checks
      * if DOMPurify is up to date or not
      */
-    DOMPurify.version = '1.0.9';
+    DOMPurify.version = '1.0.10';
 
     /**
      * Array of elements that DOMPurify removed during sanitation.
@@ -7690,9 +7702,10 @@
       }
 
       /* Shield configuration object from tampering */
-      if (!cfg || (typeof cfg === 'undefined' ? 'undefined' : _typeof$1(cfg)) !== 'object') {
+      if (!cfg || (typeof cfg === 'undefined' ? 'undefined' : _typeof(cfg)) !== 'object') {
         cfg = {};
       }
+
       /* Set configuration parameters */
       ALLOWED_TAGS = 'ALLOWED_TAGS' in cfg ? addToSet({}, cfg.ALLOWED_TAGS) : DEFAULT_ALLOWED_TAGS;
       ALLOWED_ATTR = 'ALLOWED_ATTR' in cfg ? addToSet({}, cfg.ALLOWED_ATTR) : DEFAULT_ALLOWED_ATTR;
@@ -7731,16 +7744,19 @@
           addToSet(ALLOWED_TAGS, html);
           addToSet(ALLOWED_ATTR, html$1);
         }
+
         if (USE_PROFILES.svg === true) {
           addToSet(ALLOWED_TAGS, svg);
           addToSet(ALLOWED_ATTR, svg$1);
           addToSet(ALLOWED_ATTR, xml);
         }
+
         if (USE_PROFILES.svgFilters === true) {
           addToSet(ALLOWED_TAGS, svgFilters);
           addToSet(ALLOWED_ATTR, svg$1);
           addToSet(ALLOWED_ATTR, xml);
         }
+
         if (USE_PROFILES.mathMl === true) {
           addToSet(ALLOWED_TAGS, mathMl);
           addToSet(ALLOWED_ATTR, mathMl$1);
@@ -7753,14 +7769,18 @@
         if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) {
           ALLOWED_TAGS = clone(ALLOWED_TAGS);
         }
+
         addToSet(ALLOWED_TAGS, cfg.ADD_TAGS);
       }
+
       if (cfg.ADD_ATTR) {
         if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) {
           ALLOWED_ATTR = clone(ALLOWED_ATTR);
         }
+
         addToSet(ALLOWED_ATTR, cfg.ADD_ATTR);
       }
+
       if (cfg.ADD_URI_SAFE_ATTR) {
         addToSet(URI_SAFE_ATTRIBUTES, cfg.ADD_URI_SAFE_ATTR);
       }
@@ -7798,7 +7818,7 @@
       DOMPurify.removed.push({ element: node });
       try {
         node.parentNode.removeChild(node);
-      } catch (err) {
+      } catch (error) {
         node.outerHTML = emptyHTML;
       }
     };
@@ -7815,12 +7835,13 @@
           attribute: node.getAttributeNode(name),
           from: node
         });
-      } catch (err) {
+      } catch (error) {
         DOMPurify.removed.push({
           attribute: null,
           from: node
         });
       }
+
       node.removeAttribute(name);
     };
 
@@ -7850,7 +7871,7 @@
       if (useDOMParser) {
         try {
           doc = new DOMParser().parseFromString(dirty, 'text/html');
-        } catch (err) {}
+        } catch (error) {}
       }
 
       /* Remove title to fix a mXSS bug in older MS Edge */
@@ -7893,15 +7914,16 @@
           if (doc.querySelector('svg img')) {
             useDOMParser = true;
           }
-        } catch (err) {}
+        } catch (error) {}
       })();
+
       (function () {
         try {
           var doc = _initDocument('<x/><title>&lt;/title&gt;&lt;img&gt;');
           if (doc.querySelector('title').innerHTML.match(/<\/title/)) {
             removeTitle = true;
           }
-        } catch (err) {}
+        } catch (error) {}
       })();
     }
 
@@ -7927,9 +7949,11 @@
       if (elm instanceof Text || elm instanceof Comment) {
         return false;
       }
+
       if (typeof elm.nodeName !== 'string' || typeof elm.textContent !== 'string' || typeof elm.removeChild !== 'function' || !(elm.attributes instanceof NamedNodeMap) || typeof elm.removeAttribute !== 'function' || typeof elm.setAttribute !== 'function') {
         return true;
       }
+
       return false;
     };
 
@@ -7940,7 +7964,7 @@
      * @return {Boolean} true is object is a DOM node
      */
     var _isNode = function _isNode(obj) {
-      return (typeof Node === 'undefined' ? 'undefined' : _typeof$1(Node)) === 'object' ? obj instanceof Node : obj && (typeof obj === 'undefined' ? 'undefined' : _typeof$1(obj)) === 'object' && typeof obj.nodeType === 'number' && typeof obj.nodeName === 'string';
+      return (typeof Node === 'undefined' ? 'undefined' : _typeof(Node)) === 'object' ? obj instanceof Node : obj && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && typeof obj.nodeType === 'number' && typeof obj.nodeName === 'string';
     };
 
     /**
@@ -7971,6 +7995,7 @@
      * @param   {Node} currentNode to check for permission to exist
      * @return  {Boolean} true if node was killed, false if left alive
      */
+    // eslint-disable-next-line complexity
     var _sanitizeElements = function _sanitizeElements(currentNode) {
       var content = void 0;
 
@@ -7999,8 +8024,20 @@
           try {
             var htmlToInsert = currentNode.innerHTML;
             currentNode.insertAdjacentHTML('AfterEnd', trustedTypesPolicy ? trustedTypesPolicy.createHTML(htmlToInsert) : htmlToInsert);
-          } catch (err) {}
+          } catch (error) {}
         }
+
+        _forceRemove(currentNode);
+        return true;
+      }
+
+      /* Remove in case a noscript/noembed XSS is suspected */
+      if (tagName === 'noscript' && currentNode.innerHTML.match(/<\/noscript/i)) {
+        _forceRemove(currentNode);
+        return true;
+      }
+
+      if (tagName === 'noembed' && currentNode.innerHTML.match(/<\/noembed/i)) {
         _forceRemove(currentNode);
         return true;
       }
@@ -8041,16 +8078,11 @@
      * @param  {string} value Attribute value.
      * @return {Boolean} Returns true if `value` is valid, otherwise false.
      */
+    // eslint-disable-next-line complexity
     var _isValidAttribute = function _isValidAttribute(lcTag, lcName, value) {
       /* Make sure attribute cannot clobber */
       if (SANITIZE_DOM && (lcName === 'id' || lcName === 'name') && (value in document || value in formElement)) {
         return false;
-      }
-
-      /* Sanitize attribute content to be template-safe */
-      if (SAFE_FOR_TEMPLATES) {
-        value = value.replace(MUSTACHE_EXPR$$1, ' ');
-        value = value.replace(ERB_EXPR$$1, ' ');
       }
 
       /* Allow valid data-* attributes: At least one character after "-"
@@ -8064,6 +8096,7 @@
       } else if (URI_SAFE_ATTRIBUTES[lcName]) ; else if (IS_ALLOWED_URI$$1.test(value.replace(ATTR_WHITESPACE$$1, ''))) ; else if ((lcName === 'src' || lcName === 'xlink:href') && lcTag !== 'script' && value.indexOf('data:') === 0 && DATA_URI_TAGS[lcTag]) ; else if (ALLOW_UNKNOWN_PROTOCOLS && !IS_SCRIPT_OR_DATA$$1.test(value.replace(ATTR_WHITESPACE$$1, ''))) ; else if (!value) ; else {
         return false;
       }
+
       return true;
     };
 
@@ -8075,9 +8108,8 @@
      * @protect removeAttribute
      * @protect setAttribute
      *
-     * @param  {Node} node to sanitize
+     * @param  {Node} currentNode to sanitize
      */
-    // eslint-disable-next-line complexity
     var _sanitizeAttributes = function _sanitizeAttributes(currentNode) {
       var attr = void 0;
       var value = void 0;
@@ -8144,12 +8176,19 @@
           if (name === 'id') {
             currentNode.setAttribute(name, '');
           }
+
           _removeAttribute(name, currentNode);
         }
 
         /* Did the hooks approve of the attribute? */
         if (!hookEvent.keepAttr) {
           continue;
+        }
+
+        /* Sanitize attribute content to be template-safe */
+        if (SAFE_FOR_TEMPLATES) {
+          value = value.replace(MUSTACHE_EXPR$$1, ' ');
+          value = value.replace(ERB_EXPR$$1, ' ');
         }
 
         /* Is `value` valid for this attribute? */
@@ -8166,8 +8205,9 @@
             /* Fallback to setAttribute() for browser-unrecognized namespaces e.g. "x-schema". */
             currentNode.setAttribute(name, value);
           }
+
           DOMPurify.removed.pop();
-        } catch (err) {}
+        } catch (error) {}
       }
 
       /* Execute a hook if present */
@@ -8244,14 +8284,16 @@
 
       /* Check we can run. Otherwise fall back or ignore */
       if (!DOMPurify.isSupported) {
-        if (_typeof$1(window.toStaticHTML) === 'object' || typeof window.toStaticHTML === 'function') {
+        if (_typeof(window.toStaticHTML) === 'object' || typeof window.toStaticHTML === 'function') {
           if (typeof dirty === 'string') {
             return window.toStaticHTML(dirty);
           }
+
           if (_isNode(dirty)) {
             return window.toStaticHTML(dirty.outerHTML);
           }
         }
+
         return dirty;
       }
 
@@ -8272,11 +8314,12 @@
           /* Node is already a body, use as is */
           body = importedNode;
         } else {
+          // eslint-disable-next-line unicorn/prefer-node-append
           body.appendChild(importedNode);
         }
       } else {
         /* Exit directly if we have nothing to do */
-        if (!RETURN_DOM && !WHOLE_DOCUMENT && dirty.indexOf('<') === -1) {
+        if (!RETURN_DOM && !SAFE_FOR_TEMPLATES && !WHOLE_DOCUMENT && dirty.indexOf('<') === -1) {
           return trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
         }
 
@@ -8333,6 +8376,7 @@
           returnNode = createDocumentFragment.call(body.ownerDocument);
 
           while (body.firstChild) {
+            // eslint-disable-next-line unicorn/prefer-node-append
             returnNode.appendChild(body.firstChild);
           }
         } else {
@@ -8352,6 +8396,13 @@
       }
 
       var serializedHTML = WHOLE_DOCUMENT ? body.outerHTML : body.innerHTML;
+
+      /* Sanitize final string template-safe */
+      if (SAFE_FOR_TEMPLATES) {
+        serializedHTML = serializedHTML.replace(MUSTACHE_EXPR$$1, ' ');
+        serializedHTML = serializedHTML.replace(ERB_EXPR$$1, ' ');
+      }
+
       return trustedTypesPolicy ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
     };
 
@@ -8391,6 +8442,7 @@
       if (!CONFIG) {
         _parseConfig({});
       }
+
       var lcTag = tag.toLowerCase();
       var lcName = attr.toLowerCase();
       return _isValidAttribute(lcTag, lcName, value);
@@ -8407,6 +8459,7 @@
       if (typeof hookFunction !== 'function') {
         return;
       }
+
       hooks[entryPoint] = hooks[entryPoint] || [];
       hooks[entryPoint].push(hookFunction);
     };
@@ -8683,10 +8736,11 @@
 
     try {
       value[symToStringTag] = undefined;
+      var unmasked = true;
     } catch (e) {}
 
     var result = nativeObjectToString.call(value);
-    {
+    if (unmasked) {
       if (isOwn) {
         value[symToStringTag] = tag;
       } else {
@@ -8940,14 +8994,14 @@
   var whiteList = ['需要<%= quest_ap - sp %><%= point_name %>来开始。', '使用道具恢复<%= point_name %>？', "\u6765\u81EA<span class='txt-request-name'><%= n.attributes.called_user_name %></span>\u7684\u6551\u63F4\u8BF7\u6C42", "\u6765\u81EA<span class='txt-request-name'><%= raid['called_user_name'] %></span>\u7684\u6551\u63F4\u8BF7\u6C42", '还剩<%= can_quest_start_count %>回挑战（一共<%= max_quest_start_count %>回）', '<%= set_user.name %> Rank <%= set_user.rank %> 选择任务', '更改第<%= stamp.priority %>个表情', '<%= title %>'];
 
   var filter = function filter(str) {
-    if (!whiteList.includes(str)) {
+    if (!whiteList.includes(str) && /[><]/.test(str)) {
       return purify.sanitize(str);
     }
 
     return str;
   };
 
-  var version = "1.7.3";
+  var version = "1.7.4";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -9092,7 +9146,7 @@
               return _context.stop();
           }
         }
-      }, _callee, this);
+      }, _callee);
     }));
 
     return function fetchData(_x) {
@@ -9137,7 +9191,7 @@
               return _context2.stop();
           }
         }
-      }, _callee2, this);
+      }, _callee2);
     }));
 
     return function fetchWithHash(_x2) {
@@ -11130,7 +11184,7 @@
               return _context.stop();
           }
         }
-      }, _callee, this);
+      }, _callee);
     }));
 
     return function getNameData() {
@@ -11213,7 +11267,7 @@
               return _context2.stop();
           }
         }
-      }, _callee2, this);
+      }, _callee2);
     }));
 
     return function getNounData() {
@@ -14015,7 +14069,7 @@
               return _context.stop();
           }
         }
-      }, _callee, this, [[6, 14]]);
+      }, _callee, null, [[6, 14]]);
     }));
 
     return function googleTrans(_x) {
@@ -14084,7 +14138,7 @@
               return _context2.stop();
           }
         }
-      }, _callee2, this, [[4, 12]]);
+      }, _callee2, null, [[4, 12]]);
     }));
 
     return function caiyunTrans(_x2) {
@@ -14125,7 +14179,7 @@
               return _context3.stop();
           }
         }
-      }, _callee3, this);
+      }, _callee3);
     }));
     return _ref3.apply(this, arguments);
   }
@@ -14337,7 +14391,7 @@
               return _context.stop();
           }
         }
-      }, _callee, this);
+      }, _callee);
     }));
 
     return function transMulti(_x, _x2, _x3, _x4, _x5) {
@@ -14412,7 +14466,7 @@
               return _context2.stop();
           }
         }
-      }, _callee2, this);
+      }, _callee2);
     }));
 
     return function getScenario(_x6) {
@@ -14703,7 +14757,7 @@
               return _context3.stop();
           }
         }
-      }, _callee3, this);
+      }, _callee3);
     }));
 
     return function transStart(_x7, _x8) {
@@ -14778,7 +14832,7 @@
               return _context4.stop();
           }
         }
-      }, _callee4, this);
+      }, _callee4);
     }));
     return _ref6.apply(this, arguments);
   }
@@ -14869,7 +14923,7 @@
               return _context.stop();
           }
         }
-      }, _callee, this, [[5, 18]]);
+      }, _callee, null, [[5, 18]]);
     }));
 
     return function getLocalData(_x) {
@@ -14931,14 +14985,16 @@
             case 9:
               list = parseCsv(langMsg);
               list.forEach(function (item) {
+                var trans = filter(item.trans);
+
                 if (trim(item.id)) {
                   item.en && langMsgMap.set("".concat(item.id).concat(item.en), {
-                    trans: filter(item.trans),
+                    trans: trans,
                     en: item.en,
                     jp: item.jp
                   });
                   item.jp && langMsgMap.set("".concat(item.jp), {
-                    trans: filter(item.trans),
+                    trans: trans,
                     en: item.en,
                     jp: item.jp
                   });
@@ -14954,7 +15010,7 @@
               return _context.stop();
           }
         }
-      }, _callee, this);
+      }, _callee);
     }));
 
     return function getLangMsgData() {
@@ -15009,3637 +15065,10 @@
               return _context.stop();
           }
         }
-      }, _callee, this);
+      }, _callee);
     }));
     return _transLangMsg.apply(this, arguments);
   }
-
-  var skillMap = new Map();
-  var skillKeys = [['special_skill', 'special'], ['action_ability1', 'skill-1'], ['action_ability2', 'skill-2'], ['action_ability3', 'skill-3'], ['action_ability4', 'skill-4'], ['support_ability1', 'support-1'], ['support_ability2', 'support-2'], ['support_ability_of_npczenith', 'skill-lb']];
-  var state = {
-    status: 'init',
-    cStatus: 'init',
-    locSkMap: false,
-    skillMap: skillMap,
-    skillKeys: skillKeys,
-    skillData: null,
-    commSkillMap: new Map(),
-    autoTransCache: new Map(),
-    nounMap: new Map(),
-    nounRE: ''
-  };
-
-  var getCommSkillMap =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee() {
-      var csvData, list, sortedList, nounArr;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (!(state.cStatus === 'loaded')) {
-                _context.next = 2;
-                break;
-              }
-
-              return _context.abrupt("return");
-
-            case 2:
-              _context.next = 4;
-              return fetchWithHash('/blhxfy/data/common-skill.csv');
-
-            case 4:
-              csvData = _context.sent;
-              _context.next = 7;
-              return parseCsv(csvData);
-
-            case 7:
-              list = _context.sent;
-              sortedList = sortKeywords(list, 'comment');
-              nounArr = [];
-              sortedList.forEach(function (item) {
-                if (item.comment && item.trans && item.type) {
-                  var comment = trim(item.comment);
-                  var trans = filter(trim(item.trans));
-                  var type = trim(item.type) || '1';
-
-                  if (comment && trans) {
-                    if (type === '4') {
-                      state.nounMap.set(comment, trans);
-                      nounArr.push(comment);
-                    } else {
-                      state.commSkillMap.set(comment, {
-                        trans: trans,
-                        type: type
-                      });
-                    }
-                  }
-                }
-              });
-              if (nounArr.length) state.nounRE = "(".concat(nounArr.join('|'), ")");
-              state.cStatus = 'loaded';
-
-            case 13:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function getCommSkillMap() {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var saveSkillMap =
-  /*#__PURE__*/
-  function () {
-    var _ref2 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(skillMap) {
-      var arr;
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              arr = _toConsumableArray(skillMap).slice(-20);
-              setLocalData('skill-npc', JSON.stringify(arr));
-
-            case 2:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2, this);
-    }));
-
-    return function saveSkillMap(_x) {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-
-  var getSkillMap =
-  /*#__PURE__*/
-  function () {
-    var _ref3 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee3() {
-      var str, arr, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, _step$value, key, item, _key;
-
-      return regeneratorRuntime.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.next = 2;
-              return getLocalData('skill-npc');
-
-            case 2:
-              str = _context3.sent;
-              _context3.prev = 3;
-              arr = JSON.parse(str);
-              state.skillMap = new Map(arr);
-              _iteratorNormalCompletion = true;
-              _didIteratorError = false;
-              _iteratorError = undefined;
-              _context3.prev = 9;
-
-              for (_iterator = state.skillMap[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                _step$value = _slicedToArray(_step.value, 2), key = _step$value[0], item = _step$value[1];
-
-                for (_key in item) {
-                  item[_key].name = filter(trim(item[_key].name));
-                  item[_key].detail = filter(trim(item[_key].detail));
-                }
-              }
-
-              _context3.next = 17;
-              break;
-
-            case 13:
-              _context3.prev = 13;
-              _context3.t0 = _context3["catch"](9);
-              _didIteratorError = true;
-              _iteratorError = _context3.t0;
-
-            case 17:
-              _context3.prev = 17;
-              _context3.prev = 18;
-
-              if (!_iteratorNormalCompletion && _iterator.return != null) {
-                _iterator.return();
-              }
-
-            case 20:
-              _context3.prev = 20;
-
-              if (!_didIteratorError) {
-                _context3.next = 23;
-                break;
-              }
-
-              throw _iteratorError;
-
-            case 23:
-              return _context3.finish(20);
-
-            case 24:
-              return _context3.finish(17);
-
-            case 25:
-              state.locSkMap = true;
-              _context3.next = 30;
-              break;
-
-            case 28:
-              _context3.prev = 28;
-              _context3.t1 = _context3["catch"](3);
-
-            case 30:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3, this, [[3, 28], [9, 13, 17, 25], [18,, 20, 24]]);
-    }));
-
-    return function getSkillMap() {
-      return _ref3.apply(this, arguments);
-    };
-  }();
-
-  var saveSkillPath =
-  /*#__PURE__*/
-  function () {
-    var _ref4 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee4(skillData) {
-      return regeneratorRuntime.wrap(function _callee4$(_context4) {
-        while (1) {
-          switch (_context4.prev = _context4.next) {
-            case 0:
-              setLocalData('skill-path', JSON.stringify(skillData));
-
-            case 1:
-            case "end":
-              return _context4.stop();
-          }
-        }
-      }, _callee4, this);
-    }));
-
-    return function saveSkillPath(_x2) {
-      return _ref4.apply(this, arguments);
-    };
-  }();
-
-  var getSkillPath =
-  /*#__PURE__*/
-  function () {
-    var _ref5 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee5() {
-      var str, data;
-      return regeneratorRuntime.wrap(function _callee5$(_context5) {
-        while (1) {
-          switch (_context5.prev = _context5.next) {
-            case 0:
-              _context5.next = 2;
-              return getLocalData('skill-path');
-
-            case 2:
-              str = _context5.sent;
-
-              try {
-                data = JSON.parse(str);
-                state.skillData = data;
-              } catch (e) {}
-
-            case 4:
-            case "end":
-              return _context5.stop();
-          }
-        }
-      }, _callee5, this);
-    }));
-
-    return function getSkillPath() {
-      return _ref5.apply(this, arguments);
-    };
-  }();
-
-  var setSkillMap = function setSkillMap(list) {
-    var stable = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-    var npcId, active, idArr;
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-      for (var _iterator2 = list[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var row = _step2.value;
-
-        if (row.id === 'npc') {
-          idArr = row.detail.split('|');
-        } else if (row.id === 'active') {
-          if (row.name !== '0') {
-            active = true;
-          }
-        }
-      }
-    } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-          _iterator2.return();
-        }
-      } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
-        }
-      }
-    }
-
-    if (!idArr.length || !idArr[0]) return;
-    npcId = idArr[1] || idArr[0];
-    var skillData = {};
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
-
-    try {
-      for (var _iterator3 = list[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-        var _row = _step3.value;
-
-        if (stable || active) {
-          skillData[_row.id] = _row;
-        }
-      }
-    } catch (err) {
-      _didIteratorError3 = true;
-      _iteratorError3 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-          _iterator3.return();
-        }
-      } finally {
-        if (_didIteratorError3) {
-          throw _iteratorError3;
-        }
-      }
-    }
-
-    state.skillMap.set(npcId, skillData);
-    saveSkillMap(state.skillMap);
-  };
-
-  var getSkillData =
-  /*#__PURE__*/
-  function () {
-    var _ref6 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee6(npcId) {
-      var csvName, csvData, list;
-      return regeneratorRuntime.wrap(function _callee6$(_context6) {
-        while (1) {
-          switch (_context6.prev = _context6.next) {
-            case 0:
-              if (state.locSkMap) {
-                _context6.next = 3;
-                break;
-              }
-
-              _context6.next = 3;
-              return getSkillMap();
-
-            case 3:
-              if (!state.skillMap.has(npcId)) {
-                _context6.next = 5;
-                break;
-              }
-
-              return _context6.abrupt("return", state);
-
-            case 5:
-              _context6.next = 7;
-              return getSkillPath();
-
-            case 7:
-              if (state.skillData) {
-                _context6.next = 12;
-                break;
-              }
-
-              _context6.next = 10;
-              return fetchWithHash('/blhxfy/data/skill.json');
-
-            case 10:
-              state.skillData = _context6.sent;
-              saveSkillPath(state.skillData);
-
-            case 12:
-              csvName = state.skillData[npcId];
-
-              if (!csvName) {
-                _context6.next = 19;
-                break;
-              }
-
-              _context6.next = 16;
-              return fetchWithHash("/blhxfy/data/skill/".concat(csvName));
-
-            case 16:
-              csvData = _context6.sent;
-              list = parseCsv(filter(csvData));
-              setSkillMap(list);
-
-            case 19:
-              return _context6.abrupt("return", state);
-
-            case 20:
-            case "end":
-              return _context6.stop();
-          }
-        }
-      }, _callee6, this);
-    }));
-
-    return function getSkillData(_x3) {
-      return _ref6.apply(this, arguments);
-    };
-  }();
-
-  var getLocalSkillData = function getLocalSkillData(npcId) {
-    var str = sessionStorage.getItem('blhxfy:skill-preview');
-
-    if (str) {
-      try {
-        var data = JSON.parse(str);
-
-        if (data.id === npcId) {
-          var csv = filter(data.csv);
-          var list = parseCsv(csv);
-          list.forEach(function (item) {
-            if (item.id === 'npc') {
-              item.detail = npcId;
-            }
-          });
-          setSkillMap(list);
-          return state;
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    return false;
-  };
-
-  function replaceTurn (str) {
-    return str.replace('ターン', '回合').replace('turns', '回合').replace('turn', '回合').replace('Cooldown:', '使用间隔:').replace('使用間隔:', '使用间隔:');
-  }
-
-  var buffMap = {
-    buff: new Map(),
-    debuff: new Map()
-  };
-  var loaded$2 = false;
-
-  var getData =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(type) {
-      var csv, list;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _context.next = 2;
-              return getLocalData(type);
-
-            case 2:
-              csv = _context.sent;
-
-              if (csv) {
-                _context.next = 8;
-                break;
-              }
-
-              _context.next = 6;
-              return fetchWithHash("/blhxfy/data/".concat(type, ".csv"));
-
-            case 6:
-              csv = _context.sent;
-              setLocalData(type, csv);
-
-            case 8:
-              list = parseCsv(csv);
-              list.forEach(function (item) {
-                var detail = trim(item.detail);
-                var trans = filter(trim(item.trans));
-
-                if (detail && trans) {
-                  buffMap[type].set(detail, trans);
-                }
-              });
-
-            case 10:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function getData(_x) {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var getBuffData =
-  /*#__PURE__*/
-  function () {
-    var _ref2 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(type) {
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              if (loaded$2) {
-                _context2.next = 6;
-                break;
-              }
-
-              _context2.next = 3;
-              return getData('buff');
-
-            case 3:
-              _context2.next = 5;
-              return getData('debuff');
-
-            case 5:
-              loaded$2 = true;
-
-            case 6:
-              return _context2.abrupt("return", buffMap[type]);
-
-            case 7:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2, this);
-    }));
-
-    return function getBuffData(_x2) {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-
-  var transBuff =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(data) {
-      var keys, _i, key, buffMap, k, item;
-
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              keys = ['buff', 'debuff'];
-              _i = 0;
-
-            case 2:
-              if (!(_i < keys.length)) {
-                _context.next = 12;
-                break;
-              }
-
-              key = keys[_i];
-
-              if (!data[key]) {
-                _context.next = 9;
-                break;
-              }
-
-              _context.next = 7;
-              return getBuffData(key);
-
-            case 7:
-              buffMap = _context.sent;
-
-              for (k in data[key]) {
-                item = data[key][k];
-
-                if (item.detail && buffMap.has(item.detail)) {
-                  item.detail = buffMap.get(item.detail);
-                }
-
-                if (item.effect) item.effect = replaceTurn(item.effect);
-              }
-
-            case 9:
-              _i++;
-              _context.next = 2;
-              break;
-
-            case 12:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function transBuff(_x) {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var elemtRE = '([光闇水火風土無]|light|dark|water|wind|earth|fire|plain)';
-  var elemtMap = {
-    light: '光',
-    '光': '光',
-    dark: '暗',
-    '闇': '暗',
-    water: '水',
-    '水': '水',
-    wind: '风',
-    '風': '风',
-    earth: '土',
-    '土': '土',
-    fire: '火',
-    '火': '火',
-    plain: '无',
-    '無': '无'
-  };
-  var numRE = '(\\d{1,10}\\.?\\d{0,4}?)';
-  var percentRE = '(\\d{1,10}\\.?\\d{0,4}?[%％])';
-
-  var parseRegExp = function parseRegExp(str, nounRE) {
-    return str.replace(/\(/g, '\\(').replace(/\)/g, '\\)').replace(/\$elemt/g, elemtRE).replace(/\$num/g, numRE).replace(/\$percent/g, percentRE).replace(/\$noun/g, nounRE);
-  };
-
-  var transSkill = function transSkill(comment, _ref) {
-    var commSkillMap = _ref.commSkillMap,
-        nounMap = _ref.nounMap,
-        nounRE = _ref.nounRE,
-        autoTransCache = _ref.autoTransCache;
-    if (autoTransCache.has(comment)) return autoTransCache.get(comment);
-    var result = comment;
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      var _loop = function _loop() {
-        var _step$value = _slicedToArray(_step.value, 2),
-            key = _step$value[0],
-            value = _step$value[1];
-
-        if (!trim(key)) return "continue";
-        var trans = value.trans,
-            type = value.type;
-
-        if (type === '1') {
-          var re = new RegExp(parseRegExp(key, nounRE), 'gi');
-          result = result.replace(re, function () {
-            var _trans = trans;
-
-            for (var _len = arguments.length, arr = new Array(_len), _key = 0; _key < _len; _key++) {
-              arr[_key] = arguments[_key];
-            }
-
-            for (var i = 1; i < arr.length - 2; i++) {
-              var eleKey = arr[i].toLowerCase();
-
-              if (elemtMap[eleKey]) {
-                _trans = _trans.replace("$".concat(i), elemtMap[eleKey]);
-              } else if (nounMap.has(eleKey)) {
-                _trans = _trans.replace("$".concat(i), nounMap.get(eleKey));
-              } else {
-                _trans = _trans.replace("$".concat(i), arr[i]);
-              }
-            }
-
-            return _trans;
-          });
-        } else if (type === '2') {
-          var res,
-              i = 0;
-
-          while (res !== result && i < 10) {
-            res = result;
-            result = result.replace(key, trans);
-            i++;
-          }
-        } else if (type === '3') {
-          result = result.replace("(".concat(key, ")"), "(".concat(trans, ")"));
-        }
-      };
-
-      for (var _iterator = commSkillMap[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var _ret = _loop();
-
-        if (_ret === "continue") continue;
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return != null) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-
-    autoTransCache.set(comment, result);
-    return result;
-  };
-
-  var parseBuff =
-  /*#__PURE__*/
-  function () {
-    var _ref2 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(data) {
-      var _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, item, key, ability;
-
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _iteratorNormalCompletion2 = true;
-              _didIteratorError2 = false;
-              _iteratorError2 = undefined;
-              _context.prev = 3;
-              _iterator2 = skillKeys[Symbol.iterator]();
-
-            case 5:
-              if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
-                _context.next = 21;
-                break;
-              }
-
-              item = _step2.value;
-              key = item[0];
-              ability = data[key];
-
-              if (ability) {
-                _context.next = 15;
-                break;
-              }
-
-              if (data.ability) {
-                _context.next = 12;
-                break;
-              }
-
-              return _context.abrupt("continue", 18);
-
-            case 12:
-              ability = data.ability[key];
-
-              if (ability) {
-                _context.next = 15;
-                break;
-              }
-
-              return _context.abrupt("continue", 18);
-
-            case 15:
-              if (!ability.ability_detail) {
-                _context.next = 18;
-                break;
-              }
-
-              _context.next = 18;
-              return transBuff(ability.ability_detail);
-
-            case 18:
-              _iteratorNormalCompletion2 = true;
-              _context.next = 5;
-              break;
-
-            case 21:
-              _context.next = 27;
-              break;
-
-            case 23:
-              _context.prev = 23;
-              _context.t0 = _context["catch"](3);
-              _didIteratorError2 = true;
-              _iteratorError2 = _context.t0;
-
-            case 27:
-              _context.prev = 27;
-              _context.prev = 28;
-
-              if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-                _iterator2.return();
-              }
-
-            case 30:
-              _context.prev = 30;
-
-              if (!_didIteratorError2) {
-                _context.next = 33;
-                break;
-              }
-
-              throw _iteratorError2;
-
-            case 33:
-              return _context.finish(30);
-
-            case 34:
-              return _context.finish(27);
-
-            case 35:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this, [[3, 23, 27, 35], [28,, 30, 34]]);
-    }));
-
-    return function parseBuff(_x) {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-
-  var previewSkill = function previewSkill(npcId) {
-    $('#cnt-detail').off('click.blhxfy').on('click.blhxfy', '.prt-evolution-star>div:eq(1)', function () {
-      var csv = window.prompt('粘贴要预览的技能翻译CSV文本');
-
-      if (csv) {
-        sessionStorage.setItem('blhxfy:skill-preview', JSON.stringify({
-          id: npcId,
-          csv: splitSingleLineSkill(csv)
-        }));
-        location.reload();
-      }
-    }).on('click.blhxfy', '.prt-evolution-star>div:eq(2)', function () {
-      if (confirm('清除技能预览？')) {
-        sessionStorage.removeItem('blhxfy:skill-preview');
-        location.reload();
-      }
-    });
-  };
-
-  var parseSkill =
-  /*#__PURE__*/
-  function () {
-    var _ref3 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(data, pathname) {
-      var npcId, skillState, skillData, translated, keys, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, item, key1, key2, ability, _getPlusStr, _getPlusStr2, plus1, plus2, _trans4, trans, intro, _trans2, _intro, _trans3;
-
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              if (!(Game.lang === 'en')) {
-                _context2.next = 2;
-                break;
-              }
-
-              return _context2.abrupt("return", data);
-
-            case 2:
-              if (!pathname.includes('/npc/npc/')) {
-                _context2.next = 8;
-                break;
-              }
-
-              if (!(!data.master || !data.master.id)) {
-                _context2.next = 5;
-                break;
-              }
-
-              return _context2.abrupt("return", data);
-
-            case 5:
-              npcId = "".concat(data.master.id);
-              _context2.next = 12;
-              break;
-
-            case 8:
-              if (!pathname.includes('/archive/npc_detail')) {
-                _context2.next = 12;
-                break;
-              }
-
-              if (data.id) {
-                _context2.next = 11;
-                break;
-              }
-
-              return _context2.abrupt("return", data);
-
-            case 11:
-              npcId = data.id;
-
-            case 12:
-              _context2.next = 14;
-              return parseBuff(data);
-
-            case 14:
-              previewSkill(npcId);
-              skillState = getLocalSkillData(npcId);
-
-              if (skillState) {
-                _context2.next = 20;
-                break;
-              }
-
-              _context2.next = 19;
-              return getSkillData(npcId);
-
-            case 19:
-              skillState = _context2.sent;
-
-            case 20:
-              skillData = skillState.skillMap.get(npcId);
-              translated = new Map();
-              keys = skillState.skillKeys;
-
-              if (!skillData) {
-                _context2.next = 72;
-                break;
-              }
-
-              _iteratorNormalCompletion3 = true;
-              _didIteratorError3 = false;
-              _iteratorError3 = undefined;
-              _context2.prev = 27;
-              _iterator3 = keys[Symbol.iterator]();
-
-            case 29:
-              if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
-                _context2.next = 56;
-                break;
-              }
-
-              item = _step3.value;
-              key1 = item[0];
-              key2 = item[1];
-              ability = data[key1];
-
-              if (ability) {
-                _context2.next = 40;
-                break;
-              }
-
-              if (data.ability) {
-                _context2.next = 37;
-                break;
-              }
-
-              return _context2.abrupt("continue", 53);
-
-            case 37:
-              ability = data.ability[key1];
-
-              if (ability) {
-                _context2.next = 40;
-                break;
-              }
-
-              return _context2.abrupt("continue", 53);
-
-            case 40:
-              if (ability.recast_comment) {
-                ability.recast_comment = replaceTurn(ability.recast_comment);
-              }
-
-              _getPlusStr = getPlusStr(ability.name), _getPlusStr2 = _slicedToArray(_getPlusStr, 2), plus1 = _getPlusStr2[0], plus2 = _getPlusStr2[1];
-              _trans4 = skillData["skill-".concat(ability.name)];
-
-              if (_trans4) {
-                _context2.next = 51;
-                break;
-              }
-
-              _trans4 = skillData["special-".concat(ability.name)];
-
-              if (_trans4) {
-                _context2.next = 51;
-                break;
-              }
-
-              _trans4 = skillData[key2 + plus2];
-
-              if (_trans4) {
-                _context2.next = 51;
-                break;
-              }
-
-              _trans4 = skillData[key2];
-
-              if (_trans4) {
-                _context2.next = 51;
-                break;
-              }
-
-              return _context2.abrupt("continue", 53);
-
-            case 51:
-              if (_trans4.name) {
-                ability.name = _trans4.name + plus1;
-              }
-
-              if (_trans4.detail) {
-                ability.comment = _trans4.detail;
-                translated.set(key1, true);
-              }
-
-            case 53:
-              _iteratorNormalCompletion3 = true;
-              _context2.next = 29;
-              break;
-
-            case 56:
-              _context2.next = 62;
-              break;
-
-            case 58:
-              _context2.prev = 58;
-              _context2.t0 = _context2["catch"](27);
-              _didIteratorError3 = true;
-              _iteratorError3 = _context2.t0;
-
-            case 62:
-              _context2.prev = 62;
-              _context2.prev = 63;
-
-              if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-                _iterator3.return();
-              }
-
-            case 65:
-              _context2.prev = 65;
-
-              if (!_didIteratorError3) {
-                _context2.next = 68;
-                break;
-              }
-
-              throw _iteratorError3;
-
-            case 68:
-              return _context2.finish(65);
-
-            case 69:
-              return _context2.finish(62);
-
-            case 70:
-              if (data.master) {
-                trans = skillData['npc'];
-
-                if (trans && trans.name) {
-                  data.master.name = trans.name;
-                  intro = skillData['intro'];
-                  if (intro && intro.name) data.master.evo_name = "[".concat(intro.name, "]").concat(trans.name);
-                }
-              } else if (data.name) {
-                _trans2 = skillData['npc'];
-
-                if (_trans2 && _trans2.name) {
-                  data.name = _trans2.name;
-                  _intro = skillData['intro'];
-                  if (_intro && _intro.name) data.evo_name = "[".concat(_intro.name, "]").concat(_trans2.name);
-                }
-              }
-
-              if (data.comment) {
-                _trans3 = skillData['intro'];
-                if (_trans3 && _trans3.detail) data.comment = _trans3.detail;
-              }
-
-            case 72:
-              _context2.next = 74;
-              return getCommSkillMap();
-
-            case 74:
-              keys.forEach(function (item) {
-                if (!translated.get(item[0])) {
-                  var skill = data[item[0]];
-
-                  if (skill) {
-                    skill.comment = transSkill(skill.comment, skillState);
-                  }
-                }
-              });
-              return _context2.abrupt("return", data);
-
-            case 76:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2, this, [[27, 58, 62, 70], [63,, 65, 69]]);
-    }));
-
-    return function parseSkill(_x2, _x3) {
-      return _ref3.apply(this, arguments);
-    };
-  }();
-
-  var skillMap$1 = new Map();
-  var loaded$3 = false;
-
-  var getSkillData$1 =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(id) {
-      var csv, list, trans;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (loaded$3) {
-                _context.next = 12;
-                break;
-              }
-
-              _context.next = 3;
-              return getLocalData('job-skill');
-
-            case 3:
-              csv = _context.sent;
-
-              if (csv) {
-                _context.next = 9;
-                break;
-              }
-
-              _context.next = 7;
-              return fetchWithHash('/blhxfy/data/job-skill.csv');
-
-            case 7:
-              csv = _context.sent;
-              setLocalData('job-skill', csv);
-
-            case 9:
-              list = parseCsv(csv);
-              list.forEach(function (item) {
-                if (item && item.id) {
-                  var _id = trim(item.id);
-
-                  var _en = trim(item.en);
-
-                  var _ja = trim(item.ja);
-
-                  if (_id) {
-                    var value = {
-                      name: filter(trim(item.name)),
-                      detail: filter(trim(item.detail))
-                    };
-                    skillMap$1.set(_id, value);
-                    if (_ja) skillMap$1.set(_ja, value);
-                    if (_en) skillMap$1.set(_en, value);
-                  }
-                }
-              });
-              loaded$3 = true;
-
-            case 12:
-              trans = skillMap$1.get(id);
-              return _context.abrupt("return", trans);
-
-            case 14:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function getSkillData(_x) {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var startTrans =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(data) {
-      var key, trans;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _context.t0 = regeneratorRuntime.keys(data);
-
-            case 1:
-              if ((_context.t1 = _context.t0()).done) {
-                _context.next = 15;
-                break;
-              }
-
-              key = _context.t1.value;
-
-              if (!data[key]) {
-                _context.next = 13;
-                break;
-              }
-
-              _context.next = 6;
-              return getSkillData$1(data[key].action_id);
-
-            case 6:
-              trans = _context.sent;
-
-              if (trans) {
-                data[key].name = trans.name;
-                data[key].comment = trans.detail;
-              }
-
-              if (data[key].recast_comment) {
-                data[key].recast_comment = replaceTurn(data[key].recast_comment);
-              }
-
-              if (data[key].turn_comment) {
-                data[key].turn_comment = replaceTurn(data[key].turn_comment);
-              }
-
-              if (!data[key].ability_detail) {
-                _context.next = 13;
-                break;
-              }
-
-              _context.next = 13;
-              return transBuff(data[key].ability_detail);
-
-            case 13:
-              _context.next = 1;
-              break;
-
-            case 15:
-              return _context.abrupt("return", data);
-
-            case 16:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function startTrans(_x) {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var replaceSkill =
-  /*#__PURE__*/
-  function () {
-    var _ref2 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(data) {
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              if (!data.action_ability) {
-                _context2.next = 4;
-                break;
-              }
-
-              _context2.next = 3;
-              return startTrans(data.action_ability);
-
-            case 3:
-              data.action_ability = _context2.sent;
-
-            case 4:
-              if (!data.support_ability) {
-                _context2.next = 8;
-                break;
-              }
-
-              _context2.next = 7;
-              return startTrans(data.support_ability);
-
-            case 7:
-              data.support_ability = _context2.sent;
-
-            case 8:
-              return _context2.abrupt("return", data);
-
-            case 9:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2, this);
-    }));
-
-    return function replaceSkill(_x2) {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-
-  var transSkill$1 =
-  /*#__PURE__*/
-  function () {
-    var _ref3 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee3(data, pathname) {
-      return regeneratorRuntime.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              if (!/\/party\/job\/\d+\//.test(pathname)) {
-                _context3.next = 7;
-                break;
-              }
-
-              if (!data.job) {
-                _context3.next = 5;
-                break;
-              }
-
-              _context3.next = 4;
-              return replaceSkill(data.job);
-
-            case 4:
-              data.job = _context3.sent;
-
-            case 5:
-              _context3.next = 36;
-              break;
-
-            case 7:
-              if (!pathname.includes('/party_ability_subaction/')) {
-                _context3.next = 14;
-                break;
-              }
-
-              if (!data.list) {
-                _context3.next = 12;
-                break;
-              }
-
-              _context3.next = 11;
-              return startTrans(data.list);
-
-            case 11:
-              data.list = _context3.sent;
-
-            case 12:
-              _context3.next = 36;
-              break;
-
-            case 14:
-              if (!/\/party\/ability_list\/\d+\//.test(pathname)) {
-                _context3.next = 20;
-                break;
-              }
-
-              _context3.next = 17;
-              return replaceSkill(data);
-
-            case 17:
-              data = _context3.sent;
-              _context3.next = 36;
-              break;
-
-            case 20:
-              if (!/\/party\/job_info\/\d+\//.test(pathname)) {
-                _context3.next = 31;
-                break;
-              }
-
-              if (!data.after_job_master) {
-                _context3.next = 25;
-                break;
-              }
-
-              _context3.next = 24;
-              return replaceSkill(data.after_job_master);
-
-            case 24:
-              data.after_job_master = _context3.sent;
-
-            case 25:
-              if (!data.before_job_info) {
-                _context3.next = 29;
-                break;
-              }
-
-              _context3.next = 28;
-              return replaceSkill(data.before_job_info);
-
-            case 28:
-              data.before_job_info = _context3.sent;
-
-            case 29:
-              _context3.next = 36;
-              break;
-
-            case 31:
-              if (!/\/zenith\/ability_list\/\d+/.test(pathname)) {
-                _context3.next = 36;
-                break;
-              }
-
-              if (!data.ability_list) {
-                _context3.next = 36;
-                break;
-              }
-
-              _context3.next = 35;
-              return startTrans(data.ability_list);
-
-            case 35:
-              data.list = _context3.sent;
-
-            case 36:
-              return _context3.abrupt("return", data);
-
-            case 37:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3, this);
-    }));
-
-    return function transSkill(_x3, _x4) {
-      return _ref3.apply(this, arguments);
-    };
-  }();
-
-  var _createProperty = function (object, index, value) {
-    if (index in object) _objectDp.f(object, index, _propertyDesc(0, value));
-    else object[index] = value;
-  };
-
-  _export(_export.S + _export.F * !_iterDetect(function (iter) { }), 'Array', {
-    // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
-    from: function from(arrayLike /* , mapfn = undefined, thisArg = undefined */) {
-      var O = _toObject(arrayLike);
-      var C = typeof this == 'function' ? this : Array;
-      var aLen = arguments.length;
-      var mapfn = aLen > 1 ? arguments[1] : undefined;
-      var mapping = mapfn !== undefined;
-      var index = 0;
-      var iterFn = core_getIteratorMethod(O);
-      var length, result, step, iterator;
-      if (mapping) mapfn = _ctx(mapfn, aLen > 2 ? arguments[2] : undefined, 2);
-      // if object isn't iterable or it's array with default iterator - use simple case
-      if (iterFn != undefined && !(C == Array && _isArrayIter(iterFn))) {
-        for (iterator = iterFn.call(O), result = new C(); !(step = iterator.next()).done; index++) {
-          _createProperty(result, index, mapping ? _iterCall(iterator, mapfn, [step.value, index], true) : step.value);
-        }
-      } else {
-        length = _toLength(O.length);
-        for (result = new C(length); length > index; index++) {
-          _createProperty(result, index, mapping ? mapfn(O[index], index) : O[index]);
-        }
-      }
-      result.length = index;
-      return result;
-    }
-  });
-
-  var htmlMap = new Map();
-  var loaded$4 = false;
-
-  var getCommHtmlData =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee() {
-      var csv, list, tempMap;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (loaded$4) {
-                _context.next = 14;
-                break;
-              }
-
-              _context.next = 3;
-              return getLocalData('common-html');
-
-            case 3:
-              csv = _context.sent;
-
-              if (csv) {
-                _context.next = 9;
-                break;
-              }
-
-              _context.next = 7;
-              return fetchWithHash('/blhxfy/data/common-html.csv');
-
-            case 7:
-              csv = _context.sent;
-              setLocalData('common-html', csv);
-
-            case 9:
-              list = parseCsv(csv);
-              tempMap = new Map();
-              sortKeywords(list, 'text').forEach(function (item, index) {
-                var pathname = trim(item.path);
-                var text = trim(item.text);
-                var trans = filter(trim(item.trans));
-                var times = item.count | 0 || 1;
-
-                if (pathname && text && trans) {
-                  if (tempMap.has(pathname)) {
-                    tempMap.get(pathname).push({
-                      text: text,
-                      trans: trans,
-                      times: times,
-                      index: index
-                    });
-                  } else {
-                    tempMap.set(pathname, [{
-                      text: text,
-                      trans: trans,
-                      times: times,
-                      index: index
-                    }]);
-                  }
-                }
-              });
-              sortKeywords(Array.from(tempMap.keys())).forEach(function (key) {
-                htmlMap.set(key, tempMap.get(key));
-              });
-              loaded$4 = true;
-
-            case 14:
-              return _context.abrupt("return", htmlMap);
-
-            case 15:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function getCommHtmlData() {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var htmlMap$1 = new Map();
-  var loaded$5 = false;
-
-  var getArchiveData =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee() {
-      var csv, list;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (loaded$5) {
-                _context.next = 7;
-                break;
-              }
-
-              _context.next = 3;
-              return fetchWithHash('/blhxfy/data/archive.csv');
-
-            case 3:
-              csv = _context.sent;
-              list = parseCsv(csv);
-              sortKeywords(list, 'text').forEach(function (item) {
-                var text = trim(item.text);
-                var trans = filter(trim(item.trans));
-                var times = item.count | 0 || 1;
-
-                if (text && trans) {
-                  htmlMap$1.set(text, {
-                    trans: trans,
-                    times: times
-                  });
-                }
-              });
-              loaded$5 = true;
-
-            case 7:
-              return _context.abrupt("return", htmlMap$1);
-
-            case 8:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function getArchiveData() {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var replaceHTML =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(html, pathname) {
-      var _html, theList, htmlMap, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, _step$value, key, list;
-
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _html = html;
-              theList = [];
-              _context.next = 4;
-              return getCommHtmlData();
-
-            case 4:
-              htmlMap = _context.sent;
-              _iteratorNormalCompletion = true;
-              _didIteratorError = false;
-              _iteratorError = undefined;
-              _context.prev = 8;
-
-              for (_iterator = htmlMap.entries()[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                _step$value = _slicedToArray(_step.value, 2), key = _step$value[0], list = _step$value[1];
-
-                if (pathname.includes(key)) {
-                  theList = theList.concat(list);
-                }
-              }
-
-              _context.next = 16;
-              break;
-
-            case 12:
-              _context.prev = 12;
-              _context.t0 = _context["catch"](8);
-              _didIteratorError = true;
-              _iteratorError = _context.t0;
-
-            case 16:
-              _context.prev = 16;
-              _context.prev = 17;
-
-              if (!_iteratorNormalCompletion && _iterator.return != null) {
-                _iterator.return();
-              }
-
-            case 19:
-              _context.prev = 19;
-
-              if (!_didIteratorError) {
-                _context.next = 22;
-                break;
-              }
-
-              throw _iteratorError;
-
-            case 22:
-              return _context.finish(19);
-
-            case 23:
-              return _context.finish(16);
-
-            case 24:
-              theList.sort(function (prev, next) {
-                return prev.index - next.index;
-              }).forEach(function (item) {
-                for (var i = 0; i < item.times; i++) {
-                  var newHtml = _html.replace(item.text, item.trans);
-
-                  if (newHtml !== _html) {
-                    _html = newHtml;
-                  } else {
-                    break;
-                  }
-                }
-              });
-              return _context.abrupt("return", _html);
-
-            case 26:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this, [[8, 12, 16, 24], [17,, 19, 23]]);
-    }));
-
-    return function replaceHTML(_x, _x2) {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var replaceArchive =
-  /*#__PURE__*/
-  function () {
-    var _ref2 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(html) {
-      var _html, htmlMap, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _step2$value, text, item, i, newHtml;
-
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              _html = html;
-              _context2.next = 3;
-              return getArchiveData();
-
-            case 3:
-              htmlMap = _context2.sent;
-              _iteratorNormalCompletion2 = true;
-              _didIteratorError2 = false;
-              _iteratorError2 = undefined;
-              _context2.prev = 7;
-              _iterator2 = htmlMap.entries()[Symbol.iterator]();
-
-            case 9:
-              if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
-                _context2.next = 25;
-                break;
-              }
-
-              _step2$value = _slicedToArray(_step2.value, 2), text = _step2$value[0], item = _step2$value[1];
-              i = 0;
-
-            case 12:
-              if (!(i < item.times)) {
-                _context2.next = 22;
-                break;
-              }
-
-              newHtml = _html.replace(text, item.trans);
-
-              if (!(newHtml !== _html)) {
-                _context2.next = 18;
-                break;
-              }
-
-              _html = newHtml;
-              _context2.next = 19;
-              break;
-
-            case 18:
-              return _context2.abrupt("break", 22);
-
-            case 19:
-              i++;
-              _context2.next = 12;
-              break;
-
-            case 22:
-              _iteratorNormalCompletion2 = true;
-              _context2.next = 9;
-              break;
-
-            case 25:
-              _context2.next = 31;
-              break;
-
-            case 27:
-              _context2.prev = 27;
-              _context2.t0 = _context2["catch"](7);
-              _didIteratorError2 = true;
-              _iteratorError2 = _context2.t0;
-
-            case 31:
-              _context2.prev = 31;
-              _context2.prev = 32;
-
-              if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-                _iterator2.return();
-              }
-
-            case 34:
-              _context2.prev = 34;
-
-              if (!_didIteratorError2) {
-                _context2.next = 37;
-                break;
-              }
-
-              throw _iteratorError2;
-
-            case 37:
-              return _context2.finish(34);
-
-            case 38:
-              return _context2.finish(31);
-
-            case 39:
-              return _context2.abrupt("return", _html);
-
-            case 40:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2, this, [[7, 27, 31, 39], [32,, 34, 38]]);
-    }));
-
-    return function replaceArchive(_x3) {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-
-  var settingHtml = false;
-
-  var getHtml =
-  /*#__PURE__*/
-  function () {
-    var _ref3 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee3(encodedHtml, pathname) {
-      var html;
-      return regeneratorRuntime.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.prev = 0;
-              html = decodeURIComponent(encodedHtml);
-              _context3.next = 7;
-              break;
-
-            case 4:
-              _context3.prev = 4;
-              _context3.t0 = _context3["catch"](0);
-              return _context3.abrupt("return", encodedHtml);
-
-            case 7:
-              _context3.prev = 7;
-
-              if (!pathname.includes('/archive/content/library/')) {
-                _context3.next = 14;
-                break;
-              }
-
-              _context3.next = 11;
-              return replaceArchive(html);
-
-            case 11:
-              html = _context3.sent;
-              _context3.next = 17;
-              break;
-
-            case 14:
-              _context3.next = 16;
-              return replaceHTML(html, pathname);
-
-            case 16:
-              html = _context3.sent;
-
-            case 17:
-              _context3.next = 22;
-              break;
-
-            case 19:
-              _context3.prev = 19;
-              _context3.t1 = _context3["catch"](7);
-              console.error(_context3.t1);
-
-            case 22:
-              if (!settingHtml && pathname.includes('/setting/content/index/index')) {
-                html = insertSettingHtml(html);
-                settingHtml = true;
-              }
-
-              return _context3.abrupt("return", encodeURIComponent(html));
-
-            case 24:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3, this, [[0, 4], [7, 19]]);
-    }));
-
-    return function getHtml(_x4, _x5) {
-      return _ref3.apply(this, arguments);
-    };
-  }();
-
-  function transHTML(_x6, _x7) {
-    return _transHTML.apply(this, arguments);
-  }
-
-  function _transHTML() {
-    _transHTML = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee4(data, pathname) {
-      return regeneratorRuntime.wrap(function _callee4$(_context4) {
-        while (1) {
-          switch (_context4.prev = _context4.next) {
-            case 0:
-              if (!data.data) {
-                _context4.next = 4;
-                break;
-              }
-
-              _context4.next = 3;
-              return getHtml(data.data, pathname);
-
-            case 3:
-              data.data = _context4.sent;
-
-            case 4:
-              if (!(data.option && data.option.progress)) {
-                _context4.next = 8;
-                break;
-              }
-
-              _context4.next = 7;
-              return getHtml(data.option.progress, pathname);
-
-            case 7:
-              data.option.progress = _context4.sent;
-
-            case 8:
-              if (!(data.option && data.option.quest)) {
-                _context4.next = 17;
-                break;
-              }
-
-              if (!data.option.quest.content__index) {
-                _context4.next = 13;
-                break;
-              }
-
-              _context4.next = 12;
-              return getHtml(data.option.quest.content__index, pathname);
-
-            case 12:
-              data.option.quest.content__index = _context4.sent;
-
-            case 13:
-              if (!data.option.quest.content_list) {
-                _context4.next = 17;
-                break;
-              }
-
-              _context4.next = 16;
-              return getHtml(data.option.quest.content_list, pathname);
-
-            case 16:
-              data.option.quest.content_list = _context4.sent;
-
-            case 17:
-              return _context4.abrupt("return", data);
-
-            case 18:
-            case "end":
-              return _context4.stop();
-          }
-        }
-      }, _callee4, this);
-    }));
-    return _transHTML.apply(this, arguments);
-  }
-
-  var townMap = new Map();
-  var loaded$6 = false;
-
-  var getTownData =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee() {
-      var csv, list;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (loaded$6) {
-                _context.next = 7;
-                break;
-              }
-
-              _context.next = 3;
-              return fetchWithHash('/blhxfy/data/town-info.csv');
-
-            case 3:
-              csv = _context.sent;
-              list = parseCsv(csv);
-              list.forEach(function (item) {
-                var id = trim(item.id);
-                var name = filter(trim(item.name));
-                var detail = filter(trim(item.detail));
-                var vyrn = filter(trim(item.vyrn));
-
-                if (id && name) {
-                  townMap.set(id, {
-                    name: name,
-                    detail: detail,
-                    vyrn: vyrn
-                  });
-                }
-              });
-              loaded$6 = true;
-
-            case 7:
-              return _context.abrupt("return", townMap);
-
-            case 8:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function getTownData() {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  function transTownInfo(_x, _x2) {
-    return _transTownInfo.apply(this, arguments);
-  }
-
-  function _transTownInfo() {
-    _transTownInfo = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(data, pathname) {
-      var town, townMap, key, item, id, _data;
-
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _context.prev = 0;
-              town = data.option.mydata_assets.mydata.town;
-              _context.next = 7;
-              break;
-
-            case 4:
-              _context.prev = 4;
-              _context.t0 = _context["catch"](0);
-              return _context.abrupt("return", data);
-
-            case 7:
-              _context.next = 9;
-              return getTownData();
-
-            case 9:
-              townMap = _context.sent;
-
-              if (townMap.has(town.location_id)) {
-                town.town_name = townMap.get(town.location_id).name;
-              }
-
-              for (key in town.spot) {
-                item = town.spot[key];
-                id = "".concat(town.location_id, "-").concat(item.id);
-
-                if (townMap.has(id)) {
-                  _data = townMap.get(id);
-                  item.location = _data.name;
-                  item.description = _data.detail;
-                  item.bee_comment = _data.vyrn;
-                }
-              }
-
-              return _context.abrupt("return", data);
-
-            case 13:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this, [[0, 4]]);
-    }));
-    return _transTownInfo.apply(this, arguments);
-  }
-
-  var islandMap = new Map();
-  var loaded$7 = false;
-
-  var getIslandData =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee() {
-      var csv, list;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (loaded$7) {
-                _context.next = 7;
-                break;
-              }
-
-              _context.next = 3;
-              return fetchWithHash('/blhxfy/data/island-info.csv');
-
-            case 3:
-              csv = _context.sent;
-              list = parseCsv(csv);
-              list.forEach(function (item) {
-                var id = trim(item.id);
-                var name = filter(trim(item.name));
-                var detail = filter(trim(item.detail));
-
-                if (id && name) {
-                  islandMap.set(id, {
-                    name: name,
-                    detail: detail
-                  });
-
-                  if (id === 'skydom') {
-                    islandMap.set(name, detail);
-                  }
-                }
-              });
-              loaded$7 = true;
-
-            case 7:
-              return _context.abrupt("return", islandMap);
-
-            case 8:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function getIslandData() {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  function transIslandInfo(_x, _x2) {
-    return _transIslandInfo.apply(this, arguments);
-  }
-
-  function _transIslandInfo() {
-    _transIslandInfo = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(data, pathname) {
-      var island, islandMap, key, item, id, _data;
-
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _context.prev = 0;
-              island = data.island_info;
-              _context.next = 7;
-              break;
-
-            case 4:
-              _context.prev = 4;
-              _context.t0 = _context["catch"](0);
-              return _context.abrupt("return", data);
-
-            case 7:
-              _context.next = 9;
-              return getIslandData();
-
-            case 9:
-              islandMap = _context.sent;
-
-              if (islandMap.has(island.island_name)) {
-                island.island_name = islandMap.get(island.island_name);
-              }
-
-              for (key in island) {
-                item = island[key];
-                id = key;
-
-                if (islandMap.has(id)) {
-                  if (id !== 'island_name') {
-                    _data = islandMap.get(id);
-                    item.name = _data.name;
-                    item.area_comment = _data.detail;
-                  }
-                }
-              }
-
-              return _context.abrupt("return", data);
-
-            case 13:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this, [[0, 4]]);
-    }));
-    return _transIslandInfo.apply(this, arguments);
-  }
-
-  var chatMap = new Map();
-  var nChatMap = new Map();
-  var loaded$8 = false;
-
-  var getChatData =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee() {
-      var csv, list;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (loaded$8) {
-                _context.next = 12;
-                break;
-              }
-
-              _context.next = 3;
-              return getLocalData('chat-preset');
-
-            case 3:
-              csv = _context.sent;
-
-              if (csv) {
-                _context.next = 9;
-                break;
-              }
-
-              _context.next = 7;
-              return fetchWithHash('/blhxfy/data/chat-preset.csv');
-
-            case 7:
-              csv = _context.sent;
-              setLocalData('chat-preset', csv);
-
-            case 9:
-              list = parseCsv(csv);
-              list.forEach(function (item) {
-                var id = trim(item.id);
-                var text = trim(item.text);
-                var trans = filter(trim(item.trans));
-
-                if (id && trans) {
-                  if (/\d+-n/.test(id)) {
-                    var rgs = id.match(/(\d+)-n/);
-                    var _id = rgs[1];
-                    nChatMap.set(_id, {
-                      text: text,
-                      trans: trans
-                    });
-                  } else {
-                    chatMap.set(id, trans);
-                  }
-                }
-              });
-              loaded$8 = true;
-
-            case 12:
-              return _context.abrupt("return", {
-                chatMap: chatMap,
-                nChatMap: nChatMap
-              });
-
-            case 13:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function getChatData() {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  function transChat(_x) {
-    return _transChat.apply(this, arguments);
-  }
-
-  function _transChat() {
-    _transChat = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(data) {
-      var _ref, chatMap, nChatMap, key, item, ck, id, hasSpecialTrans, _nChatMap$get, text, trans;
-
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (data.chat) {
-                _context.next = 2;
-                break;
-              }
-
-              return _context.abrupt("return", data);
-
-            case 2:
-              _context.next = 4;
-              return getChatData();
-
-            case 4:
-              _ref = _context.sent;
-              chatMap = _ref.chatMap;
-              nChatMap = _ref.nChatMap;
-
-              for (key in data.chat) {
-                item = data.chat[key];
-
-                for (ck in item) {
-                  id = item[ck].chat_id;
-
-                  if (chatMap.has(id)) {
-                    hasSpecialTrans = false;
-
-                    if (nChatMap.has(id)) {
-                      _nChatMap$get = nChatMap.get(id), text = _nChatMap$get.text, trans = _nChatMap$get.trans;
-
-                      if (item[ck].text === text) {
-                        item[ck].text = trans;
-                        hasSpecialTrans = true;
-                      }
-                    }
-
-                    if (!hasSpecialTrans) {
-                      item[ck].text = chatMap.get(id);
-                    }
-                  }
-                }
-              }
-
-              return _context.abrupt("return", data);
-
-            case 9:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-    return _transChat.apply(this, arguments);
-  }
-
-  var skillTemp = new Map();
-  var posMap = new Map();
-  var timer = null;
-  var count = 0;
-  var observered = false;
-  var obConfig = {
-    attributes: true,
-    subtree: true
-  };
-
-  var mutationCallback = function mutationCallback(mutationsList) {
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = mutationsList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var mutation = _step.value;
-        var type = mutation.type;
-        var attr = mutation.attributeName;
-        var target = mutation.target;
-
-        if (target.classList.contains('lis-ability') && type === 'attributes' && attr === 'title') {
-          var title = target.title;
-
-          if (title && title.endsWith('turn(s)')) {
-            viraSkillTitle();
-          }
-        }
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return != null) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-  };
-
-  var viraSkillTitleFunc = function viraSkillTitleFunc() {
-    var list = $('.lis-ability');
-
-    if (list.length) {
-      count = 0;
-
-      if (!observered) {
-        var targetNode = document.querySelector('.prt-command');
-        var observer = new MutationObserver(mutationCallback);
-        observer.observe(targetNode, obConfig);
-        observered = true;
-      }
-
-      list.each(function () {
-        var $elem = $(this);
-        var title = $elem.attr('title');
-        if (!title) return;
-        var name = title.split('\n')[0];
-        var trans = skillTemp.get(name);
-
-        if (trans) {
-          var _getPlusStr = getPlusStr(name),
-              _getPlusStr2 = _slicedToArray(_getPlusStr, 1),
-              plus1 = _getPlusStr2[0];
-
-          var sName = trans.name + plus1;
-          var detail = removeHtmlTag(trans.detail.replace(/<br\s?\/?>/gi, '\n'));
-          $elem.attr('title', title.replace(/^([\s\S]+)Cooldown:\s(\d+)\sturn\(s\)$/, "".concat(sName, "\n").concat(detail, "\n\u4F7F\u7528\u95F4\u9694\uFF1A$2 \u56DE\u5408")));
-        } else {
-          $elem.attr('title', title.replace(/^([\s\S]+)Cooldown:\s(\d+)\sturn\(s\)$/, "$1\u4F7F\u7528\u95F4\u9694\uFF1A$2 \u56DE\u5408"));
-        }
-      });
-    } else if (count < 20) {
-      count++;
-      viraSkillTitle();
-    }
-  };
-
-  var viraSkillTitle = function viraSkillTitle() {
-    clearTimeout(timer);
-    viraSkillTitleFunc();
-    timer = setTimeout(viraSkillTitleFunc, 500);
-  };
-
-  var collectNpcSkill = function collectNpcSkill(skillData) {
-    for (var key in skillData) {
-      if (/(skill|special)-\D.*/.test(key)) {
-        var rgs = key.match(/(skill|special)-(\D.*)/);
-
-        if (rgs && rgs[2] && !skillTemp.has(rgs[2])) {
-          skillTemp.set(rgs[2], skillData[key]);
-        }
-      }
-    }
-  };
-
-  var battle =
-  /*#__PURE__*/
-  function () {
-    var _battle = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(data, mode) {
-      var ability, scenario, spms, abKey, item, key, arr, skill, name, trans, npcId, state, skillData, index, _key, _arr, _skill, _name, _trans, _getPlusStr3, _getPlusStr4, plus1, plus2, _trans2, param, _index, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _item, _npcId, _state, _skillData, _name2, _trans3, _getPlusStr5, _getPlusStr6, _plus, _plus2, _trans4, scKey, _item2, _trans5, _getPlusStr7, _getPlusStr8, _plus3, _trans6, _getPlusStr9, _getPlusStr10, _plus4, _trans7, _getPlusStr11, _getPlusStr12, _plus5;
-
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (config.battleTrans) {
-                _context.next = 2;
-                break;
-              }
-
-              return _context.abrupt("return", data);
-
-            case 2:
-              if (mode === 'result') {
-                if (isObject_1(data.status)) {
-                  ability = data.status.ability;
-                  spms = data.status.skip_special_motion_setting;
-                }
-
-                if (isObject_1(data.scenario)) scenario = data.scenario;
-              } else {
-                ability = data.ability;
-                spms = data.skip_special_motion_setting;
-                data.temporary_potion_all_name = '群体回复药水';
-                data.temporary_potion_one_name = '治疗药水';
-              }
-
-              if (isArray_1(spms)) {
-                spms.forEach(function (item) {
-                  posMap.set(item.pos, item.setting_id);
-                });
-              } // translate skill
-
-
-              if (!isObject_1(ability)) {
-                _context.next = 36;
-                break;
-              }
-
-              _context.t0 = regeneratorRuntime.keys(ability);
-
-            case 6:
-              if ((_context.t1 = _context.t0()).done) {
-                _context.next = 36;
-                break;
-              }
-
-              abKey = _context.t1.value;
-              item = ability[abKey];
-
-              if (!(item && isObject_1(item.list))) {
-                _context.next = 34;
-                break;
-              }
-
-              if (!(item.mode === 'player')) {
-                _context.next = 27;
-                break;
-              }
-
-              _context.t2 = regeneratorRuntime.keys(item.list);
-
-            case 12:
-              if ((_context.t3 = _context.t2()).done) {
-                _context.next = 25;
-                break;
-              }
-
-              key = _context.t3.value;
-              arr = item.list[key];
-              skill = arr[0];
-
-              if (!(skill && skill['ability-name'])) {
-                _context.next = 23;
-                break;
-              }
-
-              name = skill['ability-name'];
-              _context.next = 20;
-              return getSkillData$1(name);
-
-            case 20:
-              trans = _context.sent;
-
-              if (trans) {
-                if (!skillTemp.has(name)) skillTemp.set(name, trans);
-                skill['ability-name'] = trans.name;
-                skill['text-data'] = trans.detail;
-              }
-
-              skill['duration-type'] = replaceTurn(skill['duration-type']);
-
-            case 23:
-              _context.next = 12;
-              break;
-
-            case 25:
-              _context.next = 34;
-              break;
-
-            case 27:
-              if (!(item.mode === 'npc')) {
-                _context.next = 34;
-                break;
-              }
-
-              npcId = posMap.get(item.pos);
-              _context.next = 31;
-              return getSkillData(npcId);
-
-            case 31:
-              state = _context.sent;
-              skillData = state.skillMap.get(npcId);
-
-              if (skillData && isObject_1(item.list)) {
-                collectNpcSkill(skillData);
-                index = 0;
-
-                for (_key in item.list) {
-                  index++;
-                  _arr = item.list[_key];
-                  _skill = _arr[0];
-
-                  if (_skill && _skill['ability-name']) {
-                    _name = _skill['ability-name'];
-
-                    if (skillData["skill-".concat(_name)]) {
-                      _trans = skillData["skill-".concat(_name)];
-
-                      if (_trans) {
-                        if (!skillTemp.has(_name)) skillTemp.set(_name, _trans);
-                        _skill['ability-name'] = _trans.name;
-                        _skill['text-data'] = _trans.detail;
-                      }
-                    } else {
-                      _getPlusStr3 = getPlusStr(_name), _getPlusStr4 = _slicedToArray(_getPlusStr3, 2), plus1 = _getPlusStr4[0], plus2 = _getPlusStr4[1];
-                      _trans2 = skillData["skill-".concat(index).concat(plus2)];
-                      if (!_trans2) _trans2 = skillData["skill-".concat(index)];
-
-                      if (_trans2) {
-                        if (!skillTemp.has(_name)) skillTemp.set(_name, _trans2);
-                        _skill['ability-name'] = "".concat(_trans2.name).concat(plus1);
-                        _skill['text-data'] = _trans2.detail;
-                      }
-
-                      _skill['duration-type'] = replaceTurn(_skill['duration-type']);
-                    }
-                  }
-                }
-              }
-
-            case 34:
-              _context.next = 6;
-              break;
-
-            case 36:
-              if (!(mode !== 'result' && data.player && isArray_1(data.player.param))) {
-                _context.next = 70;
-                break;
-              }
-
-              param = data.player.param;
-              _index = 0;
-              _iteratorNormalCompletion2 = true;
-              _didIteratorError2 = false;
-              _iteratorError2 = undefined;
-              _context.prev = 42;
-              _iterator2 = param[Symbol.iterator]();
-
-            case 44:
-              if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
-                _context.next = 56;
-                break;
-              }
-
-              _item = _step2.value;
-              _npcId = posMap.get(_index);
-              _index++;
-              _context.next = 50;
-              return getSkillData(_npcId);
-
-            case 50:
-              _state = _context.sent;
-              _skillData = _state.skillMap.get(_npcId);
-
-              if (_skillData) {
-                collectNpcSkill(_skillData);
-
-                if (_item['special_skill']) {
-                  _name2 = _item['special_skill'];
-
-                  if (_skillData["special-".concat(_name2)]) {
-                    _trans3 = _skillData["special-".concat(_name2)];
-
-                    if (_trans3) {
-                      if (!skillTemp.has(_name2)) skillTemp.set(_name2, _trans3);
-                      _item['special_skill'] = _trans3.name;
-                      _item['special_comment'] = _trans3.detail;
-                    }
-                  } else {
-                    _getPlusStr5 = getPlusStr(_name2), _getPlusStr6 = _slicedToArray(_getPlusStr5, 2), _plus = _getPlusStr6[0], _plus2 = _getPlusStr6[1];
-                    _trans4 = _skillData["special".concat(_plus2)];
-                    if (!_trans4) _trans4 = _skillData['special'];
-
-                    if (_trans4) {
-                      if (!skillTemp.has(_name2)) skillTemp.set(_name2, _trans4);
-                      _item['special_skill'] = "".concat(_trans4.name).concat(_plus);
-                      _item['special_comment'] = _trans4.detail;
-                    }
-                  }
-                }
-              }
-
-            case 53:
-              _iteratorNormalCompletion2 = true;
-              _context.next = 44;
-              break;
-
-            case 56:
-              _context.next = 62;
-              break;
-
-            case 58:
-              _context.prev = 58;
-              _context.t4 = _context["catch"](42);
-              _didIteratorError2 = true;
-              _iteratorError2 = _context.t4;
-
-            case 62:
-              _context.prev = 62;
-              _context.prev = 63;
-
-              if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-                _iterator2.return();
-              }
-
-            case 65:
-              _context.prev = 65;
-
-              if (!_didIteratorError2) {
-                _context.next = 68;
-                break;
-              }
-
-              throw _iteratorError2;
-
-            case 68:
-              return _context.finish(65);
-
-            case 69:
-              return _context.finish(62);
-
-            case 70:
-              // translate scenario
-              if (scenario) {
-                for (scKey in scenario) {
-                  _item2 = scenario[scKey];
-
-                  if (_item2 && _item2.name) {
-                    if (_item2.cmd === 'ability') {
-                      _trans5 = skillTemp.get(_item2.name);
-                      _getPlusStr7 = getPlusStr(_item2.name), _getPlusStr8 = _slicedToArray(_getPlusStr7, 1), _plus3 = _getPlusStr8[0];
-
-                      if (_trans5) {
-                        _item2.name = _trans5.name + _plus3;
-                        _item2.comment = _trans5.detail;
-                      }
-                    } else if (_item2.cmd === 'special_npc') {
-                      _trans6 = skillTemp.get(_item2.name);
-                      _getPlusStr9 = getPlusStr(_item2.name), _getPlusStr10 = _slicedToArray(_getPlusStr9, 1), _plus4 = _getPlusStr10[0];
-
-                      if (_trans6) {
-                        _item2.name = _trans6.name + _plus4;
-                      }
-                    } else if (_item2.cmd === 'special_change') {
-                      _trans7 = skillTemp.get(_item2.name);
-                      _getPlusStr11 = getPlusStr(_item2.name), _getPlusStr12 = _slicedToArray(_getPlusStr11, 1), _plus5 = _getPlusStr12[0];
-
-                      if (_trans7) {
-                        _item2.name = _trans7.name + _plus5;
-                        _item2.text = _trans7.detail;
-                      }
-                    }
-                  }
-                }
-              }
-
-              viraSkillTitle();
-              return _context.abrupt("return", data);
-
-            case 73:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this, [[42, 58, 62, 70], [63,, 65, 69]]);
-    }));
-
-    function battle(_x, _x2) {
-      return _battle.apply(this, arguments);
-    }
-
-    return battle;
-  }();
-
-  var transBattle = race(battle);
-
-  var replaceTime = function replaceTime(str) {
-    if (!str) return str;
-    return str.replace('時間', '小时');
-  };
-
-  var pageIndex =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(data) {
-      var messages, mydata, status, newMessages;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _context.prev = 0;
-              mydata = data.option.mydata_assets.mydata;
-              messages = mydata.messages;
-              status = mydata.status;
-              _context.next = 9;
-              break;
-
-            case 6:
-              _context.prev = 6;
-              _context.t0 = _context["catch"](0);
-              return _context.abrupt("return", data);
-
-            case 9:
-              if (messages.length) {
-                newMessages = [];
-                messages.forEach(function (item) {
-                  if (item.url !== 'news/detail/1/20002') {
-                    newMessages.push(item);
-                  }
-                });
-                mydata.messages = newMessages;
-              }
-
-              status.action_point_remain = replaceTime(status.action_point_remain);
-              status.battle_point_remain = replaceTime(status.battle_point_remain);
-              return _context.abrupt("return", data);
-
-            case 13:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this, [[0, 6]]);
-    }));
-
-    return function pageIndex(_x) {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var replaceHour = function replaceHour(data, type) {
-    var status;
-
-    try {
-      if (type === 'user') {
-        status = data.status;
-      } else {
-        status = data.option.user_status;
-      }
-    } catch (e) {
-      return data;
-    }
-
-    if (status) {
-      if (status.action_point_remain) status.action_point_remain = replaceTime(status.action_point_remain);
-      if (status.battle_point_remain) status.battle_point_remain = replaceTime(status.battle_point_remain);
-    }
-
-    return data;
-  };
-
-  var voiceMap = new Map();
-  var loaded$9 = false;
-
-  var getTownData$1 =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee() {
-      var csv, list;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (loaded$9) {
-                _context.next = 7;
-                break;
-              }
-
-              _context.next = 3;
-              return fetchWithHash('/blhxfy/data/voice-mypage.csv');
-
-            case 3:
-              csv = _context.sent;
-              list = parseCsv(csv);
-              list.forEach(function (item) {
-                var path = trim(item.path);
-                var trans = filter(trim(item.trans));
-                var duration = trim(item.duration) || 10;
-
-                if (path && trans) {
-                  voiceMap.set(path, {
-                    trans: trans,
-                    duration: duration
-                  });
-                }
-              });
-              loaded$9 = true;
-
-            case 7:
-              return _context.abrupt("return", voiceMap);
-
-            case 8:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function getTownData() {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var voiceList = [];
-
-  var saveList =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(data) {
-      var obj, key, item, vkey, voice;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              obj = data.data;
-
-              for (key in obj) {
-                item = obj[key];
-
-                for (vkey in item) {
-                  voice = item[vkey].replace(/\.[\w\d]+$/, '');
-
-                  if (!voiceList.includes(voice)) {
-                    voiceList.push(voice);
-                  }
-                }
-              }
-
-            case 2:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    return function saveList(_x) {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var createBox = function createBox() {
-    var box = document.createElement('div');
-    box.id = 'box-sub-blhxfy';
-    return box;
-  };
-
-  var hideTimer = null;
-
-  var hideBox = function hideBox() {
-    var box = document.getElementById('box-sub-blhxfy');
-    if (!box) return;
-    box.style.pointerEvents = 'none';
-    box.style.opacity = 0;
-    box.style.transition = 'opacity 1.5s';
-    clearTimeout(hideTimer);
-  };
-
-  var setSubBox = function setSubBox(text, duration) {
-    var cont = document.querySelector('.cnt-mypage .prt-user-scene');
-    if (!cont) return;
-    var box = document.getElementById('box-sub-blhxfy');
-
-    if (!box) {
-      box = createBox();
-      cont.appendChild(box);
-    }
-
-    var _text = text;
-
-    if (config.userName && (config.userName !== '姬塔' || config.userName !== '古兰')) {
-      _text = _text.replace(/团长/g, config.userName);
-    }
-
-    box.innerText = _text.replace(/\\n/g, '\n');
-    setTimeout(function () {
-      box.style.opacity = 1;
-      box.style.pointerEvents = 'auto';
-      box.style.transition = 'opacity 0.5s';
-    }, 100);
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(hideBox, duration * 1000);
-    box.removeEventListener('click', hideBox);
-    box.addEventListener('click', hideBox);
-  };
-
-  var showSub =
-  /*#__PURE__*/
-  function () {
-    var _ref2 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(src) {
-      var voice, voiceMap, data;
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              if (src) {
-                _context2.next = 2;
-                break;
-              }
-
-              return _context2.abrupt("return");
-
-            case 2:
-              hideBox();
-              voice = src.replace(/\.[\w\d]+$/, '');
-
-              if (voiceList.includes(voice)) {
-                _context2.next = 6;
-                break;
-              }
-
-              return _context2.abrupt("return");
-
-            case 6:
-              _context2.next = 8;
-              return getTownData$1();
-
-            case 8:
-              voiceMap = _context2.sent;
-
-              if (voiceMap.has(voice)) {
-                _context2.next = 11;
-                break;
-              }
-
-              return _context2.abrupt("return");
-
-            case 11:
-              data = voiceMap.get(voice);
-              setSubBox(data.trans, data.duration);
-
-            case 13:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2, this);
-    }));
-
-    return function showSub(_x2) {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-
-  var soundInjected = false;
-  function showVoiceSub(_x3, _x4, _x5) {
-    return _showVoiceSub.apply(this, arguments);
-  }
-
-  function _showVoiceSub() {
-    _showVoiceSub = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee3(data, pathname, type) {
-      return regeneratorRuntime.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              if (!soundInjected) {
-                require(['model/sound'], function (sound) {
-                  var playVoice = sound.prototype.playVoice;
-
-                  sound.prototype.playVoice = function (src, force) {
-                    if (!Game.setting.sound_flag) return;
-                    showSub(src);
-                    playVoice.call(this, src, force);
-                  };
-                });
-              }
-
-              soundInjected = true;
-
-              if (!(type === 'list')) {
-                _context3.next = 7;
-                break;
-              }
-
-              _context3.next = 5;
-              return saveList(data);
-
-            case 5:
-              _context3.next = 9;
-              break;
-
-            case 7:
-              _context3.next = 9;
-              return showSub(pathname);
-
-            case 9:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3, this);
-    }));
-    return _showVoiceSub.apply(this, arguments);
-  }
-
-  var getUserName = function getUserName(data) {
-    var html = decodeURIComponent(data.data);
-    var rgs = html.match(/<span\sclass="txt-user-name">([^<]+)<\/span>/);
-
-    if (rgs && rgs[1]) {
-      config.userName = rgs[1];
-      localStorage.setItem('blhxfy:name', rgs[1]);
-    }
-  };
-
-  var setUserName = function setUserName() {
-    if (!config.userName && Game.userId) {
-      require(['model/content'], function (mc) {
-        var req = new mc({
-          controller: "profile",
-          action: "index",
-          param: {
-            user_id: Game.userId
-          }
-        });
-        req.fetch();
-      });
-
-      config.userName = '古兰';
-      localStorage.setItem('blhxfy:name', config.userName);
-    }
-  };
-
-  var getLocalName = function getLocalName() {
-    var name = localStorage.getItem('blhxfy:name');
-    if (name) config.userName = filter(name);
-  };
-
-  getLocalName();
-
-  var apiHosts = ['game.granbluefantasy.jp', 'gbf.game.mbga.jp'];
-  function translate(_x) {
-    return _translate.apply(this, arguments);
-  }
-
-  function _translate() {
-    _translate = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(state) {
-      var uri, pathname, hostname, data, isJSON;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              uri = URI(state.url);
-              pathname = uri.pathname();
-              hostname = uri.hostname();
-              data = state.result;
-              isJSON = true;
-
-              try {
-                data = JSON.parse(data);
-              } catch (err) {
-                isJSON = false;
-              }
-
-              if (!(apiHosts.indexOf(hostname) !== -1)) {
-                _context.next = 90;
-                break;
-              }
-
-              if (!pathname.includes('scenario')) {
-                _context.next = 14;
-                break;
-              }
-
-              setUserName();
-              _context.next = 11;
-              return transScenario(data, pathname);
-
-            case 11:
-              data = _context.sent;
-              _context.next = 88;
-              break;
-
-            case 14:
-              if (!pathname.includes('/content/')) {
-                _context.next = 40;
-                break;
-              }
-
-              _context.prev = 15;
-
-              if (pathname.includes('/profile/content/index/')) {
-                getUserName(data);
-              }
-
-              _context.next = 19;
-              return transLangMsg(data, pathname);
-
-            case 19:
-              data = _context.sent;
-
-              if (!pathname.includes('/user/content/index')) {
-                _context.next = 29;
-                break;
-              }
-
-              _context.next = 23;
-              return transTownInfo(data, pathname);
-
-            case 23:
-              data = _context.sent;
-              _context.next = 26;
-              return pageIndex(data, pathname);
-
-            case 26:
-              data = _context.sent;
-              _context.next = 30;
-              break;
-
-            case 29:
-              data = replaceHour(data);
-
-            case 30:
-              _context.next = 35;
-              break;
-
-            case 32:
-              _context.prev = 32;
-              _context.t0 = _context["catch"](15);
-              console.error(_context.t0);
-
-            case 35:
-              _context.next = 37;
-              return transHTML(data, pathname);
-
-            case 37:
-              data = _context.sent;
-              _context.next = 88;
-              break;
-
-            case 40:
-              if (!(pathname.includes('/npc/npc/') || pathname.includes('/archive/npc_detail'))) {
-                _context.next = 46;
-                break;
-              }
-
-              _context.next = 43;
-              return parseSkill(data, pathname);
-
-            case 43:
-              data = _context.sent;
-              _context.next = 88;
-              break;
-
-            case 46:
-              if (!(pathname.includes('/party_ability_subaction/') || pathname.includes('/party/job/') || pathname.includes('/party/ability_list/') || pathname.includes('/zenith/ability_list/') || pathname.includes('/party/job_info/'))) {
-                _context.next = 52;
-                break;
-              }
-
-              _context.next = 49;
-              return transSkill$1(data, pathname);
-
-            case 49:
-              data = _context.sent;
-              _context.next = 88;
-              break;
-
-            case 52:
-              if (!pathname.includes('/island/init')) {
-                _context.next = 58;
-                break;
-              }
-
-              _context.next = 55;
-              return transIslandInfo(data, pathname);
-
-            case 55:
-              data = _context.sent;
-              _context.next = 88;
-              break;
-
-            case 58:
-              if (!pathname.includes('/rest/sound/mypage_voice')) {
-                _context.next = 63;
-                break;
-              }
-
-              _context.next = 61;
-              return showVoiceSub(data, pathname, 'list');
-
-            case 61:
-              _context.next = 88;
-              break;
-
-            case 63:
-              if (!/\/rest\/(multi)?raid\/start\.json/.test(pathname)) {
-                _context.next = 72;
-                break;
-              }
-
-              _context.next = 66;
-              return transChat(data);
-
-            case 66:
-              data = _context.sent;
-              _context.next = 69;
-              return transBattle(data);
-
-            case 69:
-              data = _context.sent;
-              _context.next = 88;
-              break;
-
-            case 72:
-              if (!(/\/rest\/(multi)?raid\/ability_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/temporary_item_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/normal_attack_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/summon_result\.json/.test(pathname))) {
-                _context.next = 78;
-                break;
-              }
-
-              _context.next = 75;
-              return transBattle(data, 'result');
-
-            case 75:
-              data = _context.sent;
-              _context.next = 88;
-              break;
-
-            case 78:
-              if (!/\/rest\/.*?raid\/condition\/\d+\/\d\/\d\.json/.test(pathname)) {
-                _context.next = 83;
-                break;
-              }
-
-              _context.next = 81;
-              return transBuff(data.condition);
-
-            case 81:
-              _context.next = 88;
-              break;
-
-            case 83:
-              if (!pathname.includes('/user/status')) {
-                _context.next = 87;
-                break;
-              }
-
-              data = replaceHour(data, 'user');
-              _context.next = 88;
-              break;
-
-            case 87:
-              return _context.abrupt("return");
-
-            case 88:
-              _context.next = 91;
-              break;
-
-            case 90:
-              return _context.abrupt("return");
-
-            case 91:
-              state.result = isJSON ? JSON.stringify(data) : data;
-
-            case 92:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this, [[15, 32]]);
-    }));
-    return _translate.apply(this, arguments);
-  }
-
-  var injectXHR = function injectXHR() {
-    // The following code are inspired by viramate/external.js
-    // intercept xhr request and modify the response
-    var XHR = XMLHttpRequest;
-    var originOpen = XHR.prototype.open;
-    var originSend = XHR.prototype.send;
-    var originAddEventListener = XHR.prototype.addEventListener;
-    var stateMap = new WeakMap();
-
-    function log(data) {
-      console.error(data);
-    }
-
-    function getXhrState(xhr) {
-      var result = stateMap.get(xhr);
-
-      if (!result) {
-        result = {};
-        stateMap.set(xhr, result);
-      }
-
-      if (!result.readyStateListeners) {
-        result.readyStateListeners = [];
-      }
-
-      if (!result.loadListeners) {
-        result.loadListeners = [];
-      }
-
-      return result;
-    }
-
-    var customOnLoad =
-    /*#__PURE__*/
-    function () {
-      var _ref = _asyncToGenerator(
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee(evt) {
-        var state;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                state = getXhrState(this);
-                state.onLoadEvent = evt;
-                Object.defineProperties(this, {
-                  response: {
-                    get: function get() {
-                      return state.result;
-                    }
-                  },
-                  responseText: {
-                    get: function get() {
-                      return state.result;
-                    }
-                  }
-                });
-                _context.prev = 3;
-                _context.next = 6;
-                return translate(state);
-
-              case 6:
-                _context.next = 11;
-                break;
-
-              case 8:
-                _context.prev = 8;
-                _context.t0 = _context["catch"](3);
-                log(_context.t0);
-
-              case 11:
-                state.onload && state.onload.call(this, state.onLoadEvent);
-
-              case 12:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, this, [[3, 8]]);
-      }));
-
-      return function customOnLoad(_x) {
-        return _ref.apply(this, arguments);
-      };
-    }();
-
-    var customOnReadyStateChange =
-    /*#__PURE__*/
-    function () {
-      var _ref2 = _asyncToGenerator(
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee2() {
-        var state,
-            i,
-            l,
-            _args2 = arguments;
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                try {
-                  state = getXhrState(this);
-
-                  if (this.readyState == XHR.DONE) {
-                    state.onComplete.call(this, state);
-                  }
-                } catch (err) {
-                  log(err);
-                }
-
-                try {
-                  for (i = 0, l = state.readyStateListeners.length; i < l; i++) {
-                    try {
-                      state.readyStateListeners[i].apply(this, _args2);
-                    } catch (err) {
-                      log(err);
-                    }
-                  }
-                } catch (err) {
-                  log(err);
-                }
-
-              case 2:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-
-      return function customOnReadyStateChange() {
-        return _ref2.apply(this, arguments);
-      };
-    }();
-
-    function customOnComplete(state) {
-      if (state.done) return;
-      state.done = performance.now();
-      state.response = this.response;
-      state.responseType = this.responseType;
-
-      if (state.responseType === "" || state.responseType === "text") {
-        state.responseText = this.responseText;
-        state.result = this.response || this.responseText;
-      }
-
-      state.status = this.status;
-      state.statusText = this.statusText;
-      state.contentType = this.getResponseHeader('content-type');
-    }
-
-    XHR.prototype.open = function open(method, url, async, user, password) {
-      try {
-        var state = getXhrState(this);
-        state.method = method;
-        state.url = url;
-      } catch (err) {
-        log(err);
-      }
-
-      originAddEventListener.call(this, "readystatechange", customOnReadyStateChange, false);
-      var result = originOpen.apply(this, arguments);
-      return result;
-    };
-
-    XHR.prototype.addEventListener = function addEventListener(eventName, listener, useCapture) {
-      try {
-        var state = getXhrState(this);
-
-        if (eventName === "readystatechange") {
-          state.readyStateListeners.push(listener);
-          return true;
-        }
-      } catch (err) {
-        log(err);
-      }
-
-      var result = originAddEventListener.apply(this, arguments);
-      return result;
-    };
-
-    XHR.prototype.send = function send(data) {
-      var state = null;
-
-      try {
-        state = getXhrState(this);
-
-        if (state.url) {
-          state.sent = performance.now();
-          state.data = data;
-          state.onComplete = customOnComplete;
-          state.onload = this.onload;
-          this.onload = customOnLoad;
-        }
-      } catch (err) {
-        log(err);
-      }
-
-      originSend.call(this, data);
-    };
-
-    XHR.prototype.open.toString = function toString() {
-      return originOpen.toString();
-    };
-
-    XHR.prototype.addEventListener.toString = function toString() {
-      return originAddEventListener.toString();
-    };
-
-    XHR.prototype.send.toString = function toString() {
-      return originSend.toString();
-    };
-  };
-
-  // 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
-
-  var $find = _arrayMethods(5);
-  var KEY = 'find';
-  var forced = true;
-  // Shouldn't skip holes
-  if (KEY in []) Array(1)[KEY](function () { forced = false; });
-  _export(_export.P + _export.F * forced, 'Array', {
-    find: function find(callbackfn /* , that = undefined */) {
-      return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
-    }
-  });
-  _addToUnscopables(KEY);
-
-  var addToolbar = function addToolbar() {
-    if (config.bottomToolbar) {
-      document.addEventListener('DOMContentLoaded', function () {
-        if (!document.querySelector('#treasure-footer')) {
-          document.querySelector('.cnt-global-footer').insertAdjacentHTML('afterend', "\n        <footer id=\"treasure-footer\">\n          <div class=\"cnt-treasure-footer\" style=\"height:40px\">\n            <div class=\"btn-treasure-footer-back\"></div>\n            <div class=\"btn-treasure-footer-reload\"></div>\n            <div class=\"btn-treasure-footer-mypage\" data-href=\"mypage\"></div>\n            <div id=\"prt-treasure-slider\" class=\"prt-treasure-slider\">\n              <ul class=\"lis-treasures\" id=\"treasure-list\" data-treasure-max=\"9\"></ul>\n            </div>\n          </div>\n          <div id=\"treasure-pop\"></div>\n        </footer>\n        ");
-        }
-      });
-    }
-  };
-
-  addToolbar();
-
-  document.addEventListener('DOMContentLoaded', function () {
-    document.head.insertAdjacentHTML('afterbegin', "\n  <meta name=\"mobile-web-app-capable\" content=\"yes\">\n  <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n  <link rel=\"apple-touch-startup-image\" href=\"".concat(config.origin, "/blhxfy/data/static/image/splash.png\">\n  "));
-    document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', '碧蓝幻想');
-    document.title = '碧蓝幻想';
-  });
-
-  var removeScroller = function removeScroller() {
-    if (config.removeScroller) {
-      var style = document.createElement('style');
-      style.innerHTML = "\n      ::-webkit-scrollbar {\n        display: none;\n      }\n    ";
-      document.head.appendChild(style);
-    }
-  };
-
-  removeScroller();
-
-  var hideSidebar = function hideSidebar() {
-    if (config.hideSidebar) {
-      insertCSS('hide-sidebar');
-    }
-  };
-
-  hideSidebar();
-
-  var keepBgm = function keepBgm() {
-    if (config.keepBgm) {
-      window.addEventListener('blur', function (e) {
-        e.stopImmediatePropagation();
-      }, false);
-    }
-  };
-
-  keepBgm();
-
-  window.addEventListener('load', function () {
-    $('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
-  });
 
   /**
    * Gets the timestamp of the number of milliseconds that have elapsed since
@@ -18941,6 +15370,4037 @@
 
   var debounce_1 = debounce;
 
+  var skillMap = new Map();
+  var skillKeys = [['special_skill', 'special'], ['action_ability1', 'skill-1'], ['action_ability2', 'skill-2'], ['action_ability3', 'skill-3'], ['action_ability4', 'skill-4'], ['support_ability1', 'support-1'], ['support_ability2', 'support-2'], ['support_ability_of_npczenith', 'skill-lb']];
+  var state = {
+    status: 'init',
+    cStatus: 'init',
+    locSkMap: false,
+    locASMap: false,
+    skillMap: skillMap,
+    skillKeys: skillKeys,
+    skillData: null,
+    commSkillMap: new Map(),
+    autoTransCache: new Map(),
+    nounMap: new Map(),
+    nounRE: ''
+  };
+
+  var getCommSkillMap =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee() {
+      var csvData, list, sortedList, nounArr;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (!(state.cStatus === 'loaded')) {
+                _context.next = 2;
+                break;
+              }
+
+              return _context.abrupt("return");
+
+            case 2:
+              _context.next = 4;
+              return getLocalData('comm-skill');
+
+            case 4:
+              csvData = _context.sent;
+
+              if (csvData) {
+                _context.next = 10;
+                break;
+              }
+
+              _context.next = 8;
+              return fetchWithHash('/blhxfy/data/common-skill.csv');
+
+            case 8:
+              csvData = _context.sent;
+              setLocalData('comm-skill', csvData);
+
+            case 10:
+              _context.next = 12;
+              return parseCsv(csvData);
+
+            case 12:
+              list = _context.sent;
+              sortedList = sortKeywords(list, 'comment');
+              nounArr = [];
+              sortedList.forEach(function (item) {
+                if (item.comment && item.trans && item.type) {
+                  var comment = trim(item.comment);
+                  var trans = filter(trim(item.trans));
+                  var type = trim(item.type) || '1';
+
+                  if (comment && trans) {
+                    if (type === '4') {
+                      state.nounMap.set(comment, trans);
+                      nounArr.push(comment);
+                    } else {
+                      state.commSkillMap.set(comment, {
+                        trans: trans,
+                        type: type
+                      });
+                    }
+                  }
+                }
+              });
+              if (nounArr.length) state.nounRE = "(".concat(nounArr.join('|'), ")");
+              state.cStatus = 'loaded';
+
+            case 18:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function getCommSkillMap() {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var saveSkillMap =
+  /*#__PURE__*/
+  function () {
+    var _ref2 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee2(skillMap) {
+      var arr;
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              arr = _toConsumableArray(skillMap).slice(-20);
+              setLocalData('skill-npc', JSON.stringify(arr));
+
+            case 2:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }));
+
+    return function saveSkillMap(_x) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+
+  var getSkillMap =
+  /*#__PURE__*/
+  function () {
+    var _ref3 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee3() {
+      var str, arr, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, _step$value, key, item, _key;
+
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              _context3.next = 2;
+              return getLocalData('skill-npc');
+
+            case 2:
+              str = _context3.sent;
+              _context3.prev = 3;
+              arr = JSON.parse(str);
+              state.skillMap = new Map(arr);
+              _iteratorNormalCompletion = true;
+              _didIteratorError = false;
+              _iteratorError = undefined;
+              _context3.prev = 9;
+
+              for (_iterator = state.skillMap[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                _step$value = _slicedToArray(_step.value, 2), key = _step$value[0], item = _step$value[1];
+
+                for (_key in item) {
+                  item[_key].name = filter(trim(item[_key].name));
+                  item[_key].detail = filter(trim(item[_key].detail));
+                }
+              }
+
+              _context3.next = 17;
+              break;
+
+            case 13:
+              _context3.prev = 13;
+              _context3.t0 = _context3["catch"](9);
+              _didIteratorError = true;
+              _iteratorError = _context3.t0;
+
+            case 17:
+              _context3.prev = 17;
+              _context3.prev = 18;
+
+              if (!_iteratorNormalCompletion && _iterator.return != null) {
+                _iterator.return();
+              }
+
+            case 20:
+              _context3.prev = 20;
+
+              if (!_didIteratorError) {
+                _context3.next = 23;
+                break;
+              }
+
+              throw _iteratorError;
+
+            case 23:
+              return _context3.finish(20);
+
+            case 24:
+              return _context3.finish(17);
+
+            case 25:
+              state.locSkMap = true;
+              _context3.next = 30;
+              break;
+
+            case 28:
+              _context3.prev = 28;
+              _context3.t1 = _context3["catch"](3);
+
+            case 30:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3, null, [[3, 28], [9, 13, 17, 25], [18,, 20, 24]]);
+    }));
+
+    return function getSkillMap() {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+
+  var saveAutoTrans = debounce_1(function () {
+    var arr = _toConsumableArray(state.autoTransCache).slice(-80);
+
+    setLocalData('auto-trans', JSON.stringify(arr));
+  }, 500);
+
+  var getAutoTrans =
+  /*#__PURE__*/
+  function () {
+    var _ref4 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee4() {
+      var str, arr, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _step2$value, key, item;
+
+      return regeneratorRuntime.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              _context4.next = 2;
+              return getLocalData('auto-trans');
+
+            case 2:
+              str = _context4.sent;
+              _context4.prev = 3;
+              arr = JSON.parse(str);
+              state.autoTransCache = new Map(arr);
+              _iteratorNormalCompletion2 = true;
+              _didIteratorError2 = false;
+              _iteratorError2 = undefined;
+              _context4.prev = 9;
+
+              for (_iterator2 = state.autoTransCache[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                _step2$value = _slicedToArray(_step2.value, 2), key = _step2$value[0], item = _step2$value[1];
+                state.autoTransCache.set(key, filter(trim(item)));
+              }
+
+              _context4.next = 17;
+              break;
+
+            case 13:
+              _context4.prev = 13;
+              _context4.t0 = _context4["catch"](9);
+              _didIteratorError2 = true;
+              _iteratorError2 = _context4.t0;
+
+            case 17:
+              _context4.prev = 17;
+              _context4.prev = 18;
+
+              if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                _iterator2.return();
+              }
+
+            case 20:
+              _context4.prev = 20;
+
+              if (!_didIteratorError2) {
+                _context4.next = 23;
+                break;
+              }
+
+              throw _iteratorError2;
+
+            case 23:
+              return _context4.finish(20);
+
+            case 24:
+              return _context4.finish(17);
+
+            case 25:
+              state.locASMap = true;
+              _context4.next = 30;
+              break;
+
+            case 28:
+              _context4.prev = 28;
+              _context4.t1 = _context4["catch"](3);
+
+            case 30:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4, null, [[3, 28], [9, 13, 17, 25], [18,, 20, 24]]);
+    }));
+
+    return function getAutoTrans() {
+      return _ref4.apply(this, arguments);
+    };
+  }();
+
+  var saveSkillPath =
+  /*#__PURE__*/
+  function () {
+    var _ref5 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee5(skillData) {
+      return regeneratorRuntime.wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              setLocalData('skill-path', JSON.stringify(skillData));
+
+            case 1:
+            case "end":
+              return _context5.stop();
+          }
+        }
+      }, _callee5);
+    }));
+
+    return function saveSkillPath(_x2) {
+      return _ref5.apply(this, arguments);
+    };
+  }();
+
+  var getSkillPath =
+  /*#__PURE__*/
+  function () {
+    var _ref6 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee6() {
+      var str, data;
+      return regeneratorRuntime.wrap(function _callee6$(_context6) {
+        while (1) {
+          switch (_context6.prev = _context6.next) {
+            case 0:
+              _context6.next = 2;
+              return getLocalData('skill-path');
+
+            case 2:
+              str = _context6.sent;
+
+              try {
+                data = JSON.parse(str);
+                state.skillData = data;
+              } catch (e) {}
+
+            case 4:
+            case "end":
+              return _context6.stop();
+          }
+        }
+      }, _callee6);
+    }));
+
+    return function getSkillPath() {
+      return _ref6.apply(this, arguments);
+    };
+  }();
+
+  var setSkillMap = function setSkillMap(list) {
+    var stable = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    var npcId, active, idArr;
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+      for (var _iterator3 = list[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        var row = _step3.value;
+
+        if (row.id === 'npc') {
+          idArr = row.detail.split('|');
+        } else if (row.id === 'active') {
+          if (row.name !== '0') {
+            active = true;
+          }
+        }
+      }
+    } catch (err) {
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+          _iterator3.return();
+        }
+      } finally {
+        if (_didIteratorError3) {
+          throw _iteratorError3;
+        }
+      }
+    }
+
+    if (!idArr.length || !idArr[0]) return;
+    npcId = idArr[1] || idArr[0];
+    var skillData = {};
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
+
+    try {
+      for (var _iterator4 = list[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+        var _row = _step4.value;
+
+        if (stable || active) {
+          skillData[_row.id] = _row;
+        }
+      }
+    } catch (err) {
+      _didIteratorError4 = true;
+      _iteratorError4 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+          _iterator4.return();
+        }
+      } finally {
+        if (_didIteratorError4) {
+          throw _iteratorError4;
+        }
+      }
+    }
+
+    state.skillMap.set(npcId, skillData);
+    saveSkillMap(state.skillMap);
+  };
+
+  var getSkillData =
+  /*#__PURE__*/
+  function () {
+    var _ref7 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee7(npcId) {
+      var csvName, csvData, list;
+      return regeneratorRuntime.wrap(function _callee7$(_context7) {
+        while (1) {
+          switch (_context7.prev = _context7.next) {
+            case 0:
+              if (state.locSkMap) {
+                _context7.next = 3;
+                break;
+              }
+
+              _context7.next = 3;
+              return getSkillMap();
+
+            case 3:
+              if (state.locASMap) {
+                _context7.next = 6;
+                break;
+              }
+
+              _context7.next = 6;
+              return getAutoTrans();
+
+            case 6:
+              if (!state.skillMap.has(npcId)) {
+                _context7.next = 8;
+                break;
+              }
+
+              return _context7.abrupt("return", state);
+
+            case 8:
+              _context7.next = 10;
+              return getSkillPath();
+
+            case 10:
+              if (state.skillData) {
+                _context7.next = 15;
+                break;
+              }
+
+              _context7.next = 13;
+              return fetchWithHash('/blhxfy/data/skill.json');
+
+            case 13:
+              state.skillData = _context7.sent;
+              saveSkillPath(state.skillData);
+
+            case 15:
+              csvName = state.skillData[npcId];
+
+              if (!csvName) {
+                _context7.next = 22;
+                break;
+              }
+
+              _context7.next = 19;
+              return fetchWithHash("/blhxfy/data/skill/".concat(csvName));
+
+            case 19:
+              csvData = _context7.sent;
+              list = parseCsv(filter(csvData));
+              setSkillMap(list);
+
+            case 22:
+              return _context7.abrupt("return", state);
+
+            case 23:
+            case "end":
+              return _context7.stop();
+          }
+        }
+      }, _callee7);
+    }));
+
+    return function getSkillData(_x3) {
+      return _ref7.apply(this, arguments);
+    };
+  }();
+
+  var getLocalSkillData = function getLocalSkillData(npcId) {
+    var str = sessionStorage.getItem('blhxfy:skill-preview');
+
+    if (str) {
+      try {
+        var data = JSON.parse(str);
+
+        if (data.id === npcId) {
+          var csv = filter(data.csv);
+          var list = parseCsv(csv);
+          list.forEach(function (item) {
+            if (item.id === 'npc') {
+              item.detail = npcId;
+            }
+          });
+          setSkillMap(list);
+          return state;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    return false;
+  };
+
+  function replaceTurn (str) {
+    return str.replace('ターン', '回合').replace('turns', '回合').replace('turn', '回合').replace('Cooldown:', '使用间隔:').replace('使用間隔:', '使用间隔:');
+  }
+
+  var buffMap = {
+    buff: new Map(),
+    debuff: new Map()
+  };
+  var loaded$2 = false;
+
+  var getData =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(type) {
+      var csv, list;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return getLocalData(type);
+
+            case 2:
+              csv = _context.sent;
+
+              if (csv) {
+                _context.next = 8;
+                break;
+              }
+
+              _context.next = 6;
+              return fetchWithHash("/blhxfy/data/".concat(type, ".csv"));
+
+            case 6:
+              csv = _context.sent;
+              setLocalData(type, csv);
+
+            case 8:
+              list = parseCsv(csv);
+              list.forEach(function (item) {
+                var detail = trim(item.detail);
+                var trans = filter(trim(item.trans));
+
+                if (detail && trans) {
+                  buffMap[type].set(detail, trans);
+                }
+              });
+
+            case 10:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function getData(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var getBuffData =
+  /*#__PURE__*/
+  function () {
+    var _ref2 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee2(type) {
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              if (loaded$2) {
+                _context2.next = 6;
+                break;
+              }
+
+              _context2.next = 3;
+              return getData('buff');
+
+            case 3:
+              _context2.next = 5;
+              return getData('debuff');
+
+            case 5:
+              loaded$2 = true;
+
+            case 6:
+              return _context2.abrupt("return", buffMap[type]);
+
+            case 7:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }));
+
+    return function getBuffData(_x2) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+
+  var transBuff =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data) {
+      var keys, _i, key, buffMap, k, item;
+
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              keys = ['buff', 'debuff'];
+              _i = 0;
+
+            case 2:
+              if (!(_i < keys.length)) {
+                _context.next = 12;
+                break;
+              }
+
+              key = keys[_i];
+
+              if (!data[key]) {
+                _context.next = 9;
+                break;
+              }
+
+              _context.next = 7;
+              return getBuffData(key);
+
+            case 7:
+              buffMap = _context.sent;
+
+              for (k in data[key]) {
+                item = data[key][k];
+
+                if (item.detail && buffMap.has(item.detail)) {
+                  item.detail = buffMap.get(item.detail);
+                }
+
+                if (item.effect) item.effect = replaceTurn(item.effect);
+              }
+
+            case 9:
+              _i++;
+              _context.next = 2;
+              break;
+
+            case 12:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function transBuff(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var elemtRE = '([光闇水火風土無]|light|dark|water|wind|earth|fire|plain)';
+  var elemtMap = {
+    light: '光',
+    '光': '光',
+    dark: '暗',
+    '闇': '暗',
+    water: '水',
+    '水': '水',
+    wind: '风',
+    '風': '风',
+    earth: '土',
+    '土': '土',
+    fire: '火',
+    '火': '火',
+    plain: '无',
+    '無': '无'
+  };
+  var numRE = '(\\d{1,10}\\.?\\d{0,4}?)';
+  var percentRE = '(\\d{1,10}\\.?\\d{0,4}?[%％])';
+
+  var parseRegExp = function parseRegExp(str, nounRE) {
+    return str.replace(/\(/g, '\\(').replace(/\)/g, '\\)').replace(/\$elemt/g, elemtRE).replace(/\$num/g, numRE).replace(/\$percent/g, percentRE).replace(/\$noun/g, nounRE);
+  };
+
+  var transSkill = function transSkill(comment, _ref) {
+    var commSkillMap = _ref.commSkillMap,
+        nounMap = _ref.nounMap,
+        nounRE = _ref.nounRE,
+        autoTransCache = _ref.autoTransCache;
+    if (autoTransCache.has(comment)) return autoTransCache.get(comment);
+    var result = comment;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      var _loop = function _loop() {
+        var _step$value = _slicedToArray(_step.value, 2),
+            key = _step$value[0],
+            value = _step$value[1];
+
+        if (!trim(key)) return "continue";
+        var trans = value.trans,
+            type = value.type;
+
+        if (type === '1') {
+          var re = new RegExp(parseRegExp(key, nounRE), 'gi');
+          result = result.replace(re, function () {
+            var _trans = trans;
+
+            for (var _len = arguments.length, arr = new Array(_len), _key = 0; _key < _len; _key++) {
+              arr[_key] = arguments[_key];
+            }
+
+            for (var i = 1; i < arr.length - 2; i++) {
+              var eleKey = arr[i].toLowerCase();
+
+              if (elemtMap[eleKey]) {
+                _trans = _trans.replace("$".concat(i), elemtMap[eleKey]);
+              } else if (nounMap.has(eleKey)) {
+                _trans = _trans.replace("$".concat(i), nounMap.get(eleKey));
+              } else {
+                _trans = _trans.replace("$".concat(i), arr[i]);
+              }
+            }
+
+            return _trans;
+          });
+        } else if (type === '2') {
+          var res,
+              i = 0;
+
+          while (res !== result && i < 10) {
+            res = result;
+            result = result.replace(key, trans);
+            i++;
+          }
+        } else if (type === '3') {
+          result = result.replace("(".concat(key, ")"), "(".concat(trans, ")"));
+        }
+      };
+
+      for (var _iterator = commSkillMap[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var _ret = _loop();
+
+        if (_ret === "continue") continue;
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+
+    autoTransCache.set(comment, result);
+    saveAutoTrans();
+    return result;
+  };
+
+  var parseBuff =
+  /*#__PURE__*/
+  function () {
+    var _ref2 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data) {
+      var _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, item, key, ability;
+
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _iteratorNormalCompletion2 = true;
+              _didIteratorError2 = false;
+              _iteratorError2 = undefined;
+              _context.prev = 3;
+              _iterator2 = skillKeys[Symbol.iterator]();
+
+            case 5:
+              if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
+                _context.next = 21;
+                break;
+              }
+
+              item = _step2.value;
+              key = item[0];
+              ability = data[key];
+
+              if (ability) {
+                _context.next = 15;
+                break;
+              }
+
+              if (data.ability) {
+                _context.next = 12;
+                break;
+              }
+
+              return _context.abrupt("continue", 18);
+
+            case 12:
+              ability = data.ability[key];
+
+              if (ability) {
+                _context.next = 15;
+                break;
+              }
+
+              return _context.abrupt("continue", 18);
+
+            case 15:
+              if (!ability.ability_detail) {
+                _context.next = 18;
+                break;
+              }
+
+              _context.next = 18;
+              return transBuff(ability.ability_detail);
+
+            case 18:
+              _iteratorNormalCompletion2 = true;
+              _context.next = 5;
+              break;
+
+            case 21:
+              _context.next = 27;
+              break;
+
+            case 23:
+              _context.prev = 23;
+              _context.t0 = _context["catch"](3);
+              _didIteratorError2 = true;
+              _iteratorError2 = _context.t0;
+
+            case 27:
+              _context.prev = 27;
+              _context.prev = 28;
+
+              if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                _iterator2.return();
+              }
+
+            case 30:
+              _context.prev = 30;
+
+              if (!_didIteratorError2) {
+                _context.next = 33;
+                break;
+              }
+
+              throw _iteratorError2;
+
+            case 33:
+              return _context.finish(30);
+
+            case 34:
+              return _context.finish(27);
+
+            case 35:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, null, [[3, 23, 27, 35], [28,, 30, 34]]);
+    }));
+
+    return function parseBuff(_x) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+
+  var previewSkill = function previewSkill(npcId) {
+    $('#cnt-detail').off('click.blhxfy').on('click.blhxfy', '.prt-evolution-star>div:eq(1)', function () {
+      var csv = window.prompt('粘贴要预览的技能翻译CSV文本');
+
+      if (csv) {
+        sessionStorage.setItem('blhxfy:skill-preview', JSON.stringify({
+          id: npcId,
+          csv: splitSingleLineSkill(csv)
+        }));
+        location.reload();
+      }
+    }).on('click.blhxfy', '.prt-evolution-star>div:eq(2)', function () {
+      if (confirm('清除技能预览？')) {
+        sessionStorage.removeItem('blhxfy:skill-preview');
+        location.reload();
+      }
+    });
+  };
+
+  var parseSkill =
+  /*#__PURE__*/
+  function () {
+    var _ref3 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee2(data, pathname) {
+      var npcId, skillState, skillData, translated, keys, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, item, key1, key2, ability, _getPlusStr, _getPlusStr2, plus1, plus2, _trans4, trans, intro, _trans2, _intro, _trans3;
+
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              if (!(Game.lang === 'en')) {
+                _context2.next = 2;
+                break;
+              }
+
+              return _context2.abrupt("return", data);
+
+            case 2:
+              if (!pathname.includes('/npc/npc/')) {
+                _context2.next = 8;
+                break;
+              }
+
+              if (!(!data.master || !data.master.id)) {
+                _context2.next = 5;
+                break;
+              }
+
+              return _context2.abrupt("return", data);
+
+            case 5:
+              npcId = "".concat(data.master.id);
+              _context2.next = 12;
+              break;
+
+            case 8:
+              if (!pathname.includes('/archive/npc_detail')) {
+                _context2.next = 12;
+                break;
+              }
+
+              if (data.id) {
+                _context2.next = 11;
+                break;
+              }
+
+              return _context2.abrupt("return", data);
+
+            case 11:
+              npcId = data.id;
+
+            case 12:
+              _context2.next = 14;
+              return parseBuff(data);
+
+            case 14:
+              previewSkill(npcId);
+              skillState = getLocalSkillData(npcId);
+
+              if (skillState) {
+                _context2.next = 20;
+                break;
+              }
+
+              _context2.next = 19;
+              return getSkillData(npcId);
+
+            case 19:
+              skillState = _context2.sent;
+
+            case 20:
+              skillData = skillState.skillMap.get(npcId);
+              translated = new Map();
+              keys = skillState.skillKeys;
+
+              if (!skillData) {
+                _context2.next = 72;
+                break;
+              }
+
+              _iteratorNormalCompletion3 = true;
+              _didIteratorError3 = false;
+              _iteratorError3 = undefined;
+              _context2.prev = 27;
+              _iterator3 = keys[Symbol.iterator]();
+
+            case 29:
+              if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
+                _context2.next = 56;
+                break;
+              }
+
+              item = _step3.value;
+              key1 = item[0];
+              key2 = item[1];
+              ability = data[key1];
+
+              if (ability) {
+                _context2.next = 40;
+                break;
+              }
+
+              if (data.ability) {
+                _context2.next = 37;
+                break;
+              }
+
+              return _context2.abrupt("continue", 53);
+
+            case 37:
+              ability = data.ability[key1];
+
+              if (ability) {
+                _context2.next = 40;
+                break;
+              }
+
+              return _context2.abrupt("continue", 53);
+
+            case 40:
+              if (ability.recast_comment) {
+                ability.recast_comment = replaceTurn(ability.recast_comment);
+              }
+
+              _getPlusStr = getPlusStr(ability.name), _getPlusStr2 = _slicedToArray(_getPlusStr, 2), plus1 = _getPlusStr2[0], plus2 = _getPlusStr2[1];
+              _trans4 = skillData["skill-".concat(ability.name)];
+
+              if (_trans4) {
+                _context2.next = 51;
+                break;
+              }
+
+              _trans4 = skillData["special-".concat(ability.name)];
+
+              if (_trans4) {
+                _context2.next = 51;
+                break;
+              }
+
+              _trans4 = skillData[key2 + plus2];
+
+              if (_trans4) {
+                _context2.next = 51;
+                break;
+              }
+
+              _trans4 = skillData[key2];
+
+              if (_trans4) {
+                _context2.next = 51;
+                break;
+              }
+
+              return _context2.abrupt("continue", 53);
+
+            case 51:
+              if (_trans4.name) {
+                ability.name = _trans4.name + plus1;
+              }
+
+              if (_trans4.detail) {
+                ability.comment = _trans4.detail;
+                translated.set(key1, true);
+              }
+
+            case 53:
+              _iteratorNormalCompletion3 = true;
+              _context2.next = 29;
+              break;
+
+            case 56:
+              _context2.next = 62;
+              break;
+
+            case 58:
+              _context2.prev = 58;
+              _context2.t0 = _context2["catch"](27);
+              _didIteratorError3 = true;
+              _iteratorError3 = _context2.t0;
+
+            case 62:
+              _context2.prev = 62;
+              _context2.prev = 63;
+
+              if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+                _iterator3.return();
+              }
+
+            case 65:
+              _context2.prev = 65;
+
+              if (!_didIteratorError3) {
+                _context2.next = 68;
+                break;
+              }
+
+              throw _iteratorError3;
+
+            case 68:
+              return _context2.finish(65);
+
+            case 69:
+              return _context2.finish(62);
+
+            case 70:
+              if (data.master) {
+                trans = skillData['npc'];
+
+                if (trans && trans.name) {
+                  data.master.name = trans.name;
+                  intro = skillData['intro'];
+                  if (intro && intro.name) data.master.evo_name = "[".concat(intro.name, "]").concat(trans.name);
+                }
+              } else if (data.name) {
+                _trans2 = skillData['npc'];
+
+                if (_trans2 && _trans2.name) {
+                  data.name = _trans2.name;
+                  _intro = skillData['intro'];
+                  if (_intro && _intro.name) data.evo_name = "[".concat(_intro.name, "]").concat(_trans2.name);
+                }
+              }
+
+              if (data.comment) {
+                _trans3 = skillData['intro'];
+                if (_trans3 && _trans3.detail) data.comment = _trans3.detail;
+              }
+
+            case 72:
+              _context2.next = 74;
+              return getCommSkillMap();
+
+            case 74:
+              keys.forEach(function (item) {
+                if (!translated.get(item[0])) {
+                  var skill = data[item[0]];
+
+                  if (skill) {
+                    skill.comment = transSkill(skill.comment, skillState);
+                  }
+                }
+              });
+              return _context2.abrupt("return", data);
+
+            case 76:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, null, [[27, 58, 62, 70], [63,, 65, 69]]);
+    }));
+
+    return function parseSkill(_x2, _x3) {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+
+  var skillMap$1 = new Map();
+  var loaded$3 = false;
+
+  var getSkillData$1 =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(id) {
+      var csv, list, trans;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (loaded$3) {
+                _context.next = 12;
+                break;
+              }
+
+              _context.next = 3;
+              return getLocalData('job-skill');
+
+            case 3:
+              csv = _context.sent;
+
+              if (csv) {
+                _context.next = 9;
+                break;
+              }
+
+              _context.next = 7;
+              return fetchWithHash('/blhxfy/data/job-skill.csv');
+
+            case 7:
+              csv = _context.sent;
+              setLocalData('job-skill', csv);
+
+            case 9:
+              list = parseCsv(csv);
+              list.forEach(function (item) {
+                if (item && item.id) {
+                  var _id = trim(item.id);
+
+                  var _en = trim(item.en);
+
+                  var _ja = trim(item.ja);
+
+                  if (_id) {
+                    var value = {
+                      name: filter(trim(item.name)),
+                      detail: filter(trim(item.detail))
+                    };
+                    skillMap$1.set(_id, value);
+                    if (_ja) skillMap$1.set(_ja, value);
+                    if (_en) skillMap$1.set(_en, value);
+                  }
+                }
+              });
+              loaded$3 = true;
+
+            case 12:
+              trans = skillMap$1.get(id);
+              return _context.abrupt("return", trans);
+
+            case 14:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function getSkillData(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var startTrans =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data) {
+      var key, trans;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.t0 = regeneratorRuntime.keys(data);
+
+            case 1:
+              if ((_context.t1 = _context.t0()).done) {
+                _context.next = 15;
+                break;
+              }
+
+              key = _context.t1.value;
+
+              if (!data[key]) {
+                _context.next = 13;
+                break;
+              }
+
+              _context.next = 6;
+              return getSkillData$1(data[key].action_id);
+
+            case 6:
+              trans = _context.sent;
+
+              if (trans) {
+                data[key].name = trans.name;
+                data[key].comment = trans.detail;
+              }
+
+              if (data[key].recast_comment) {
+                data[key].recast_comment = replaceTurn(data[key].recast_comment);
+              }
+
+              if (data[key].turn_comment) {
+                data[key].turn_comment = replaceTurn(data[key].turn_comment);
+              }
+
+              if (!data[key].ability_detail) {
+                _context.next = 13;
+                break;
+              }
+
+              _context.next = 13;
+              return transBuff(data[key].ability_detail);
+
+            case 13:
+              _context.next = 1;
+              break;
+
+            case 15:
+              return _context.abrupt("return", data);
+
+            case 16:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function startTrans(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var replaceSkill =
+  /*#__PURE__*/
+  function () {
+    var _ref2 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee2(data) {
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              if (!data.action_ability) {
+                _context2.next = 4;
+                break;
+              }
+
+              _context2.next = 3;
+              return startTrans(data.action_ability);
+
+            case 3:
+              data.action_ability = _context2.sent;
+
+            case 4:
+              if (!data.support_ability) {
+                _context2.next = 8;
+                break;
+              }
+
+              _context2.next = 7;
+              return startTrans(data.support_ability);
+
+            case 7:
+              data.support_ability = _context2.sent;
+
+            case 8:
+              return _context2.abrupt("return", data);
+
+            case 9:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }));
+
+    return function replaceSkill(_x2) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+
+  var transSkill$1 =
+  /*#__PURE__*/
+  function () {
+    var _ref3 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee3(data, pathname) {
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              if (!/\/party\/job\/\d+\//.test(pathname)) {
+                _context3.next = 7;
+                break;
+              }
+
+              if (!data.job) {
+                _context3.next = 5;
+                break;
+              }
+
+              _context3.next = 4;
+              return replaceSkill(data.job);
+
+            case 4:
+              data.job = _context3.sent;
+
+            case 5:
+              _context3.next = 36;
+              break;
+
+            case 7:
+              if (!pathname.includes('/party_ability_subaction/')) {
+                _context3.next = 14;
+                break;
+              }
+
+              if (!data.list) {
+                _context3.next = 12;
+                break;
+              }
+
+              _context3.next = 11;
+              return startTrans(data.list);
+
+            case 11:
+              data.list = _context3.sent;
+
+            case 12:
+              _context3.next = 36;
+              break;
+
+            case 14:
+              if (!/\/party\/ability_list\/\d+\//.test(pathname)) {
+                _context3.next = 20;
+                break;
+              }
+
+              _context3.next = 17;
+              return replaceSkill(data);
+
+            case 17:
+              data = _context3.sent;
+              _context3.next = 36;
+              break;
+
+            case 20:
+              if (!/\/party\/job_info\/\d+\//.test(pathname)) {
+                _context3.next = 31;
+                break;
+              }
+
+              if (!data.after_job_master) {
+                _context3.next = 25;
+                break;
+              }
+
+              _context3.next = 24;
+              return replaceSkill(data.after_job_master);
+
+            case 24:
+              data.after_job_master = _context3.sent;
+
+            case 25:
+              if (!data.before_job_info) {
+                _context3.next = 29;
+                break;
+              }
+
+              _context3.next = 28;
+              return replaceSkill(data.before_job_info);
+
+            case 28:
+              data.before_job_info = _context3.sent;
+
+            case 29:
+              _context3.next = 36;
+              break;
+
+            case 31:
+              if (!/\/zenith\/ability_list\/\d+/.test(pathname)) {
+                _context3.next = 36;
+                break;
+              }
+
+              if (!data.ability_list) {
+                _context3.next = 36;
+                break;
+              }
+
+              _context3.next = 35;
+              return startTrans(data.ability_list);
+
+            case 35:
+              data.list = _context3.sent;
+
+            case 36:
+              return _context3.abrupt("return", data);
+
+            case 37:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }));
+
+    return function transSkill(_x3, _x4) {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+
+  var _createProperty = function (object, index, value) {
+    if (index in object) _objectDp.f(object, index, _propertyDesc(0, value));
+    else object[index] = value;
+  };
+
+  _export(_export.S + _export.F * !_iterDetect(function (iter) { }), 'Array', {
+    // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
+    from: function from(arrayLike /* , mapfn = undefined, thisArg = undefined */) {
+      var O = _toObject(arrayLike);
+      var C = typeof this == 'function' ? this : Array;
+      var aLen = arguments.length;
+      var mapfn = aLen > 1 ? arguments[1] : undefined;
+      var mapping = mapfn !== undefined;
+      var index = 0;
+      var iterFn = core_getIteratorMethod(O);
+      var length, result, step, iterator;
+      if (mapping) mapfn = _ctx(mapfn, aLen > 2 ? arguments[2] : undefined, 2);
+      // if object isn't iterable or it's array with default iterator - use simple case
+      if (iterFn != undefined && !(C == Array && _isArrayIter(iterFn))) {
+        for (iterator = iterFn.call(O), result = new C(); !(step = iterator.next()).done; index++) {
+          _createProperty(result, index, mapping ? _iterCall(iterator, mapfn, [step.value, index], true) : step.value);
+        }
+      } else {
+        length = _toLength(O.length);
+        for (result = new C(length); length > index; index++) {
+          _createProperty(result, index, mapping ? mapfn(O[index], index) : O[index]);
+        }
+      }
+      result.length = index;
+      return result;
+    }
+  });
+
+  var htmlMap = new Map();
+  var loaded$4 = false;
+
+  var getCommHtmlData =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee() {
+      var csv, list, tempMap;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (loaded$4) {
+                _context.next = 14;
+                break;
+              }
+
+              _context.next = 3;
+              return getLocalData('common-html');
+
+            case 3:
+              csv = _context.sent;
+
+              if (csv) {
+                _context.next = 9;
+                break;
+              }
+
+              _context.next = 7;
+              return fetchWithHash('/blhxfy/data/common-html.csv');
+
+            case 7:
+              csv = _context.sent;
+              setLocalData('common-html', csv);
+
+            case 9:
+              list = parseCsv(csv);
+              tempMap = new Map();
+              sortKeywords(list, 'text').forEach(function (item, index) {
+                var pathname = trim(item.path);
+                var text = trim(item.text);
+                var trans = filter(trim(item.trans));
+                var times = item.count | 0 || 1;
+
+                if (pathname && text && trans) {
+                  if (tempMap.has(pathname)) {
+                    tempMap.get(pathname).push({
+                      text: text,
+                      trans: trans,
+                      times: times,
+                      index: index
+                    });
+                  } else {
+                    tempMap.set(pathname, [{
+                      text: text,
+                      trans: trans,
+                      times: times,
+                      index: index
+                    }]);
+                  }
+                }
+              });
+              sortKeywords(Array.from(tempMap.keys())).forEach(function (key) {
+                htmlMap.set(key, tempMap.get(key));
+              });
+              loaded$4 = true;
+
+            case 14:
+              return _context.abrupt("return", htmlMap);
+
+            case 15:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function getCommHtmlData() {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var htmlMap$1 = new Map();
+  var loaded$5 = false;
+
+  var getArchiveData =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee() {
+      var csv, list;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (loaded$5) {
+                _context.next = 7;
+                break;
+              }
+
+              _context.next = 3;
+              return fetchWithHash('/blhxfy/data/archive.csv');
+
+            case 3:
+              csv = _context.sent;
+              list = parseCsv(csv);
+              sortKeywords(list, 'text').forEach(function (item) {
+                var text = trim(item.text);
+                var trans = filter(trim(item.trans));
+                var times = item.count | 0 || 1;
+
+                if (text && trans) {
+                  htmlMap$1.set(text, {
+                    trans: trans,
+                    times: times
+                  });
+                }
+              });
+              loaded$5 = true;
+
+            case 7:
+              return _context.abrupt("return", htmlMap$1);
+
+            case 8:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function getArchiveData() {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var replaceHTML =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(html, pathname) {
+      var _html, theList, htmlMap, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, _step$value, key, list;
+
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _html = html;
+              theList = [];
+              _context.next = 4;
+              return getCommHtmlData();
+
+            case 4:
+              htmlMap = _context.sent;
+              _iteratorNormalCompletion = true;
+              _didIteratorError = false;
+              _iteratorError = undefined;
+              _context.prev = 8;
+
+              for (_iterator = htmlMap.entries()[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                _step$value = _slicedToArray(_step.value, 2), key = _step$value[0], list = _step$value[1];
+
+                if (pathname.includes(key)) {
+                  theList = theList.concat(list);
+                }
+              }
+
+              _context.next = 16;
+              break;
+
+            case 12:
+              _context.prev = 12;
+              _context.t0 = _context["catch"](8);
+              _didIteratorError = true;
+              _iteratorError = _context.t0;
+
+            case 16:
+              _context.prev = 16;
+              _context.prev = 17;
+
+              if (!_iteratorNormalCompletion && _iterator.return != null) {
+                _iterator.return();
+              }
+
+            case 19:
+              _context.prev = 19;
+
+              if (!_didIteratorError) {
+                _context.next = 22;
+                break;
+              }
+
+              throw _iteratorError;
+
+            case 22:
+              return _context.finish(19);
+
+            case 23:
+              return _context.finish(16);
+
+            case 24:
+              theList.sort(function (prev, next) {
+                return prev.index - next.index;
+              }).forEach(function (item) {
+                for (var i = 0; i < item.times; i++) {
+                  var newHtml = _html.replace(item.text, item.trans);
+
+                  if (newHtml !== _html) {
+                    _html = newHtml;
+                  } else {
+                    break;
+                  }
+                }
+              });
+              return _context.abrupt("return", _html);
+
+            case 26:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, null, [[8, 12, 16, 24], [17,, 19, 23]]);
+    }));
+
+    return function replaceHTML(_x, _x2) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var replaceArchive =
+  /*#__PURE__*/
+  function () {
+    var _ref2 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee2(html) {
+      var _html, htmlMap, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _step2$value, text, item, i, newHtml;
+
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              _html = html;
+              _context2.next = 3;
+              return getArchiveData();
+
+            case 3:
+              htmlMap = _context2.sent;
+              _iteratorNormalCompletion2 = true;
+              _didIteratorError2 = false;
+              _iteratorError2 = undefined;
+              _context2.prev = 7;
+              _iterator2 = htmlMap.entries()[Symbol.iterator]();
+
+            case 9:
+              if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
+                _context2.next = 25;
+                break;
+              }
+
+              _step2$value = _slicedToArray(_step2.value, 2), text = _step2$value[0], item = _step2$value[1];
+              i = 0;
+
+            case 12:
+              if (!(i < item.times)) {
+                _context2.next = 22;
+                break;
+              }
+
+              newHtml = _html.replace(text, item.trans);
+
+              if (!(newHtml !== _html)) {
+                _context2.next = 18;
+                break;
+              }
+
+              _html = newHtml;
+              _context2.next = 19;
+              break;
+
+            case 18:
+              return _context2.abrupt("break", 22);
+
+            case 19:
+              i++;
+              _context2.next = 12;
+              break;
+
+            case 22:
+              _iteratorNormalCompletion2 = true;
+              _context2.next = 9;
+              break;
+
+            case 25:
+              _context2.next = 31;
+              break;
+
+            case 27:
+              _context2.prev = 27;
+              _context2.t0 = _context2["catch"](7);
+              _didIteratorError2 = true;
+              _iteratorError2 = _context2.t0;
+
+            case 31:
+              _context2.prev = 31;
+              _context2.prev = 32;
+
+              if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                _iterator2.return();
+              }
+
+            case 34:
+              _context2.prev = 34;
+
+              if (!_didIteratorError2) {
+                _context2.next = 37;
+                break;
+              }
+
+              throw _iteratorError2;
+
+            case 37:
+              return _context2.finish(34);
+
+            case 38:
+              return _context2.finish(31);
+
+            case 39:
+              return _context2.abrupt("return", _html);
+
+            case 40:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, null, [[7, 27, 31, 39], [32,, 34, 38]]);
+    }));
+
+    return function replaceArchive(_x3) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+
+  var settingHtml = false;
+
+  var getHtml =
+  /*#__PURE__*/
+  function () {
+    var _ref3 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee3(encodedHtml, pathname) {
+      var html;
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              _context3.prev = 0;
+              html = decodeURIComponent(encodedHtml);
+              _context3.next = 7;
+              break;
+
+            case 4:
+              _context3.prev = 4;
+              _context3.t0 = _context3["catch"](0);
+              return _context3.abrupt("return", encodedHtml);
+
+            case 7:
+              _context3.prev = 7;
+
+              if (!pathname.includes('/archive/content/library/')) {
+                _context3.next = 14;
+                break;
+              }
+
+              _context3.next = 11;
+              return replaceArchive(html);
+
+            case 11:
+              html = _context3.sent;
+              _context3.next = 17;
+              break;
+
+            case 14:
+              _context3.next = 16;
+              return replaceHTML(html, pathname);
+
+            case 16:
+              html = _context3.sent;
+
+            case 17:
+              _context3.next = 22;
+              break;
+
+            case 19:
+              _context3.prev = 19;
+              _context3.t1 = _context3["catch"](7);
+              console.error(_context3.t1);
+
+            case 22:
+              if (!settingHtml && pathname.includes('/setting/content/index/index')) {
+                html = insertSettingHtml(html);
+                settingHtml = true;
+              }
+
+              return _context3.abrupt("return", encodeURIComponent(html));
+
+            case 24:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3, null, [[0, 4], [7, 19]]);
+    }));
+
+    return function getHtml(_x4, _x5) {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+
+  function transHTML(_x6, _x7) {
+    return _transHTML.apply(this, arguments);
+  }
+
+  function _transHTML() {
+    _transHTML = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee4(data, pathname) {
+      return regeneratorRuntime.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              if (!data.data) {
+                _context4.next = 4;
+                break;
+              }
+
+              _context4.next = 3;
+              return getHtml(data.data, pathname);
+
+            case 3:
+              data.data = _context4.sent;
+
+            case 4:
+              if (!(data.option && data.option.progress)) {
+                _context4.next = 8;
+                break;
+              }
+
+              _context4.next = 7;
+              return getHtml(data.option.progress, pathname);
+
+            case 7:
+              data.option.progress = _context4.sent;
+
+            case 8:
+              if (!(data.option && data.option.quest)) {
+                _context4.next = 17;
+                break;
+              }
+
+              if (!data.option.quest.content__index) {
+                _context4.next = 13;
+                break;
+              }
+
+              _context4.next = 12;
+              return getHtml(data.option.quest.content__index, pathname);
+
+            case 12:
+              data.option.quest.content__index = _context4.sent;
+
+            case 13:
+              if (!data.option.quest.content_list) {
+                _context4.next = 17;
+                break;
+              }
+
+              _context4.next = 16;
+              return getHtml(data.option.quest.content_list, pathname);
+
+            case 16:
+              data.option.quest.content_list = _context4.sent;
+
+            case 17:
+              return _context4.abrupt("return", data);
+
+            case 18:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4);
+    }));
+    return _transHTML.apply(this, arguments);
+  }
+
+  var townMap = new Map();
+  var loaded$6 = false;
+
+  var getTownData =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee() {
+      var csv, list;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (loaded$6) {
+                _context.next = 12;
+                break;
+              }
+
+              _context.next = 3;
+              return getLocalData('town-info');
+
+            case 3:
+              csv = _context.sent;
+
+              if (csv) {
+                _context.next = 9;
+                break;
+              }
+
+              _context.next = 7;
+              return fetchWithHash('/blhxfy/data/town-info.csv');
+
+            case 7:
+              csv = _context.sent;
+              setLocalData('town-info', csv);
+
+            case 9:
+              list = parseCsv(csv);
+              list.forEach(function (item) {
+                var id = trim(item.id);
+                var name = filter(trim(item.name));
+                var detail = filter(trim(item.detail));
+                var vyrn = filter(trim(item.vyrn));
+
+                if (id && name) {
+                  townMap.set(id, {
+                    name: name,
+                    detail: detail,
+                    vyrn: vyrn
+                  });
+                }
+              });
+              loaded$6 = true;
+
+            case 12:
+              return _context.abrupt("return", townMap);
+
+            case 13:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function getTownData() {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  function transTownInfo(_x, _x2) {
+    return _transTownInfo.apply(this, arguments);
+  }
+
+  function _transTownInfo() {
+    _transTownInfo = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data, pathname) {
+      var town, townMap, key, item, id, _data;
+
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.prev = 0;
+              town = data.option.mydata_assets.mydata.town;
+              _context.next = 7;
+              break;
+
+            case 4:
+              _context.prev = 4;
+              _context.t0 = _context["catch"](0);
+              return _context.abrupt("return", data);
+
+            case 7:
+              _context.next = 9;
+              return getTownData();
+
+            case 9:
+              townMap = _context.sent;
+
+              if (townMap.has(town.location_id)) {
+                town.town_name = townMap.get(town.location_id).name;
+              }
+
+              for (key in town.spot) {
+                item = town.spot[key];
+                id = "".concat(town.location_id, "-").concat(item.id);
+
+                if (townMap.has(id)) {
+                  _data = townMap.get(id);
+                  item.location = _data.name;
+                  item.description = _data.detail;
+                  item.bee_comment = _data.vyrn;
+                }
+              }
+
+              return _context.abrupt("return", data);
+
+            case 13:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, null, [[0, 4]]);
+    }));
+    return _transTownInfo.apply(this, arguments);
+  }
+
+  var islandMap = new Map();
+  var loaded$7 = false;
+
+  var getIslandData =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee() {
+      var csv, list;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (loaded$7) {
+                _context.next = 7;
+                break;
+              }
+
+              _context.next = 3;
+              return fetchWithHash('/blhxfy/data/island-info.csv');
+
+            case 3:
+              csv = _context.sent;
+              list = parseCsv(csv);
+              list.forEach(function (item) {
+                var id = trim(item.id);
+                var name = filter(trim(item.name));
+                var detail = filter(trim(item.detail));
+
+                if (id && name) {
+                  islandMap.set(id, {
+                    name: name,
+                    detail: detail
+                  });
+
+                  if (id === 'skydom') {
+                    islandMap.set(name, detail);
+                  }
+                }
+              });
+              loaded$7 = true;
+
+            case 7:
+              return _context.abrupt("return", islandMap);
+
+            case 8:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function getIslandData() {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  function transIslandInfo(_x, _x2) {
+    return _transIslandInfo.apply(this, arguments);
+  }
+
+  function _transIslandInfo() {
+    _transIslandInfo = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data, pathname) {
+      var island, islandMap, key, item, id, _data;
+
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.prev = 0;
+              island = data.island_info;
+              _context.next = 7;
+              break;
+
+            case 4:
+              _context.prev = 4;
+              _context.t0 = _context["catch"](0);
+              return _context.abrupt("return", data);
+
+            case 7:
+              _context.next = 9;
+              return getIslandData();
+
+            case 9:
+              islandMap = _context.sent;
+
+              if (islandMap.has(island.island_name)) {
+                island.island_name = islandMap.get(island.island_name);
+              }
+
+              for (key in island) {
+                item = island[key];
+                id = key;
+
+                if (islandMap.has(id)) {
+                  if (id !== 'island_name') {
+                    _data = islandMap.get(id);
+                    item.name = _data.name;
+                    item.area_comment = _data.detail;
+                  }
+                }
+              }
+
+              return _context.abrupt("return", data);
+
+            case 13:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, null, [[0, 4]]);
+    }));
+    return _transIslandInfo.apply(this, arguments);
+  }
+
+  var chatMap = new Map();
+  var nChatMap = new Map();
+  var loaded$8 = false;
+
+  var getChatData =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee() {
+      var csv, list;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (loaded$8) {
+                _context.next = 12;
+                break;
+              }
+
+              _context.next = 3;
+              return getLocalData('chat-preset');
+
+            case 3:
+              csv = _context.sent;
+
+              if (csv) {
+                _context.next = 9;
+                break;
+              }
+
+              _context.next = 7;
+              return fetchWithHash('/blhxfy/data/chat-preset.csv');
+
+            case 7:
+              csv = _context.sent;
+              setLocalData('chat-preset', csv);
+
+            case 9:
+              list = parseCsv(csv);
+              list.forEach(function (item) {
+                var id = trim(item.id);
+                var text = trim(item.text);
+                var trans = filter(trim(item.trans));
+
+                if (id && trans) {
+                  if (/\d+-n/.test(id)) {
+                    var rgs = id.match(/(\d+)-n/);
+                    var _id = rgs[1];
+                    nChatMap.set(_id, {
+                      text: text,
+                      trans: trans
+                    });
+                  } else {
+                    chatMap.set(id, trans);
+                  }
+                }
+              });
+              loaded$8 = true;
+
+            case 12:
+              return _context.abrupt("return", {
+                chatMap: chatMap,
+                nChatMap: nChatMap
+              });
+
+            case 13:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function getChatData() {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  function transChat(_x) {
+    return _transChat.apply(this, arguments);
+  }
+
+  function _transChat() {
+    _transChat = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data) {
+      var _ref, chatMap, nChatMap, key, item, ck, id, hasSpecialTrans, _nChatMap$get, text, trans;
+
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (data.chat) {
+                _context.next = 2;
+                break;
+              }
+
+              return _context.abrupt("return", data);
+
+            case 2:
+              _context.next = 4;
+              return getChatData();
+
+            case 4:
+              _ref = _context.sent;
+              chatMap = _ref.chatMap;
+              nChatMap = _ref.nChatMap;
+
+              for (key in data.chat) {
+                item = data.chat[key];
+
+                for (ck in item) {
+                  id = item[ck].chat_id;
+
+                  if (chatMap.has(id)) {
+                    hasSpecialTrans = false;
+
+                    if (nChatMap.has(id)) {
+                      _nChatMap$get = nChatMap.get(id), text = _nChatMap$get.text, trans = _nChatMap$get.trans;
+
+                      if (item[ck].text === text) {
+                        item[ck].text = trans;
+                        hasSpecialTrans = true;
+                      }
+                    }
+
+                    if (!hasSpecialTrans) {
+                      item[ck].text = chatMap.get(id);
+                    }
+                  }
+                }
+              }
+
+              return _context.abrupt("return", data);
+
+            case 9:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+    return _transChat.apply(this, arguments);
+  }
+
+  var skillTemp = new Map();
+  var posMap = new Map();
+  var count = 0;
+  var observered = false;
+  var obConfig = {
+    attributes: true,
+    subtree: true
+  };
+
+  var mutationCallback = function mutationCallback(mutationsList) {
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = mutationsList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var mutation = _step.value;
+        var type = mutation.type;
+        var attr = mutation.attributeName;
+        var target = mutation.target;
+
+        if (target.classList.contains('lis-ability') && type === 'attributes' && attr === 'title') {
+          var title = target.title;
+
+          if (title && title.endsWith('turn(s)')) {
+            viraSkillTitle();
+          }
+        }
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+  };
+
+  var viraSkillTitleFunc = function viraSkillTitleFunc() {
+    var list = $('.lis-ability');
+
+    if (list.length) {
+      count = 0;
+
+      if (!observered) {
+        var targetNode = document.querySelector('.prt-command');
+        var observer = new MutationObserver(mutationCallback);
+        observer.observe(targetNode, obConfig);
+        observered = true;
+      }
+
+      list.each(function () {
+        var $elem = $(this);
+        var title = $elem.attr('title');
+        if (!title) return;
+        var name = title.split('\n')[0];
+        var trans = skillTemp.get(name);
+
+        if (trans) {
+          var _getPlusStr = getPlusStr(name),
+              _getPlusStr2 = _slicedToArray(_getPlusStr, 1),
+              plus1 = _getPlusStr2[0];
+
+          var sName = trans.name + plus1;
+          var detail = removeHtmlTag(trans.detail.replace(/<br\s?\/?>/gi, '\n'));
+          $elem.attr('title', title.replace(/^([\s\S]+)Cooldown:\s(\d+)\sturn\(s\)$/, "".concat(sName, "\n").concat(detail, "\n\u4F7F\u7528\u95F4\u9694\uFF1A$2 \u56DE\u5408")));
+        } else {
+          $elem.attr('title', title.replace(/^([\s\S]+)Cooldown:\s(\d+)\sturn\(s\)$/, "$1\u4F7F\u7528\u95F4\u9694\uFF1A$2 \u56DE\u5408"));
+        }
+      });
+    } else if (count < 20) {
+      count++;
+      viraSkillTitle();
+    }
+  };
+
+  var viraSkillTitle = debounce_1(viraSkillTitleFunc, 500);
+
+  var collectNpcSkill = function collectNpcSkill(skillData) {
+    for (var key in skillData) {
+      if (/(skill|special)-\D.*/.test(key)) {
+        var rgs = key.match(/(skill|special)-(\D.*)/);
+
+        if (rgs && rgs[2] && !skillTemp.has(rgs[2])) {
+          skillTemp.set(rgs[2], skillData[key]);
+        }
+      }
+    }
+  };
+
+  var battle =
+  /*#__PURE__*/
+  function () {
+    var _battle = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data, mode) {
+      var ability, scenario, spms, abKey, item, key, arr, skill, name, trans, npcId, state$1, skillData, index, _key, _arr, _skill, _name, _trans, detail, _getPlusStr3, _getPlusStr4, plus1, plus2, _trans2, _detail, _key2, _arr2, _skill2, _name2, _detail2, param, _index, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _item, _npcId, _state, _skillData, _name3, _trans3, _detail3, _getPlusStr5, _getPlusStr6, _plus, _plus2, _trans4, _detail4, _name4, _detail5, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, _item2, scKey, _item3, _trans5, _getPlusStr7, _getPlusStr8, _plus3, _trans6, _getPlusStr9, _getPlusStr10, _plus4, _trans7, _getPlusStr11, _getPlusStr12, _plus5;
+
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (config.battleTrans) {
+                _context.next = 2;
+                break;
+              }
+
+              return _context.abrupt("return", data);
+
+            case 2:
+              if (mode === 'result') {
+                if (isObject_1(data.status)) {
+                  ability = data.status.ability;
+                  spms = data.status.skip_special_motion_setting;
+                }
+
+                if (isObject_1(data.scenario)) scenario = data.scenario;
+              } else {
+                ability = data.ability;
+                spms = data.skip_special_motion_setting;
+                data.temporary_potion_all_name = '群体回复药水';
+                data.temporary_potion_one_name = '治疗药水';
+              }
+
+              if (isArray_1(spms)) {
+                spms.forEach(function (item) {
+                  posMap.set(item.pos, item.setting_id);
+                });
+              }
+
+              _context.next = 6;
+              return getCommSkillMap();
+
+            case 6:
+              if (!isObject_1(ability)) {
+                _context.next = 96;
+                break;
+              }
+
+              _context.t0 = regeneratorRuntime.keys(ability);
+
+            case 8:
+              if ((_context.t1 = _context.t0()).done) {
+                _context.next = 96;
+                break;
+              }
+
+              abKey = _context.t1.value;
+              item = ability[abKey];
+
+              if (!(item && isObject_1(item.list))) {
+                _context.next = 94;
+                break;
+              }
+
+              if (!(item.mode === 'player')) {
+                _context.next = 29;
+                break;
+              }
+
+              _context.t2 = regeneratorRuntime.keys(item.list);
+
+            case 14:
+              if ((_context.t3 = _context.t2()).done) {
+                _context.next = 27;
+                break;
+              }
+
+              key = _context.t3.value;
+              arr = item.list[key];
+              skill = arr[0];
+
+              if (!(skill && skill['ability-name'])) {
+                _context.next = 25;
+                break;
+              }
+
+              name = skill['ability-name'];
+              _context.next = 22;
+              return getSkillData$1(name);
+
+            case 22:
+              trans = _context.sent;
+
+              if (trans) {
+                if (!skillTemp.has(name)) skillTemp.set(name, trans);
+                skill['ability-name'] = trans.name;
+                skill['text-data'] = trans.detail;
+              }
+
+              skill['duration-type'] = replaceTurn(skill['duration-type']);
+
+            case 25:
+              _context.next = 14;
+              break;
+
+            case 27:
+              _context.next = 94;
+              break;
+
+            case 29:
+              if (!(item.mode === 'npc')) {
+                _context.next = 94;
+                break;
+              }
+
+              npcId = posMap.get(item.pos);
+              _context.next = 33;
+              return getSkillData(npcId);
+
+            case 33:
+              state$1 = _context.sent;
+              skillData = state$1.skillMap.get(npcId);
+
+              if (!(skillData && isObject_1(item.list))) {
+                _context.next = 80;
+                break;
+              }
+
+              collectNpcSkill(skillData);
+              index = 0;
+              _context.t4 = regeneratorRuntime.keys(item.list);
+
+            case 39:
+              if ((_context.t5 = _context.t4()).done) {
+                _context.next = 78;
+                break;
+              }
+
+              _key = _context.t5.value;
+              index++;
+              _arr = item.list[_key];
+              _skill = _arr[0];
+
+              if (!(_skill && _skill['ability-name'])) {
+                _context.next = 76;
+                break;
+              }
+
+              _name = _skill['ability-name'];
+
+              if (!skillData["skill-".concat(_name)]) {
+                _context.next = 61;
+                break;
+              }
+
+              _trans = skillData["skill-".concat(_name)];
+
+              if (!_trans) {
+                _context.next = 54;
+                break;
+              }
+
+              if (!skillTemp.has(_name)) skillTemp.set(_name, _trans);
+              _skill['ability-name'] = _trans.name;
+              _skill['text-data'] = _trans.detail;
+              _context.next = 59;
+              break;
+
+            case 54:
+              _context.next = 56;
+              return transSkill(_skill['text-data'], state$1);
+
+            case 56:
+              detail = _context.sent;
+              _skill['text-data'] = detail;
+              if (!skillTemp.has(_name)) skillTemp.set(_name, {
+                name: _name,
+                detail: detail
+              });
+
+            case 59:
+              _context.next = 76;
+              break;
+
+            case 61:
+              _getPlusStr3 = getPlusStr(_name), _getPlusStr4 = _slicedToArray(_getPlusStr3, 2), plus1 = _getPlusStr4[0], plus2 = _getPlusStr4[1];
+              _trans2 = skillData["skill-".concat(index).concat(plus2)];
+              if (!_trans2) _trans2 = skillData["skill-".concat(index)];
+
+              if (!_trans2) {
+                _context.next = 70;
+                break;
+              }
+
+              if (!skillTemp.has(_name)) skillTemp.set(_name, _trans2);
+              _skill['ability-name'] = "".concat(_trans2.name).concat(plus1);
+              _skill['text-data'] = _trans2.detail;
+              _context.next = 75;
+              break;
+
+            case 70:
+              _context.next = 72;
+              return transSkill(_skill['text-data'], state$1);
+
+            case 72:
+              _detail = _context.sent;
+              _skill['text-data'] = _detail;
+              if (!skillTemp.has(_name)) skillTemp.set(_name, {
+                name: _name,
+                detail: _detail
+              });
+
+            case 75:
+              _skill['duration-type'] = replaceTurn(_skill['duration-type']);
+
+            case 76:
+              _context.next = 39;
+              break;
+
+            case 78:
+              _context.next = 94;
+              break;
+
+            case 80:
+              _context.t6 = regeneratorRuntime.keys(item.list);
+
+            case 81:
+              if ((_context.t7 = _context.t6()).done) {
+                _context.next = 94;
+                break;
+              }
+
+              _key2 = _context.t7.value;
+              _arr2 = item.list[_key2];
+              _skill2 = _arr2[0];
+
+              if (!(_skill2 && _skill2['ability-name'] && _skill2['text-data'])) {
+                _context.next = 92;
+                break;
+              }
+
+              _name2 = _skill2['ability-name'];
+              _context.next = 89;
+              return transSkill(_skill2['text-data'], state$1);
+
+            case 89:
+              _detail2 = _context.sent;
+              _skill2['text-data'] = _detail2;
+              if (!skillTemp.has(_name2)) skillTemp.set(_name2, {
+                name: _name2,
+                detail: _detail2
+              });
+
+            case 92:
+              _context.next = 81;
+              break;
+
+            case 94:
+              _context.next = 8;
+              break;
+
+            case 96:
+              if (!(mode !== 'result' && data.player && isArray_1(data.player.param))) {
+                _context.next = 171;
+                break;
+              }
+
+              param = data.player.param;
+              _index = 0;
+              _iteratorNormalCompletion2 = true;
+              _didIteratorError2 = false;
+              _iteratorError2 = undefined;
+              _context.prev = 102;
+              _iterator2 = param[Symbol.iterator]();
+
+            case 104:
+              if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
+                _context.next = 157;
+                break;
+              }
+
+              _item = _step2.value;
+              _npcId = posMap.get(_index);
+              _index++;
+              _context.next = 110;
+              return getSkillData(_npcId);
+
+            case 110:
+              _state = _context.sent;
+              _skillData = _state.skillMap.get(_npcId);
+
+              if (!_skillData) {
+                _context.next = 147;
+                break;
+              }
+
+              collectNpcSkill(_skillData);
+
+              if (!_item['special_skill']) {
+                _context.next = 145;
+                break;
+              }
+
+              _name3 = _item['special_skill'];
+
+              if (!_skillData["special-".concat(_name3)]) {
+                _context.next = 131;
+                break;
+              }
+
+              _trans3 = _skillData["special-".concat(_name3)];
+
+              if (!_trans3) {
+                _context.next = 124;
+                break;
+              }
+
+              if (!skillTemp.has(_name3)) skillTemp.set(_name3, _trans3);
+              _item['special_skill'] = _trans3.name;
+              _item['special_comment'] = _trans3.detail;
+              _context.next = 129;
+              break;
+
+            case 124:
+              _context.next = 126;
+              return transSkill(_item['special_comment'], _state);
+
+            case 126:
+              _detail3 = _context.sent;
+              _item['special_comment'] = _detail3;
+              if (!skillTemp.has(_name3)) skillTemp.set(_name3, {
+                name: _name3,
+                detail: _detail3
+              });
+
+            case 129:
+              _context.next = 145;
+              break;
+
+            case 131:
+              _getPlusStr5 = getPlusStr(_name3), _getPlusStr6 = _slicedToArray(_getPlusStr5, 2), _plus = _getPlusStr6[0], _plus2 = _getPlusStr6[1];
+              _trans4 = _skillData["special".concat(_plus2)];
+              if (!_trans4) _trans4 = _skillData['special'];
+
+              if (!_trans4) {
+                _context.next = 140;
+                break;
+              }
+
+              if (!skillTemp.has(_name3)) skillTemp.set(_name3, _trans4);
+              _item['special_skill'] = "".concat(_trans4.name).concat(_plus);
+              _item['special_comment'] = _trans4.detail;
+              _context.next = 145;
+              break;
+
+            case 140:
+              _context.next = 142;
+              return transSkill(_item['special_comment'], _state);
+
+            case 142:
+              _detail4 = _context.sent;
+              _item['special_comment'] = _detail4;
+              if (!skillTemp.has(_name3)) skillTemp.set(_name3, {
+                name: _name3,
+                detail: _detail4
+              });
+
+            case 145:
+              _context.next = 154;
+              break;
+
+            case 147:
+              if (!(_item['special_skill'] && _item['special_comment'])) {
+                _context.next = 154;
+                break;
+              }
+
+              _name4 = _item['special_skill'];
+              _context.next = 151;
+              return transSkill(_item['special_comment'], _state);
+
+            case 151:
+              _detail5 = _context.sent;
+              _item['special_comment'] = _detail5;
+              if (!skillTemp.has(_name4)) skillTemp.set(_name4, {
+                name: _name4,
+                detail: _detail5
+              });
+
+            case 154:
+              _iteratorNormalCompletion2 = true;
+              _context.next = 104;
+              break;
+
+            case 157:
+              _context.next = 163;
+              break;
+
+            case 159:
+              _context.prev = 159;
+              _context.t8 = _context["catch"](102);
+              _didIteratorError2 = true;
+              _iteratorError2 = _context.t8;
+
+            case 163:
+              _context.prev = 163;
+              _context.prev = 164;
+
+              if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                _iterator2.return();
+              }
+
+            case 166:
+              _context.prev = 166;
+
+              if (!_didIteratorError2) {
+                _context.next = 169;
+                break;
+              }
+
+              throw _iteratorError2;
+
+            case 169:
+              return _context.finish(166);
+
+            case 170:
+              return _context.finish(163);
+
+            case 171:
+              if (!(data.summon && isArray_1(data.summon))) {
+                _context.next = 205;
+                break;
+              }
+
+              _iteratorNormalCompletion3 = true;
+              _didIteratorError3 = false;
+              _iteratorError3 = undefined;
+              _context.prev = 175;
+              _iterator3 = data.summon[Symbol.iterator]();
+
+            case 177:
+              if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
+                _context.next = 191;
+                break;
+              }
+
+              _item2 = _step3.value;
+
+              if (!_item2) {
+                _context.next = 188;
+                break;
+              }
+
+              if (!_item2.comment) {
+                _context.next = 184;
+                break;
+              }
+
+              _context.next = 183;
+              return transSkill(_item2.comment, state);
+
+            case 183:
+              _item2.comment = _context.sent;
+
+            case 184:
+              if (!_item2.protection) {
+                _context.next = 188;
+                break;
+              }
+
+              _context.next = 187;
+              return transSkill(_item2.protection, state);
+
+            case 187:
+              _item2.protection = _context.sent;
+
+            case 188:
+              _iteratorNormalCompletion3 = true;
+              _context.next = 177;
+              break;
+
+            case 191:
+              _context.next = 197;
+              break;
+
+            case 193:
+              _context.prev = 193;
+              _context.t9 = _context["catch"](175);
+              _didIteratorError3 = true;
+              _iteratorError3 = _context.t9;
+
+            case 197:
+              _context.prev = 197;
+              _context.prev = 198;
+
+              if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+                _iterator3.return();
+              }
+
+            case 200:
+              _context.prev = 200;
+
+              if (!_didIteratorError3) {
+                _context.next = 203;
+                break;
+              }
+
+              throw _iteratorError3;
+
+            case 203:
+              return _context.finish(200);
+
+            case 204:
+              return _context.finish(197);
+
+            case 205:
+              if (!(data.supporter && data.supporter.name)) {
+                _context.next = 215;
+                break;
+              }
+
+              _context.next = 208;
+              return transSkill(data.supporter.comment, state);
+
+            case 208:
+              data.supporter.comment = _context.sent;
+              _context.next = 211;
+              return transSkill(data.supporter.detail, state);
+
+            case 211:
+              data.supporter.detail = _context.sent;
+              _context.next = 214;
+              return transSkill(data.supporter.protection, state);
+
+            case 214:
+              data.supporter.protection = _context.sent;
+
+            case 215:
+              // translate scenario
+              if (scenario) {
+                for (scKey in scenario) {
+                  _item3 = scenario[scKey];
+
+                  if (_item3 && _item3.name) {
+                    if (_item3.cmd === 'ability') {
+                      _trans5 = skillTemp.get(_item3.name);
+                      _getPlusStr7 = getPlusStr(_item3.name), _getPlusStr8 = _slicedToArray(_getPlusStr7, 1), _plus3 = _getPlusStr8[0];
+
+                      if (_trans5) {
+                        _item3.name = _trans5.name + _plus3;
+                        _item3.comment = _trans5.detail;
+                      }
+                    } else if (_item3.cmd === 'special_npc') {
+                      _trans6 = skillTemp.get(_item3.name);
+                      _getPlusStr9 = getPlusStr(_item3.name), _getPlusStr10 = _slicedToArray(_getPlusStr9, 1), _plus4 = _getPlusStr10[0];
+
+                      if (_trans6) {
+                        _item3.name = _trans6.name + _plus4;
+                      }
+                    } else if (_item3.cmd === 'special_change') {
+                      _trans7 = skillTemp.get(_item3.name);
+                      _getPlusStr11 = getPlusStr(_item3.name), _getPlusStr12 = _slicedToArray(_getPlusStr11, 1), _plus5 = _getPlusStr12[0];
+
+                      if (_trans7) {
+                        _item3.name = _trans7.name + _plus5;
+                        _item3.text = _trans7.detail;
+                      }
+                    }
+                  }
+                }
+              }
+
+              viraSkillTitle();
+              return _context.abrupt("return", data);
+
+            case 218:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, null, [[102, 159, 163, 171], [164,, 166, 170], [175, 193, 197, 205], [198,, 200, 204]]);
+    }));
+
+    function battle(_x, _x2) {
+      return _battle.apply(this, arguments);
+    }
+
+    return battle;
+  }();
+
+  var transBattle = race(battle);
+
+  var replaceTime = function replaceTime(str) {
+    if (!str) return str;
+    return str.replace('時間', '小时');
+  };
+
+  var pageIndex =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data) {
+      var messages, mydata, status, newMessages;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.prev = 0;
+              mydata = data.option.mydata_assets.mydata;
+              messages = mydata.messages;
+              status = mydata.status;
+              _context.next = 9;
+              break;
+
+            case 6:
+              _context.prev = 6;
+              _context.t0 = _context["catch"](0);
+              return _context.abrupt("return", data);
+
+            case 9:
+              if (messages.length) {
+                newMessages = [];
+                messages.forEach(function (item) {
+                  if (item.url !== 'news/detail/1/20002') {
+                    newMessages.push(item);
+                  }
+                });
+                mydata.messages = newMessages;
+              }
+
+              status.action_point_remain = replaceTime(status.action_point_remain);
+              status.battle_point_remain = replaceTime(status.battle_point_remain);
+              return _context.abrupt("return", data);
+
+            case 13:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, null, [[0, 6]]);
+    }));
+
+    return function pageIndex(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var replaceHour = function replaceHour(data, type) {
+    var status;
+
+    try {
+      if (type === 'user') {
+        status = data.status;
+      } else {
+        status = data.option.user_status;
+      }
+    } catch (e) {
+      return data;
+    }
+
+    if (status) {
+      if (status.action_point_remain) status.action_point_remain = replaceTime(status.action_point_remain);
+      if (status.battle_point_remain) status.battle_point_remain = replaceTime(status.battle_point_remain);
+    }
+
+    return data;
+  };
+
+  var voiceMap = new Map();
+  var loaded$9 = false;
+
+  var getTownData$1 =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee() {
+      var csv, list;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (loaded$9) {
+                _context.next = 7;
+                break;
+              }
+
+              _context.next = 3;
+              return fetchWithHash('/blhxfy/data/voice-mypage.csv');
+
+            case 3:
+              csv = _context.sent;
+              list = parseCsv(csv);
+              list.forEach(function (item) {
+                var path = trim(item.path);
+                var trans = filter(trim(item.trans));
+                var duration = trim(item.duration) || 10;
+
+                if (path && trans) {
+                  voiceMap.set(path, {
+                    trans: trans,
+                    duration: duration
+                  });
+                }
+              });
+              loaded$9 = true;
+
+            case 7:
+              return _context.abrupt("return", voiceMap);
+
+            case 8:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function getTownData() {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var voiceList = [];
+
+  var saveList =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data) {
+      var obj, key, item, vkey, voice;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              obj = data.data;
+
+              for (key in obj) {
+                item = obj[key];
+
+                for (vkey in item) {
+                  voice = item[vkey].replace(/\.[\w\d]+$/, '');
+
+                  if (!voiceList.includes(voice)) {
+                    voiceList.push(voice);
+                  }
+                }
+              }
+
+            case 2:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function saveList(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var createBox = function createBox() {
+    var box = document.createElement('div');
+    box.id = 'box-sub-blhxfy';
+    return box;
+  };
+
+  var hideTimer = null;
+
+  var hideBox = function hideBox() {
+    var box = document.getElementById('box-sub-blhxfy');
+    if (!box) return;
+    box.style.pointerEvents = 'none';
+    box.style.opacity = 0;
+    box.style.transition = 'opacity 1.5s';
+    clearTimeout(hideTimer);
+  };
+
+  var setSubBox = function setSubBox(text, duration) {
+    var cont = document.querySelector('.cnt-mypage .prt-user-scene');
+    if (!cont) return;
+    var box = document.getElementById('box-sub-blhxfy');
+
+    if (!box) {
+      box = createBox();
+      cont.appendChild(box);
+    }
+
+    var _text = text;
+
+    if (config.userName && (config.userName !== '姬塔' || config.userName !== '古兰')) {
+      _text = _text.replace(/团长/g, config.userName);
+    }
+
+    box.innerText = _text.replace(/\\n/g, '\n');
+    setTimeout(function () {
+      box.style.opacity = 1;
+      box.style.pointerEvents = 'auto';
+      box.style.transition = 'opacity 0.5s';
+    }, 100);
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(hideBox, duration * 1000);
+    box.removeEventListener('click', hideBox);
+    box.addEventListener('click', hideBox);
+  };
+
+  var showSub =
+  /*#__PURE__*/
+  function () {
+    var _ref2 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee2(src) {
+      var voice, voiceMap, data;
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              if (src) {
+                _context2.next = 2;
+                break;
+              }
+
+              return _context2.abrupt("return");
+
+            case 2:
+              hideBox();
+              voice = src.replace(/\.[\w\d]+$/, '');
+
+              if (voiceList.includes(voice)) {
+                _context2.next = 6;
+                break;
+              }
+
+              return _context2.abrupt("return");
+
+            case 6:
+              _context2.next = 8;
+              return getTownData$1();
+
+            case 8:
+              voiceMap = _context2.sent;
+
+              if (voiceMap.has(voice)) {
+                _context2.next = 11;
+                break;
+              }
+
+              return _context2.abrupt("return");
+
+            case 11:
+              data = voiceMap.get(voice);
+              setSubBox(data.trans, data.duration);
+
+            case 13:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }));
+
+    return function showSub(_x2) {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+
+  var soundInjected = false;
+  function showVoiceSub(_x3, _x4, _x5) {
+    return _showVoiceSub.apply(this, arguments);
+  }
+
+  function _showVoiceSub() {
+    _showVoiceSub = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee3(data, pathname, type) {
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              if (!soundInjected) {
+                require(['model/sound'], function (sound) {
+                  var playVoice = sound.prototype.playVoice;
+
+                  sound.prototype.playVoice = function (src, force) {
+                    if (!Game.setting.sound_flag) return;
+                    showSub(src);
+                    playVoice.call(this, src, force);
+                  };
+                });
+              }
+
+              soundInjected = true;
+
+              if (!(type === 'list')) {
+                _context3.next = 7;
+                break;
+              }
+
+              _context3.next = 5;
+              return saveList(data);
+
+            case 5:
+              _context3.next = 9;
+              break;
+
+            case 7:
+              _context3.next = 9;
+              return showSub(pathname);
+
+            case 9:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }));
+    return _showVoiceSub.apply(this, arguments);
+  }
+
+  var getUserName = function getUserName(data) {
+    var html = decodeURIComponent(data.data);
+    var rgs = html.match(/<span\sclass="txt-user-name">([^<]+)<\/span>/);
+
+    if (rgs && rgs[1]) {
+      config.userName = rgs[1];
+      localStorage.setItem('blhxfy:name', rgs[1]);
+    }
+  };
+
+  var setUserName = function setUserName() {
+    if (!config.userName && Game.userId) {
+      require(['model/content'], function (mc) {
+        var req = new mc({
+          controller: "profile",
+          action: "index",
+          param: {
+            user_id: Game.userId
+          }
+        });
+        req.fetch();
+      });
+
+      config.userName = '古兰';
+      localStorage.setItem('blhxfy:name', config.userName);
+    }
+  };
+
+  var getLocalName = function getLocalName() {
+    var name = localStorage.getItem('blhxfy:name');
+    if (name) config.userName = filter(name);
+  };
+
+  getLocalName();
+
+  var apiHosts = ['game.granbluefantasy.jp', 'gbf.game.mbga.jp'];
+  function translate(_x) {
+    return _translate.apply(this, arguments);
+  }
+
+  function _translate() {
+    _translate = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(state) {
+      var uri, pathname, hostname, data, isJSON;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              uri = URI(state.url);
+              pathname = uri.pathname();
+              hostname = uri.hostname();
+              data = state.result;
+              isJSON = true;
+
+              try {
+                data = JSON.parse(data);
+              } catch (err) {
+                isJSON = false;
+              }
+
+              if (!(apiHosts.indexOf(hostname) !== -1)) {
+                _context.next = 90;
+                break;
+              }
+
+              if (!pathname.includes('scenario')) {
+                _context.next = 14;
+                break;
+              }
+
+              setUserName();
+              _context.next = 11;
+              return transScenario(data, pathname);
+
+            case 11:
+              data = _context.sent;
+              _context.next = 88;
+              break;
+
+            case 14:
+              if (!pathname.includes('/content/')) {
+                _context.next = 40;
+                break;
+              }
+
+              _context.prev = 15;
+
+              if (pathname.includes('/profile/content/index/')) {
+                getUserName(data);
+              }
+
+              _context.next = 19;
+              return transLangMsg(data, pathname);
+
+            case 19:
+              data = _context.sent;
+
+              if (!pathname.includes('/user/content/index')) {
+                _context.next = 29;
+                break;
+              }
+
+              _context.next = 23;
+              return transTownInfo(data, pathname);
+
+            case 23:
+              data = _context.sent;
+              _context.next = 26;
+              return pageIndex(data, pathname);
+
+            case 26:
+              data = _context.sent;
+              _context.next = 30;
+              break;
+
+            case 29:
+              data = replaceHour(data);
+
+            case 30:
+              _context.next = 35;
+              break;
+
+            case 32:
+              _context.prev = 32;
+              _context.t0 = _context["catch"](15);
+              console.error(_context.t0);
+
+            case 35:
+              _context.next = 37;
+              return transHTML(data, pathname);
+
+            case 37:
+              data = _context.sent;
+              _context.next = 88;
+              break;
+
+            case 40:
+              if (!(pathname.includes('/npc/npc/') || pathname.includes('/archive/npc_detail'))) {
+                _context.next = 46;
+                break;
+              }
+
+              _context.next = 43;
+              return parseSkill(data, pathname);
+
+            case 43:
+              data = _context.sent;
+              _context.next = 88;
+              break;
+
+            case 46:
+              if (!(pathname.includes('/party_ability_subaction/') || pathname.includes('/party/job/') || pathname.includes('/party/ability_list/') || pathname.includes('/zenith/ability_list/') || pathname.includes('/party/job_info/'))) {
+                _context.next = 52;
+                break;
+              }
+
+              _context.next = 49;
+              return transSkill$1(data, pathname);
+
+            case 49:
+              data = _context.sent;
+              _context.next = 88;
+              break;
+
+            case 52:
+              if (!pathname.includes('/island/init')) {
+                _context.next = 58;
+                break;
+              }
+
+              _context.next = 55;
+              return transIslandInfo(data, pathname);
+
+            case 55:
+              data = _context.sent;
+              _context.next = 88;
+              break;
+
+            case 58:
+              if (!pathname.includes('/rest/sound/mypage_voice')) {
+                _context.next = 63;
+                break;
+              }
+
+              _context.next = 61;
+              return showVoiceSub(data, pathname, 'list');
+
+            case 61:
+              _context.next = 88;
+              break;
+
+            case 63:
+              if (!/\/rest\/(multi)?raid\/start\.json/.test(pathname)) {
+                _context.next = 72;
+                break;
+              }
+
+              _context.next = 66;
+              return transChat(data);
+
+            case 66:
+              data = _context.sent;
+              _context.next = 69;
+              return transBattle(data);
+
+            case 69:
+              data = _context.sent;
+              _context.next = 88;
+              break;
+
+            case 72:
+              if (!(/\/rest\/(multi)?raid\/ability_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/temporary_item_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/normal_attack_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/summon_result\.json/.test(pathname))) {
+                _context.next = 78;
+                break;
+              }
+
+              _context.next = 75;
+              return transBattle(data, 'result');
+
+            case 75:
+              data = _context.sent;
+              _context.next = 88;
+              break;
+
+            case 78:
+              if (!/\/rest\/.*?raid\/condition\/\d+\/\d\/\d\.json/.test(pathname)) {
+                _context.next = 83;
+                break;
+              }
+
+              _context.next = 81;
+              return transBuff(data.condition);
+
+            case 81:
+              _context.next = 88;
+              break;
+
+            case 83:
+              if (!pathname.includes('/user/status')) {
+                _context.next = 87;
+                break;
+              }
+
+              data = replaceHour(data, 'user');
+              _context.next = 88;
+              break;
+
+            case 87:
+              return _context.abrupt("return");
+
+            case 88:
+              _context.next = 91;
+              break;
+
+            case 90:
+              return _context.abrupt("return");
+
+            case 91:
+              state.result = isJSON ? JSON.stringify(data) : data;
+
+            case 92:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, null, [[15, 32]]);
+    }));
+    return _translate.apply(this, arguments);
+  }
+
+  var injectXHR = function injectXHR() {
+    // The following code are inspired by viramate/external.js
+    // intercept xhr request and modify the response
+    var XHR = XMLHttpRequest;
+    var originOpen = XHR.prototype.open;
+    var originSend = XHR.prototype.send;
+    var originAddEventListener = XHR.prototype.addEventListener;
+    var stateMap = new WeakMap();
+
+    function log(data) {
+      console.error(data);
+    }
+
+    function getXhrState(xhr) {
+      var result = stateMap.get(xhr);
+
+      if (!result) {
+        result = {};
+        stateMap.set(xhr, result);
+      }
+
+      if (!result.readyStateListeners) {
+        result.readyStateListeners = [];
+      }
+
+      if (!result.loadListeners) {
+        result.loadListeners = [];
+      }
+
+      return result;
+    }
+
+    var customOnLoad =
+    /*#__PURE__*/
+    function () {
+      var _ref = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee(evt) {
+        var state;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                state = getXhrState(this);
+                state.onLoadEvent = evt;
+                Object.defineProperties(this, {
+                  response: {
+                    get: function get() {
+                      return state.result;
+                    }
+                  },
+                  responseText: {
+                    get: function get() {
+                      return state.result;
+                    }
+                  }
+                });
+                _context.prev = 3;
+                _context.next = 6;
+                return translate(state);
+
+              case 6:
+                _context.next = 11;
+                break;
+
+              case 8:
+                _context.prev = 8;
+                _context.t0 = _context["catch"](3);
+                log(_context.t0);
+
+              case 11:
+                state.onload && state.onload.call(this, state.onLoadEvent);
+
+              case 12:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this, [[3, 8]]);
+      }));
+
+      return function customOnLoad(_x) {
+        return _ref.apply(this, arguments);
+      };
+    }();
+
+    var customOnReadyStateChange =
+    /*#__PURE__*/
+    function () {
+      var _ref2 = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee2() {
+        var state,
+            i,
+            l,
+            _args2 = arguments;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                try {
+                  state = getXhrState(this);
+
+                  if (this.readyState == XHR.DONE) {
+                    state.onComplete.call(this, state);
+                  }
+                } catch (err) {
+                  log(err);
+                }
+
+                try {
+                  for (i = 0, l = state.readyStateListeners.length; i < l; i++) {
+                    try {
+                      state.readyStateListeners[i].apply(this, _args2);
+                    } catch (err) {
+                      log(err);
+                    }
+                  }
+                } catch (err) {
+                  log(err);
+                }
+
+              case 2:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      return function customOnReadyStateChange() {
+        return _ref2.apply(this, arguments);
+      };
+    }();
+
+    function customOnComplete(state) {
+      if (state.done) return;
+      state.done = performance.now();
+      state.response = this.response;
+      state.responseType = this.responseType;
+
+      if (state.responseType === "" || state.responseType === "text") {
+        state.responseText = this.responseText;
+        state.result = this.response || this.responseText;
+      }
+
+      state.status = this.status;
+      state.statusText = this.statusText;
+      state.contentType = this.getResponseHeader('content-type');
+    }
+
+    XHR.prototype.open = function open(method, url, async, user, password) {
+      try {
+        var state = getXhrState(this);
+        state.method = method;
+        state.url = url;
+      } catch (err) {
+        log(err);
+      }
+
+      originAddEventListener.call(this, "readystatechange", customOnReadyStateChange, false);
+      var result = originOpen.apply(this, arguments);
+      return result;
+    };
+
+    XHR.prototype.addEventListener = function addEventListener(eventName, listener, useCapture) {
+      try {
+        var state = getXhrState(this);
+
+        if (eventName === "readystatechange") {
+          state.readyStateListeners.push(listener);
+          return true;
+        }
+      } catch (err) {
+        log(err);
+      }
+
+      var result = originAddEventListener.apply(this, arguments);
+      return result;
+    };
+
+    XHR.prototype.send = function send(data) {
+      var state = null;
+
+      try {
+        state = getXhrState(this);
+
+        if (state.url) {
+          state.sent = performance.now();
+          state.data = data;
+          state.onComplete = customOnComplete;
+          state.onload = this.onload;
+          this.onload = customOnLoad;
+        }
+      } catch (err) {
+        log(err);
+      }
+
+      originSend.call(this, data);
+    };
+
+    XHR.prototype.open.toString = function toString() {
+      return originOpen.toString();
+    };
+
+    XHR.prototype.addEventListener.toString = function toString() {
+      return originAddEventListener.toString();
+    };
+
+    XHR.prototype.send.toString = function toString() {
+      return originSend.toString();
+    };
+  };
+
+  // 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
+
+  var $find = _arrayMethods(5);
+  var KEY = 'find';
+  var forced = true;
+  // Shouldn't skip holes
+  if (KEY in []) Array(1)[KEY](function () { forced = false; });
+  _export(_export.P + _export.F * forced, 'Array', {
+    find: function find(callbackfn /* , that = undefined */) {
+      return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    }
+  });
+  _addToUnscopables(KEY);
+
+  var addToolbar = function addToolbar() {
+    if (config.bottomToolbar) {
+      document.addEventListener('DOMContentLoaded', function () {
+        if (!document.querySelector('#treasure-footer')) {
+          document.querySelector('.cnt-global-footer').insertAdjacentHTML('afterend', "\n        <footer id=\"treasure-footer\">\n          <div class=\"cnt-treasure-footer\" style=\"height:40px\">\n            <div class=\"btn-treasure-footer-back\"></div>\n            <div class=\"btn-treasure-footer-reload\"></div>\n            <div class=\"btn-treasure-footer-mypage\" data-href=\"mypage\"></div>\n            <div id=\"prt-treasure-slider\" class=\"prt-treasure-slider\">\n              <ul class=\"lis-treasures\" id=\"treasure-list\" data-treasure-max=\"9\"></ul>\n            </div>\n          </div>\n          <div id=\"treasure-pop\"></div>\n        </footer>\n        ");
+        }
+      });
+    }
+  };
+
+  addToolbar();
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.head.insertAdjacentHTML('afterbegin', "\n  <meta name=\"mobile-web-app-capable\" content=\"yes\">\n  <meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n  <link rel=\"apple-touch-startup-image\" href=\"".concat(config.origin, "/blhxfy/data/static/image/splash.png\">\n  "));
+    document.querySelector('meta[name="apple-mobile-web-app-title"]').setAttribute('content', '碧蓝幻想');
+    document.title = '碧蓝幻想';
+  });
+
+  var removeScroller = function removeScroller() {
+    if (config.removeScroller) {
+      var style = document.createElement('style');
+      style.innerHTML = "\n      ::-webkit-scrollbar {\n        display: none;\n      }\n    ";
+      document.head.appendChild(style);
+    }
+  };
+
+  removeScroller();
+
+  var hideSidebar = function hideSidebar() {
+    if (config.hideSidebar) {
+      insertCSS('hide-sidebar');
+    }
+  };
+
+  hideSidebar();
+
+  var keepBgm = function keepBgm() {
+    if (config.keepBgm) {
+      window.addEventListener('blur', function (e) {
+        e.stopImmediatePropagation();
+      }, false);
+    }
+  };
+
+  keepBgm();
+
+  window.addEventListener('load', function () {
+    $('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
+  });
+
   var saveToLocalstorage = function saveToLocalstorage(key, value) {
     var data;
 
@@ -19219,12 +19679,12 @@
     document.body.dispatchEvent(event);
   };
 
-  var main$1 = function main() {
+  var main = function main() {
     if (window.blhxfy) return;
     eventMessage();
     injectXHR();
   };
 
-  main$1();
+  main();
 
 }());
