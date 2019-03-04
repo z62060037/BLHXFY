@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.7.2
+// @version      1.7.3
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -5867,7 +5867,7 @@
 	  return str;
 	};
 
-	var version = "1.7.2";
+	var version = "1.7.3";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -11667,7 +11667,9 @@ ${extraHtml}
 	  skillKeys,
 	  skillData: null,
 	  commSkillMap: new Map(),
-	  autoTransCache: new Map()
+	  autoTransCache: new Map(),
+	  nounMap: new Map(),
+	  nounRE: ''
 	};
 
 	const getCommSkillMap = async () => {
@@ -11675,6 +11677,7 @@ ${extraHtml}
 	  const csvData = await fetchWithHash('/blhxfy/data/common-skill.csv');
 	  const list = await parseCsv(csvData);
 	  const sortedList = sortKeywords(list, 'comment');
+	  let nounArr = [];
 	  sortedList.forEach(item => {
 	    if (item.comment && item.trans && item.type) {
 	      const comment = trim(item.comment);
@@ -11682,13 +11685,19 @@ ${extraHtml}
 	      const type = trim(item.type) || '1';
 
 	      if (comment && trans) {
-	        state.commSkillMap.set(comment, {
-	          trans,
-	          type
-	        });
+	        if (type === '4') {
+	          state.nounMap.set(comment, trans);
+	          nounArr.push(comment);
+	        } else {
+	          state.commSkillMap.set(comment, {
+	            trans,
+	            type
+	          });
+	        }
 	      }
 	    }
 	  });
+	  if (nounArr.length) state.nounRE = `(${nounArr.join('|')})`;
 	  state.cStatus = 'loaded';
 	};
 
@@ -11881,26 +11890,28 @@ ${extraHtml}
 	const numRE = '(\\d{1,10}\\.?\\d{0,4}?)';
 	const percentRE = '(\\d{1,10}\\.?\\d{0,4}?[%％])';
 
-	const parseRegExp = str => {
-	  return str.replace(/\(/g, '\\(').replace(/\)/g, '\\)').replace(/\$elemt/g, elemtRE).replace(/\$num/g, numRE).replace(/\$percent/g, percentRE);
+	const parseRegExp = (str, nounRE) => {
+	  return str.replace(/\(/g, '\\(').replace(/\)/g, '\\)').replace(/\$elemt/g, elemtRE).replace(/\$num/g, numRE).replace(/\$percent/g, percentRE).replace(/\$noun/g, nounRE);
 	};
 
 	const transSkill = (comment, {
 	  commSkillMap,
+	  nounMap,
+	  nounRE,
 	  autoTransCache
 	}) => {
 	  if (autoTransCache.has(comment)) return autoTransCache.get(comment);
 	  let result = comment;
 
 	  for (let [key, value] of commSkillMap) {
-	    if (!key.trim()) continue;
+	    if (!trim(key)) continue;
 	    const {
 	      trans,
 	      type
 	    } = value;
 
 	    if (type === '1') {
-	      const re = new RegExp(parseRegExp(key), 'gi');
+	      const re = new RegExp(parseRegExp(key, nounRE), 'gi');
 	      result = result.replace(re, (...arr) => {
 	        let _trans = trans;
 
@@ -11909,6 +11920,8 @@ ${extraHtml}
 
 	          if (elemtMap[eleKey]) {
 	            _trans = _trans.replace(`$${i}`, elemtMap[eleKey]);
+	          } else if (nounMap.has(eleKey)) {
+	            _trans = _trans.replace(`$${i}`, nounMap.get(eleKey));
 	          } else {
 	            _trans = _trans.replace(`$${i}`, arr[i]);
 	          }
@@ -11971,6 +11984,7 @@ ${extraHtml}
 	};
 
 	const parseSkill = async (data, pathname) => {
+	  if (Game.lang === 'en') return data;
 	  let npcId;
 
 	  if (pathname.includes('/npc/npc/')) {

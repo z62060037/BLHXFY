@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.7.2
+// @version      1.7.3
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -8947,7 +8947,7 @@
     return str;
   };
 
-  var version = "1.7.2";
+  var version = "1.7.3";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -15024,7 +15024,9 @@
     skillKeys: skillKeys,
     skillData: null,
     commSkillMap: new Map(),
-    autoTransCache: new Map()
+    autoTransCache: new Map(),
+    nounMap: new Map(),
+    nounRE: ''
   };
 
   var getCommSkillMap =
@@ -15033,7 +15035,7 @@
     var _ref = _asyncToGenerator(
     /*#__PURE__*/
     regeneratorRuntime.mark(function _callee() {
-      var csvData, list, sortedList;
+      var csvData, list, sortedList, nounArr;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -15057,6 +15059,7 @@
             case 7:
               list = _context.sent;
               sortedList = sortKeywords(list, 'comment');
+              nounArr = [];
               sortedList.forEach(function (item) {
                 if (item.comment && item.trans && item.type) {
                   var comment = trim(item.comment);
@@ -15064,16 +15067,22 @@
                   var type = trim(item.type) || '1';
 
                   if (comment && trans) {
-                    state.commSkillMap.set(comment, {
-                      trans: trans,
-                      type: type
-                    });
+                    if (type === '4') {
+                      state.nounMap.set(comment, trans);
+                      nounArr.push(comment);
+                    } else {
+                      state.commSkillMap.set(comment, {
+                        trans: trans,
+                        type: type
+                      });
+                    }
                   }
                 }
               });
+              if (nounArr.length) state.nounRE = "(".concat(nounArr.join('|'), ")");
               state.cStatus = 'loaded';
 
-            case 11:
+            case 13:
             case "end":
               return _context.stop();
           }
@@ -15618,12 +15627,14 @@
   var numRE = '(\\d{1,10}\\.?\\d{0,4}?)';
   var percentRE = '(\\d{1,10}\\.?\\d{0,4}?[%％])';
 
-  var parseRegExp = function parseRegExp(str) {
-    return str.replace(/\(/g, '\\(').replace(/\)/g, '\\)').replace(/\$elemt/g, elemtRE).replace(/\$num/g, numRE).replace(/\$percent/g, percentRE);
+  var parseRegExp = function parseRegExp(str, nounRE) {
+    return str.replace(/\(/g, '\\(').replace(/\)/g, '\\)').replace(/\$elemt/g, elemtRE).replace(/\$num/g, numRE).replace(/\$percent/g, percentRE).replace(/\$noun/g, nounRE);
   };
 
   var transSkill = function transSkill(comment, _ref) {
     var commSkillMap = _ref.commSkillMap,
+        nounMap = _ref.nounMap,
+        nounRE = _ref.nounRE,
         autoTransCache = _ref.autoTransCache;
     if (autoTransCache.has(comment)) return autoTransCache.get(comment);
     var result = comment;
@@ -15637,12 +15648,12 @@
             key = _step$value[0],
             value = _step$value[1];
 
-        if (!key.trim()) return "continue";
+        if (!trim(key)) return "continue";
         var trans = value.trans,
             type = value.type;
 
         if (type === '1') {
-          var re = new RegExp(parseRegExp(key), 'gi');
+          var re = new RegExp(parseRegExp(key, nounRE), 'gi');
           result = result.replace(re, function () {
             var _trans = trans;
 
@@ -15655,6 +15666,8 @@
 
               if (elemtMap[eleKey]) {
                 _trans = _trans.replace("$".concat(i), elemtMap[eleKey]);
+              } else if (nounMap.has(eleKey)) {
+                _trans = _trans.replace("$".concat(i), nounMap.get(eleKey));
               } else {
                 _trans = _trans.replace("$".concat(i), arr[i]);
               }
@@ -15842,77 +15855,85 @@
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
+              if (!(Game.lang === 'en')) {
+                _context2.next = 2;
+                break;
+              }
+
+              return _context2.abrupt("return", data);
+
+            case 2:
               if (!pathname.includes('/npc/npc/')) {
-                _context2.next = 6;
+                _context2.next = 8;
                 break;
               }
 
               if (!(!data.master || !data.master.id)) {
-                _context2.next = 3;
+                _context2.next = 5;
                 break;
               }
 
               return _context2.abrupt("return", data);
 
-            case 3:
+            case 5:
               npcId = "".concat(data.master.id);
-              _context2.next = 10;
+              _context2.next = 12;
               break;
 
-            case 6:
+            case 8:
               if (!pathname.includes('/archive/npc_detail')) {
-                _context2.next = 10;
+                _context2.next = 12;
                 break;
               }
 
               if (data.id) {
-                _context2.next = 9;
+                _context2.next = 11;
                 break;
               }
 
               return _context2.abrupt("return", data);
 
-            case 9:
+            case 11:
               npcId = data.id;
 
-            case 10:
-              _context2.next = 12;
+            case 12:
+              _context2.next = 14;
               return parseBuff(data);
 
-            case 12:
+            case 14:
               previewSkill(npcId);
               skillState = getLocalSkillData(npcId);
 
               if (skillState) {
-                _context2.next = 18;
+                _context2.next = 20;
                 break;
               }
 
-              _context2.next = 17;
+              _context2.next = 19;
               return getSkillData(npcId);
 
-            case 17:
+            case 19:
               skillState = _context2.sent;
 
-            case 18:
+            case 20:
               skillData = skillState.skillMap.get(npcId);
               translated = new Map();
               keys = skillState.skillKeys;
 
               if (!skillData) {
-                _context2.next = 70;
+                _context2.next = 72;
                 break;
               }
 
               _iteratorNormalCompletion3 = true;
               _didIteratorError3 = false;
               _iteratorError3 = undefined;
-              _context2.prev = 25;
+              _context2.prev = 27;
               _iterator3 = keys[Symbol.iterator]();
 
-            case 27:
+            case 29:
               if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
-                _context2.next = 54;
+                _context2.next = 56;
                 break;
               }
 
@@ -15922,28 +15943,28 @@
               ability = data[key1];
 
               if (ability) {
-                _context2.next = 38;
+                _context2.next = 40;
                 break;
               }
 
               if (data.ability) {
-                _context2.next = 35;
+                _context2.next = 37;
                 break;
               }
 
-              return _context2.abrupt("continue", 51);
+              return _context2.abrupt("continue", 53);
 
-            case 35:
+            case 37:
               ability = data.ability[key1];
 
               if (ability) {
-                _context2.next = 38;
+                _context2.next = 40;
                 break;
               }
 
-              return _context2.abrupt("continue", 51);
+              return _context2.abrupt("continue", 53);
 
-            case 38:
+            case 40:
               if (ability.recast_comment) {
                 ability.recast_comment = replaceTurn(ability.recast_comment);
               }
@@ -15952,34 +15973,34 @@
               _trans4 = skillData["skill-".concat(ability.name)];
 
               if (_trans4) {
-                _context2.next = 49;
+                _context2.next = 51;
                 break;
               }
 
               _trans4 = skillData["special-".concat(ability.name)];
 
               if (_trans4) {
-                _context2.next = 49;
+                _context2.next = 51;
                 break;
               }
 
               _trans4 = skillData[key2 + plus2];
 
               if (_trans4) {
-                _context2.next = 49;
+                _context2.next = 51;
                 break;
               }
 
               _trans4 = skillData[key2];
 
               if (_trans4) {
-                _context2.next = 49;
+                _context2.next = 51;
                 break;
               }
 
-              return _context2.abrupt("continue", 51);
+              return _context2.abrupt("continue", 53);
 
-            case 49:
+            case 51:
               if (_trans4.name) {
                 ability.name = _trans4.name + plus1;
               }
@@ -15989,46 +16010,46 @@
                 translated.set(key1, true);
               }
 
-            case 51:
+            case 53:
               _iteratorNormalCompletion3 = true;
-              _context2.next = 27;
-              break;
-
-            case 54:
-              _context2.next = 60;
+              _context2.next = 29;
               break;
 
             case 56:
-              _context2.prev = 56;
-              _context2.t0 = _context2["catch"](25);
+              _context2.next = 62;
+              break;
+
+            case 58:
+              _context2.prev = 58;
+              _context2.t0 = _context2["catch"](27);
               _didIteratorError3 = true;
               _iteratorError3 = _context2.t0;
 
-            case 60:
-              _context2.prev = 60;
-              _context2.prev = 61;
+            case 62:
+              _context2.prev = 62;
+              _context2.prev = 63;
 
               if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
                 _iterator3.return();
               }
 
-            case 63:
-              _context2.prev = 63;
+            case 65:
+              _context2.prev = 65;
 
               if (!_didIteratorError3) {
-                _context2.next = 66;
+                _context2.next = 68;
                 break;
               }
 
               throw _iteratorError3;
 
-            case 66:
-              return _context2.finish(63);
-
-            case 67:
-              return _context2.finish(60);
-
             case 68:
+              return _context2.finish(65);
+
+            case 69:
+              return _context2.finish(62);
+
+            case 70:
               if (data.master) {
                 trans = skillData['npc'];
 
@@ -16052,11 +16073,11 @@
                 if (_trans3 && _trans3.detail) data.comment = _trans3.detail;
               }
 
-            case 70:
-              _context2.next = 72;
+            case 72:
+              _context2.next = 74;
               return getCommSkillMap();
 
-            case 72:
+            case 74:
               keys.forEach(function (item) {
                 if (!translated.get(item[0])) {
                   var skill = data[item[0]];
@@ -16068,12 +16089,12 @@
               });
               return _context2.abrupt("return", data);
 
-            case 74:
+            case 76:
             case "end":
               return _context2.stop();
           }
         }
-      }, _callee2, this, [[25, 56, 60, 68], [61,, 63, 67]]);
+      }, _callee2, this, [[27, 58, 62, 70], [63,, 65, 69]]);
     }));
 
     return function parseSkill(_x2, _x3) {
