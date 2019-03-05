@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.7.4
+// @version      1.7.5
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -5602,7 +5602,7 @@
 	    const promise2 = new Promise(rev => {
 	      setTimeout(() => {
 	        rev(args[0]);
-	      }, 300);
+	      }, 500);
 	    });
 	    return Promise.race([promise1, promise2]);
 	  };
@@ -5920,7 +5920,7 @@
 	  return str;
 	};
 
-	var version = "1.7.4";
+	var version = "1.7.5";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -12087,7 +12087,7 @@ ${extraHtml}
 	};
 
 	const saveAutoTrans = debounce_1(() => {
-	  const arr = [...state.autoTransCache].slice(-80);
+	  const arr = [...state.autoTransCache].slice(-200);
 	  setLocalData('auto-trans', JSON.stringify(arr));
 	}, 500);
 
@@ -12195,7 +12195,7 @@ ${extraHtml}
 	};
 
 	function replaceTurn (str) {
-	  return str.replace('ターン', '回合').replace('turns', '回合').replace('turn', '回合').replace('Cooldown:', '使用间隔:').replace('使用間隔:', '使用间隔:');
+	  return str.replace('ターン', '回合').replace('turns', '回合').replace('turn', '回合').replace('Cooldown', '使用间隔').replace('使用間隔', '使用间隔').replace('初回召喚', '初次召唤').replace('後', '后');
 	}
 
 	const buffMap = {
@@ -12253,7 +12253,7 @@ ${extraHtml}
 	  }
 	};
 
-	const elemtRE = '([光闇水火風土無]|light|dark|water|wind|earth|fire|plain)';
+	const elemtRE = '([光闇水火風土無全]|light|dark|water|wind|earth|fire|plain|all)';
 	const elemtMap = {
 	  light: '光',
 	  '光': '光',
@@ -12268,7 +12268,9 @@ ${extraHtml}
 	  fire: '火',
 	  '火': '火',
 	  plain: '无',
-	  '無': '无'
+	  '無': '无',
+	  all: '全',
+	  '全': '全'
 	};
 	const numRE = '(\\d{1,10}\\.?\\d{0,4}?)';
 	const percentRE = '(\\d{1,10}\\.?\\d{0,4}?[%％])';
@@ -13271,6 +13273,57 @@ ${extraHtml}
 
 	var transBattle = race(battle);
 
+	const autoTrans = skill => {
+	  if (!skill.comment) return;
+	  skill.comment = transSkill(skill.comment, state);
+	};
+
+	const weaponSkill = async data => {
+	  await getCommSkillMap();
+
+	  if (data.skill1) {
+	    autoTrans(data.skill1);
+	  }
+
+	  if (data.skill2) {
+	    autoTrans(data.skill2);
+	  }
+
+	  if (data.special_skill) {
+	    autoTrans(data.special_skill);
+	  }
+
+	  return data;
+	};
+
+	const autoTrans$1 = (skill, type) => {
+	  if (!skill.comment) return;
+	  skill.comment = transSkill(skill.comment, state);
+
+	  if (type === 'call') {
+	    if (skill.recast_comment) skill.recast_comment = replaceTurn(skill.recast_comment);
+	    if (skill.start_recast_comment) skill.start_recast_comment = replaceTurn(skill.start_recast_comment);
+	  }
+	};
+
+	const summonSkill = async data => {
+	  await getCommSkillMap();
+
+	  if (data.skill) {
+	    autoTrans$1(data.skill);
+	  }
+
+	  if (data.sub_skill) {
+	    autoTrans$1(data.sub_skill);
+	  }
+
+	  if (data.special_skill) {
+	    autoTrans$1(data.special_skill, 'call');
+	  }
+
+	  return data;
+	};
+
 	const replaceTime = str => {
 	  if (!str) return str;
 	  return str.replace('時間', '小时');
@@ -13536,6 +13589,10 @@ ${extraHtml}
 	      await transBuff(data.condition);
 	    } else if (pathname.includes('/user/status')) {
 	      data = replaceHour(data, 'user');
+	    } else if (pathname.includes('/weapon/weapon/') || pathname.includes('/archive/weapon_detail')) {
+	      data = await weaponSkill(data);
+	    } else if (pathname.includes('/summon/summon/') || pathname.includes('/archive/summon_detail')) {
+	      data = await summonSkill(data);
 	    } else {
 	      return;
 	    }

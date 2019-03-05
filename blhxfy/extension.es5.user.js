@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.7.4
+// @version      1.7.5
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -8683,7 +8683,7 @@
       var promise2 = new Promise(function (rev) {
         setTimeout(function () {
           rev(args[0]);
-        }, 300);
+        }, 500);
       });
       return Promise.race([promise1, promise2]);
     };
@@ -9001,7 +9001,7 @@
     return str;
   };
 
-  var version = "1.7.4";
+  var version = "1.7.5";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -15583,7 +15583,7 @@
   }();
 
   var saveAutoTrans = debounce_1(function () {
-    var arr = _toConsumableArray(state.autoTransCache).slice(-80);
+    var arr = _toConsumableArray(state.autoTransCache).slice(-200);
 
     setLocalData('auto-trans', JSON.stringify(arr));
   }, 500);
@@ -15913,7 +15913,7 @@
   };
 
   function replaceTurn (str) {
-    return str.replace('ターン', '回合').replace('turns', '回合').replace('turn', '回合').replace('Cooldown:', '使用间隔:').replace('使用間隔:', '使用间隔:');
+    return str.replace('ターン', '回合').replace('turns', '回合').replace('turn', '回合').replace('Cooldown', '使用间隔').replace('使用間隔', '使用间隔').replace('初回召喚', '初次召唤').replace('後', '后');
   }
 
   var buffMap = {
@@ -16078,7 +16078,7 @@
     };
   }();
 
-  var elemtRE = '([光闇水火風土無]|light|dark|water|wind|earth|fire|plain)';
+  var elemtRE = '([光闇水火風土無全]|light|dark|water|wind|earth|fire|plain|all)';
   var elemtMap = {
     light: '光',
     '光': '光',
@@ -16093,7 +16093,9 @@
     fire: '火',
     '火': '火',
     plain: '无',
-    '無': '无'
+    '無': '无',
+    all: '全',
+    '全': '全'
   };
   var numRE = '(\\d{1,10}\\.?\\d{0,4}?)';
   var percentRE = '(\\d{1,10}\\.?\\d{0,4}?[%％])';
@@ -18522,6 +18524,103 @@
 
   var transBattle = race(battle);
 
+  var autoTrans = function autoTrans(skill) {
+    if (!skill.comment) return;
+    skill.comment = transSkill(skill.comment, state);
+  };
+
+  var weaponSkill =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data) {
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return getCommSkillMap();
+
+            case 2:
+              if (data.skill1) {
+                autoTrans(data.skill1);
+              }
+
+              if (data.skill2) {
+                autoTrans(data.skill2);
+              }
+
+              if (data.special_skill) {
+                autoTrans(data.special_skill);
+              }
+
+              return _context.abrupt("return", data);
+
+            case 6:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function weaponSkill(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var autoTrans$1 = function autoTrans(skill, type) {
+    if (!skill.comment) return;
+    skill.comment = transSkill(skill.comment, state);
+
+    if (type === 'call') {
+      if (skill.recast_comment) skill.recast_comment = replaceTurn(skill.recast_comment);
+      if (skill.start_recast_comment) skill.start_recast_comment = replaceTurn(skill.start_recast_comment);
+    }
+  };
+
+  var summonSkill =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data) {
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return getCommSkillMap();
+
+            case 2:
+              if (data.skill) {
+                autoTrans$1(data.skill);
+              }
+
+              if (data.sub_skill) {
+                autoTrans$1(data.sub_skill);
+              }
+
+              if (data.special_skill) {
+                autoTrans$1(data.special_skill, 'call');
+              }
+
+              return _context.abrupt("return", data);
+
+            case 6:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function summonSkill(_x) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
   var replaceTime = function replaceTime(str) {
     if (!str) return str;
     return str.replace('時間', '小时');
@@ -18914,7 +19013,7 @@
               }
 
               if (!(apiHosts.indexOf(hostname) !== -1)) {
-                _context.next = 90;
+                _context.next = 102;
                 break;
               }
 
@@ -18929,7 +19028,7 @@
 
             case 11:
               data = _context.sent;
-              _context.next = 88;
+              _context.next = 100;
               break;
 
             case 14:
@@ -18986,7 +19085,7 @@
 
             case 37:
               data = _context.sent;
-              _context.next = 88;
+              _context.next = 100;
               break;
 
             case 40:
@@ -19000,7 +19099,7 @@
 
             case 43:
               data = _context.sent;
-              _context.next = 88;
+              _context.next = 100;
               break;
 
             case 46:
@@ -19014,7 +19113,7 @@
 
             case 49:
               data = _context.sent;
-              _context.next = 88;
+              _context.next = 100;
               break;
 
             case 52:
@@ -19028,7 +19127,7 @@
 
             case 55:
               data = _context.sent;
-              _context.next = 88;
+              _context.next = 100;
               break;
 
             case 58:
@@ -19041,7 +19140,7 @@
               return showVoiceSub(data, pathname, 'list');
 
             case 61:
-              _context.next = 88;
+              _context.next = 100;
               break;
 
             case 63:
@@ -19060,7 +19159,7 @@
 
             case 69:
               data = _context.sent;
-              _context.next = 88;
+              _context.next = 100;
               break;
 
             case 72:
@@ -19074,7 +19173,7 @@
 
             case 75:
               data = _context.sent;
-              _context.next = 88;
+              _context.next = 100;
               break;
 
             case 78:
@@ -19087,7 +19186,7 @@
               return transBuff(data.condition);
 
             case 81:
-              _context.next = 88;
+              _context.next = 100;
               break;
 
             case 83:
@@ -19097,23 +19196,51 @@
               }
 
               data = replaceHour(data, 'user');
-              _context.next = 88;
+              _context.next = 100;
               break;
 
             case 87:
-              return _context.abrupt("return");
+              if (!(pathname.includes('/weapon/weapon/') || pathname.includes('/archive/weapon_detail'))) {
+                _context.next = 93;
+                break;
+              }
 
-            case 88:
-              _context.next = 91;
-              break;
+              _context.next = 90;
+              return weaponSkill(data);
 
             case 90:
+              data = _context.sent;
+              _context.next = 100;
+              break;
+
+            case 93:
+              if (!(pathname.includes('/summon/summon/') || pathname.includes('/archive/summon_detail'))) {
+                _context.next = 99;
+                break;
+              }
+
+              _context.next = 96;
+              return summonSkill(data);
+
+            case 96:
+              data = _context.sent;
+              _context.next = 100;
+              break;
+
+            case 99:
               return _context.abrupt("return");
 
-            case 91:
+            case 100:
+              _context.next = 103;
+              break;
+
+            case 102:
+              return _context.abrupt("return");
+
+            case 103:
               state.result = isJSON ? JSON.stringify(data) : data;
 
-            case 92:
+            case 104:
             case "end":
               return _context.stop();
           }
