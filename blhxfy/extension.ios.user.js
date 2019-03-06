@@ -5580,13 +5580,13 @@
 	  return [plusStr, plusStr2, _str];
 	};
 
-	const race = func => {
+	const race = (func, time = 500) => {
 	  return function (...args) {
 	    const promise1 = func(...args);
 	    const promise2 = new Promise(rev => {
 	      setTimeout(() => {
 	        rev(args[0]);
-	      }, 500);
+	      }, time);
 	    });
 	    return Promise.race([promise1, promise2]);
 	  };
@@ -5904,7 +5904,7 @@
 	  return str;
 	};
 
-	var version = "1.7.5";
+	var version = "1.8.0";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -5995,20 +5995,14 @@
 	};
 
 	const load = new Promise((rev, rej) => {
-	  let timer;
 	  window.addEventListener('load', () => {
 	    const iframe = document.createElement('iframe');
 	    iframe.src = `${origin}/blhxfy/lacia.html`;
 	    iframe.style.display = 'none';
 	    document.body.appendChild(iframe);
 	    lacia = iframe.contentWindow;
-	    timer = setTimeout(() => {
-	      rej('加载lacia.html超时');
-	      timeoutStyle();
-	    }, config.timeout * 1000);
 	  });
 	  ee.once('loaded', () => {
-	    clearTimeout(timer);
 	    rev();
 	  });
 	});
@@ -6039,18 +6033,83 @@
 	  });
 	};
 
-	const getHash = fetchData('/blhxfy/manifest.json').then(data => {
-	  config.newVersion = data.version;
-	  return data.hash;
-	}).then(hash => {
-	  config.hash = hash;
-	  insertCSS('BLHXFY');
-	  return hash;
+	let fetchInfo = {
+	  status: 'init',
+	  result: false,
+	  data: null
+	};
+
+	const tryFetch = async () => {
+	  if (window.fetch) {
+	    if (sessionStorage.getItem('blhxfy:cors') === 'disabled') {
+	      fetchInfo.status = 'finished';
+	      return;
+	    }
+
+	    try {
+	      const res = await fetch(`${origin}/blhxfy/manifest.json`);
+	      const data = await res.json();
+	      fetchInfo.data = data;
+	      fetchInfo.result = true;
+	      sessionStorage.setItem('blhxfy:cors', 'enabled');
+	    } catch (e) {
+	      sessionStorage.setItem('blhxfy:cors', 'disabled');
+	    }
+	  }
+
+	  fetchInfo.status = 'finished';
+	};
+
+	const request = async pathname => {
+	  if (fetchInfo.result) {
+	    return new Promise((rev, rej) => {
+	      let timer = setTimeout(() => {
+	        rej(`加载${pathname}超时`);
+	        timeoutStyle();
+	      }, config.timeout * 1000);
+	      fetch(`${origin}${pathname}`).then(res => {
+	        clearTimeout(timer);
+	        const type = res.headers.get('content-type');
+
+	        if (type.includes('json')) {
+	          return res.json();
+	        }
+
+	        return res.text();
+	      }).then(rev).catch(rej);
+	    });
+	  } else {
+	    return await fetchData(pathname);
+	  }
+	};
+
+	const getHash = new Promise((rev, rej) => {
+	  if (fetchInfo.status !== 'finished') {
+	    tryFetch().then(() => {
+	      const beforeStart = data => {
+	        config.newVersion = data.version;
+	        config.hash = data.hash;
+	        insertCSS('BLHXFY');
+	      };
+
+	      if (fetchInfo.result) {
+	        beforeStart(fetchInfo.data);
+	        rev(fetchInfo.data.hash);
+	      } else {
+	        fetchData('/blhxfy/manifest.json').then(data => {
+	          beforeStart(data);
+	          rev(data.hash);
+	        });
+	      }
+	    });
+	  } else {
+	    rev(fetchInfo.data.hash);
+	  }
 	});
 
 	const fetchWithHash = async pathname => {
 	  const hash = await getHash;
-	  const data = await fetchData(`${pathname}?lacia=${hash}`);
+	  const data = await request(`${pathname}?lacia=${hash}`);
 	  return data;
 	};
 
@@ -10740,7 +10799,7 @@ ${extraHtml}
 
 	const CROSS_DOMAIN_REQ = !!window.GM_xmlhttpRequest;
 
-	const request = (url, option, type) => {
+	const request$1 = (url, option, type) => {
 	  const {
 	    method = 'GET',
 	    headers,
@@ -11120,7 +11179,7 @@ ${extraHtml}
 	  });
 
 	  try {
-	    const res = await request(`https://translate.google.cn/translate_a/single?${query}`, {
+	    const res = await request$1(`https://translate.google.cn/translate_a/single?${query}`, {
 	      data: data.toString(),
 	      method: 'POST',
 	      headers: {
@@ -11153,7 +11212,7 @@ ${extraHtml}
 	  };
 
 	  try {
-	    const res = await request('https://api.interpreter.caiyunai.com/v1/translator', {
+	    const res = await request$1('https://api.interpreter.caiyunai.com/v1/translator', {
 	      data: JSON.stringify(data),
 	      method: 'POST',
 	      headers: {

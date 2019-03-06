@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.7.5
+// @version      1.8.0
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -8674,6 +8674,7 @@
   };
 
   var race = function race(func) {
+    var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 500;
     return function () {
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
@@ -8683,7 +8684,7 @@
       var promise2 = new Promise(function (rev) {
         setTimeout(function () {
           rev(args[0]);
-        }, 500);
+        }, time);
       });
       return Promise.race([promise1, promise2]);
     };
@@ -9001,7 +9002,7 @@
     return str;
   };
 
-  var version = "1.7.5";
+  var version = "1.8.0";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -9085,20 +9086,14 @@
   };
 
   var load = new Promise(function (rev, rej) {
-    var timer;
     window.addEventListener('load', function () {
       var iframe = document.createElement('iframe');
       iframe.src = "".concat(origin, "/blhxfy/lacia.html");
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
       lacia = iframe.contentWindow;
-      timer = setTimeout(function () {
-        rej('加载lacia.html超时');
-        timeoutStyle();
-      }, config.timeout * 1000);
     });
     ee.once('loaded', function () {
-      clearTimeout(timer);
       rev();
     });
   });
@@ -9154,48 +9149,184 @@
     };
   }();
 
-  var getHash = fetchData('/blhxfy/manifest.json').then(function (data) {
-    config.newVersion = data.version;
-    return data.hash;
-  }).then(function (hash) {
-    config.hash = hash;
-    insertCSS('BLHXFY');
-    return hash;
+  var fetchInfo = {
+    status: 'init',
+    result: false,
+    data: null
+  };
+
+  var tryFetch =
+  /*#__PURE__*/
+  function () {
+    var _ref2 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee2() {
+      var res, data;
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              if (!window.fetch) {
+                _context2.next = 19;
+                break;
+              }
+
+              if (!(sessionStorage.getItem('blhxfy:cors') === 'disabled')) {
+                _context2.next = 4;
+                break;
+              }
+
+              fetchInfo.status = 'finished';
+              return _context2.abrupt("return");
+
+            case 4:
+              _context2.prev = 4;
+              _context2.next = 7;
+              return fetch("".concat(origin, "/blhxfy/manifest.json"));
+
+            case 7:
+              res = _context2.sent;
+              _context2.next = 10;
+              return res.json();
+
+            case 10:
+              data = _context2.sent;
+              fetchInfo.data = data;
+              fetchInfo.result = true;
+              sessionStorage.setItem('blhxfy:cors', 'enabled');
+              _context2.next = 19;
+              break;
+
+            case 16:
+              _context2.prev = 16;
+              _context2.t0 = _context2["catch"](4);
+              sessionStorage.setItem('blhxfy:cors', 'disabled');
+
+            case 19:
+              fetchInfo.status = 'finished';
+
+            case 20:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, null, [[4, 16]]);
+    }));
+
+    return function tryFetch() {
+      return _ref2.apply(this, arguments);
+    };
+  }();
+
+  var request =
+  /*#__PURE__*/
+  function () {
+    var _ref3 = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee3(pathname) {
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              if (!fetchInfo.result) {
+                _context3.next = 4;
+                break;
+              }
+
+              return _context3.abrupt("return", new Promise(function (rev, rej) {
+                var timer = setTimeout(function () {
+                  rej("\u52A0\u8F7D".concat(pathname, "\u8D85\u65F6"));
+                  timeoutStyle();
+                }, config.timeout * 1000);
+                fetch("".concat(origin).concat(pathname)).then(function (res) {
+                  clearTimeout(timer);
+                  var type = res.headers.get('content-type');
+
+                  if (type.includes('json')) {
+                    return res.json();
+                  }
+
+                  return res.text();
+                }).then(rev).catch(rej);
+              }));
+
+            case 4:
+              _context3.next = 6;
+              return fetchData(pathname);
+
+            case 6:
+              return _context3.abrupt("return", _context3.sent);
+
+            case 7:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }));
+
+    return function request(_x2) {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+
+  var getHash = new Promise(function (rev, rej) {
+    if (fetchInfo.status !== 'finished') {
+      tryFetch().then(function () {
+        var beforeStart = function beforeStart(data) {
+          config.newVersion = data.version;
+          config.hash = data.hash;
+          insertCSS('BLHXFY');
+        };
+
+        if (fetchInfo.result) {
+          beforeStart(fetchInfo.data);
+          rev(fetchInfo.data.hash);
+        } else {
+          fetchData('/blhxfy/manifest.json').then(function (data) {
+            beforeStart(data);
+            rev(data.hash);
+          });
+        }
+      });
+    } else {
+      rev(fetchInfo.data.hash);
+    }
   });
 
   var fetchWithHash =
   /*#__PURE__*/
   function () {
-    var _ref2 = _asyncToGenerator(
+    var _ref4 = _asyncToGenerator(
     /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(pathname) {
+    regeneratorRuntime.mark(function _callee4(pathname) {
       var hash, data;
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      return regeneratorRuntime.wrap(function _callee4$(_context4) {
         while (1) {
-          switch (_context2.prev = _context2.next) {
+          switch (_context4.prev = _context4.next) {
             case 0:
-              _context2.next = 2;
+              _context4.next = 2;
               return getHash;
 
             case 2:
-              hash = _context2.sent;
-              _context2.next = 5;
-              return fetchData("".concat(pathname, "?lacia=").concat(hash));
+              hash = _context4.sent;
+              _context4.next = 5;
+              return request("".concat(pathname, "?lacia=").concat(hash));
 
             case 5:
-              data = _context2.sent;
-              return _context2.abrupt("return", data);
+              data = _context4.sent;
+              return _context4.abrupt("return", data);
 
             case 7:
             case "end":
-              return _context2.stop();
+              return _context4.stop();
           }
         }
-      }, _callee2);
+      }, _callee4);
     }));
 
-    return function fetchWithHash(_x2) {
-      return _ref2.apply(this, arguments);
+    return function fetchWithHash(_x3) {
+      return _ref4.apply(this, arguments);
     };
   }();
 
@@ -13639,7 +13770,7 @@
 
   var CROSS_DOMAIN_REQ = !!window.GM_xmlhttpRequest;
 
-  var request = function request(url, option, type) {
+  var request$1 = function request(url, option, type) {
     var _option$method = option.method,
         method = _option$method === void 0 ? 'GET' : _option$method,
         headers = option.headers,
@@ -14038,7 +14169,7 @@
               });
               _context.prev = 6;
               _context.next = 9;
-              return request("https://translate.google.cn/translate_a/single?".concat(query), {
+              return request$1("https://translate.google.cn/translate_a/single?".concat(query), {
                 data: data.toString(),
                 method: 'POST',
                 headers: {
@@ -14106,7 +14237,7 @@
               };
               _context2.prev = 4;
               _context2.next = 7;
-              return request('https://api.interpreter.caiyunai.com/v1/translator', {
+              return request$1('https://api.interpreter.caiyunai.com/v1/translator', {
                 data: JSON.stringify(data),
                 method: 'POST',
                 headers: {
