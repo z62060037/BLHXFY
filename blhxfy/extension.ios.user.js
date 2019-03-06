@@ -5904,7 +5904,7 @@
 	  return str;
 	};
 
-	var version = "1.8.0";
+	var version = "1.8.1";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -13367,6 +13367,60 @@ ${extraHtml}
 	  return data;
 	};
 
+	const comicMap = new Map();
+	let loaded$9 = false;
+
+	const getComicData = async () => {
+	  if (!loaded$9) {
+	    const csv = await fetchWithHash('/blhxfy/data/comic.csv');
+	    const list = parseCsv(csv);
+	    list.forEach(item => {
+	      const id = trim(item.id);
+	      const title = filter(trim(item.title));
+	      const url = filter(trim(item.url));
+
+	      if (id && url) {
+	        comicMap.set(id, {
+	          title,
+	          url
+	        });
+	      }
+	    });
+	    loaded$9 = true;
+	  }
+
+	  return comicMap;
+	};
+
+	const comic = async (data, pathname) => {
+	  const rgs = pathname.match(/\/comic\/content\/episode\/(\d+)/);
+
+	  if (rgs && rgs[1]) {
+	    let html;
+
+	    try {
+	      html = decodeURIComponent(data.data);
+	    } catch (err) {
+	      return data;
+	    }
+
+	    const id = rgs[1];
+	    const comicMap = await getComicData();
+	    const info = comicMap.get(id);
+
+	    if (info) {
+	      if (info.title) {
+	        html = html.replace(/(<div\s+class=["']*prt-episode-title["']*>)[^<]*(<\/div>)/, `$1${info.title}$2`);
+	      }
+
+	      html = html.replace(/(<img\s+class=["']*img-episode["']* src=["']*)[^\s"'>]+(?=[\s"'>])/, `$1${info.url}`);
+	      data.data = encodeURIComponent(html);
+	    }
+	  }
+
+	  return data;
+	};
+
 	const replaceTime = str => {
 	  if (!str) return str;
 	  return str.replace('時間', '小时');
@@ -13401,6 +13455,10 @@ ${extraHtml}
 	};
 
 	const replaceHour = (data, type) => {
+	  if (!data.status && !data.option && !data.option.user_status) {
+	    return data;
+	  }
+
 	  let status;
 
 	  try {
@@ -13422,10 +13480,10 @@ ${extraHtml}
 	};
 
 	const voiceMap = new Map();
-	let loaded$9 = false;
+	let loaded$a = false;
 
 	const getTownData$1 = async () => {
-	  if (!loaded$9) {
+	  if (!loaded$a) {
 	    const csv = await fetchWithHash('/blhxfy/data/voice-mypage.csv');
 	    const list = parseCsv(csv);
 	    list.forEach(item => {
@@ -13440,7 +13498,7 @@ ${extraHtml}
 	        });
 	      }
 	    });
-	    loaded$9 = true;
+	    loaded$a = true;
 	  }
 
 	  return voiceMap;
@@ -13602,19 +13660,21 @@ ${extraHtml}
 	          getUserName(data);
 	        }
 
-	        data = await transLangMsg(data, pathname);
-
 	        if (pathname.includes('/user/content/index')) {
 	          data = await transTownInfo(data, pathname);
 	          data = await pageIndex(data, pathname);
 	        } else {
 	          data = replaceHour(data);
 	        }
+
+	        if (pathname.includes('/comic/content/episode/')) {
+	          data = await comic(data, pathname);
+	        }
 	      } catch (err) {
 	        console.error(err);
 	      }
 
-	      data = await transHTML(data, pathname);
+	      await Promise.all([transLangMsg(data, pathname), transHTML(data, pathname)]);
 	    } else if (pathname.includes('/npc/npc/') || pathname.includes('/archive/npc_detail')) {
 	      data = await parseSkill(data, pathname);
 	    } else if (pathname.includes('/party_ability_subaction/') || pathname.includes('/party/job/') || pathname.includes('/party/ability_list/') || pathname.includes('/zenith/ability_list/') || pathname.includes('/party/job_info/')) {

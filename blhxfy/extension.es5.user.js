@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.0
+// @version      1.8.1
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -2073,6 +2073,511 @@
       });
     });
   }
+  });
+
+  // 7.3.20 SpeciesConstructor(O, defaultConstructor)
+
+
+  var SPECIES$1 = _wks('species');
+  var _speciesConstructor = function (O, D) {
+    var C = _anObject(O).constructor;
+    var S;
+    return C === undefined || (S = _anObject(C)[SPECIES$1]) == undefined ? D : _aFunction(S);
+  };
+
+  // fast apply, http://jsperf.lnkit.com/fast-apply/5
+  var _invoke = function (fn, args, that) {
+    var un = that === undefined;
+    switch (args.length) {
+      case 0: return un ? fn()
+                        : fn.call(that);
+      case 1: return un ? fn(args[0])
+                        : fn.call(that, args[0]);
+      case 2: return un ? fn(args[0], args[1])
+                        : fn.call(that, args[0], args[1]);
+      case 3: return un ? fn(args[0], args[1], args[2])
+                        : fn.call(that, args[0], args[1], args[2]);
+      case 4: return un ? fn(args[0], args[1], args[2], args[3])
+                        : fn.call(that, args[0], args[1], args[2], args[3]);
+    } return fn.apply(that, args);
+  };
+
+  var process = _global.process;
+  var setTask = _global.setImmediate;
+  var clearTask = _global.clearImmediate;
+  var MessageChannel = _global.MessageChannel;
+  var Dispatch = _global.Dispatch;
+  var counter = 0;
+  var queue = {};
+  var ONREADYSTATECHANGE = 'onreadystatechange';
+  var defer, channel, port;
+  var run = function () {
+    var id = +this;
+    // eslint-disable-next-line no-prototype-builtins
+    if (queue.hasOwnProperty(id)) {
+      var fn = queue[id];
+      delete queue[id];
+      fn();
+    }
+  };
+  var listener = function (event) {
+    run.call(event.data);
+  };
+  // Node.js 0.9+ & IE10+ has setImmediate, otherwise:
+  if (!setTask || !clearTask) {
+    setTask = function setImmediate(fn) {
+      var args = [];
+      var i = 1;
+      while (arguments.length > i) args.push(arguments[i++]);
+      queue[++counter] = function () {
+        // eslint-disable-next-line no-new-func
+        _invoke(typeof fn == 'function' ? fn : Function(fn), args);
+      };
+      defer(counter);
+      return counter;
+    };
+    clearTask = function clearImmediate(id) {
+      delete queue[id];
+    };
+    // Node.js 0.8-
+    if (_cof(process) == 'process') {
+      defer = function (id) {
+        process.nextTick(_ctx(run, id, 1));
+      };
+    // Sphere (JS game engine) Dispatch API
+    } else if (Dispatch && Dispatch.now) {
+      defer = function (id) {
+        Dispatch.now(_ctx(run, id, 1));
+      };
+    // Browsers with MessageChannel, includes WebWorkers
+    } else if (MessageChannel) {
+      channel = new MessageChannel();
+      port = channel.port2;
+      channel.port1.onmessage = listener;
+      defer = _ctx(port.postMessage, port, 1);
+    // Browsers with postMessage, skip WebWorkers
+    // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
+    } else if (_global.addEventListener && typeof postMessage == 'function' && !_global.importScripts) {
+      defer = function (id) {
+        _global.postMessage(id + '', '*');
+      };
+      _global.addEventListener('message', listener, false);
+    // IE8-
+    } else if (ONREADYSTATECHANGE in _domCreate('script')) {
+      defer = function (id) {
+        _html.appendChild(_domCreate('script'))[ONREADYSTATECHANGE] = function () {
+          _html.removeChild(this);
+          run.call(id);
+        };
+      };
+    // Rest old browsers
+    } else {
+      defer = function (id) {
+        setTimeout(_ctx(run, id, 1), 0);
+      };
+    }
+  }
+  var _task = {
+    set: setTask,
+    clear: clearTask
+  };
+
+  var macrotask = _task.set;
+  var Observer = _global.MutationObserver || _global.WebKitMutationObserver;
+  var process$1 = _global.process;
+  var Promise$1 = _global.Promise;
+  var isNode = _cof(process$1) == 'process';
+
+  var _microtask = function () {
+    var head, last, notify;
+
+    var flush = function () {
+      var parent, fn;
+      if (isNode && (parent = process$1.domain)) parent.exit();
+      while (head) {
+        fn = head.fn;
+        head = head.next;
+        try {
+          fn();
+        } catch (e) {
+          if (head) notify();
+          else last = undefined;
+          throw e;
+        }
+      } last = undefined;
+      if (parent) parent.enter();
+    };
+
+    // Node.js
+    if (isNode) {
+      notify = function () {
+        process$1.nextTick(flush);
+      };
+    // browsers with MutationObserver, except iOS Safari - https://github.com/zloirock/core-js/issues/339
+    } else if (Observer && !(_global.navigator && _global.navigator.standalone)) {
+      var toggle = true;
+      var node = document.createTextNode('');
+      new Observer(flush).observe(node, { characterData: true }); // eslint-disable-line no-new
+      notify = function () {
+        node.data = toggle = !toggle;
+      };
+    // environments with maybe non-completely correct, but existent Promise
+    } else if (Promise$1 && Promise$1.resolve) {
+      // Promise.resolve without an argument throws an error in LG WebOS 2
+      var promise = Promise$1.resolve(undefined);
+      notify = function () {
+        promise.then(flush);
+      };
+    // for other environments - macrotask based on:
+    // - setImmediate
+    // - MessageChannel
+    // - window.postMessag
+    // - onreadystatechange
+    // - setTimeout
+    } else {
+      notify = function () {
+        // strange IE + webpack dev server bug - use .call(global)
+        macrotask.call(_global, flush);
+      };
+    }
+
+    return function (fn) {
+      var task = { fn: fn, next: undefined };
+      if (last) last.next = task;
+      if (!head) {
+        head = task;
+        notify();
+      } last = task;
+    };
+  };
+
+  // 25.4.1.5 NewPromiseCapability(C)
+
+
+  function PromiseCapability(C) {
+    var resolve, reject;
+    this.promise = new C(function ($$resolve, $$reject) {
+      if (resolve !== undefined || reject !== undefined) throw TypeError('Bad Promise constructor');
+      resolve = $$resolve;
+      reject = $$reject;
+    });
+    this.resolve = _aFunction(resolve);
+    this.reject = _aFunction(reject);
+  }
+
+  var f$4 = function (C) {
+    return new PromiseCapability(C);
+  };
+
+  var _newPromiseCapability = {
+  	f: f$4
+  };
+
+  var _perform = function (exec) {
+    try {
+      return { e: false, v: exec() };
+    } catch (e) {
+      return { e: true, v: e };
+    }
+  };
+
+  var navigator = _global.navigator;
+
+  var _userAgent = navigator && navigator.userAgent || '';
+
+  var _promiseResolve = function (C, x) {
+    _anObject(C);
+    if (_isObject(x) && x.constructor === C) return x;
+    var promiseCapability = _newPromiseCapability.f(C);
+    var resolve = promiseCapability.resolve;
+    resolve(x);
+    return promiseCapability.promise;
+  };
+
+  var SPECIES$2 = _wks('species');
+
+  var _setSpecies = function (KEY) {
+    var C = _global[KEY];
+    if (_descriptors && C && !C[SPECIES$2]) _objectDp.f(C, SPECIES$2, {
+      configurable: true,
+      get: function () { return this; }
+    });
+  };
+
+  var task = _task.set;
+  var microtask = _microtask();
+
+
+
+
+  var PROMISE = 'Promise';
+  var TypeError$1 = _global.TypeError;
+  var process$2 = _global.process;
+  var versions = process$2 && process$2.versions;
+  var v8 = versions && versions.v8 || '';
+  var $Promise = _global[PROMISE];
+  var isNode$1 = _classof(process$2) == 'process';
+  var empty = function () { /* empty */ };
+  var Internal, newGenericPromiseCapability, OwnPromiseCapability, Wrapper;
+  var newPromiseCapability = newGenericPromiseCapability = _newPromiseCapability.f;
+
+  var USE_NATIVE = !!function () {
+    try {
+      // correct subclassing with @@species support
+      var promise = $Promise.resolve(1);
+      var FakePromise = (promise.constructor = {})[_wks('species')] = function (exec) {
+        exec(empty, empty);
+      };
+      // unhandled rejections tracking support, NodeJS Promise without it fails @@species test
+      return (isNode$1 || typeof PromiseRejectionEvent == 'function')
+        && promise.then(empty) instanceof FakePromise
+        // v8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
+        // we can't detect it synchronously, so just check versions
+        && v8.indexOf('6.6') !== 0
+        && _userAgent.indexOf('Chrome/66') === -1;
+    } catch (e) { /* empty */ }
+  }();
+
+  // helpers
+  var isThenable = function (it) {
+    var then;
+    return _isObject(it) && typeof (then = it.then) == 'function' ? then : false;
+  };
+  var notify = function (promise, isReject) {
+    if (promise._n) return;
+    promise._n = true;
+    var chain = promise._c;
+    microtask(function () {
+      var value = promise._v;
+      var ok = promise._s == 1;
+      var i = 0;
+      var run = function (reaction) {
+        var handler = ok ? reaction.ok : reaction.fail;
+        var resolve = reaction.resolve;
+        var reject = reaction.reject;
+        var domain = reaction.domain;
+        var result, then, exited;
+        try {
+          if (handler) {
+            if (!ok) {
+              if (promise._h == 2) onHandleUnhandled(promise);
+              promise._h = 1;
+            }
+            if (handler === true) result = value;
+            else {
+              if (domain) domain.enter();
+              result = handler(value); // may throw
+              if (domain) {
+                domain.exit();
+                exited = true;
+              }
+            }
+            if (result === reaction.promise) {
+              reject(TypeError$1('Promise-chain cycle'));
+            } else if (then = isThenable(result)) {
+              then.call(result, resolve, reject);
+            } else resolve(result);
+          } else reject(value);
+        } catch (e) {
+          if (domain && !exited) domain.exit();
+          reject(e);
+        }
+      };
+      while (chain.length > i) run(chain[i++]); // variable length - can't use forEach
+      promise._c = [];
+      promise._n = false;
+      if (isReject && !promise._h) onUnhandled(promise);
+    });
+  };
+  var onUnhandled = function (promise) {
+    task.call(_global, function () {
+      var value = promise._v;
+      var unhandled = isUnhandled(promise);
+      var result, handler, console;
+      if (unhandled) {
+        result = _perform(function () {
+          if (isNode$1) {
+            process$2.emit('unhandledRejection', value, promise);
+          } else if (handler = _global.onunhandledrejection) {
+            handler({ promise: promise, reason: value });
+          } else if ((console = _global.console) && console.error) {
+            console.error('Unhandled promise rejection', value);
+          }
+        });
+        // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
+        promise._h = isNode$1 || isUnhandled(promise) ? 2 : 1;
+      } promise._a = undefined;
+      if (unhandled && result.e) throw result.v;
+    });
+  };
+  var isUnhandled = function (promise) {
+    return promise._h !== 1 && (promise._a || promise._c).length === 0;
+  };
+  var onHandleUnhandled = function (promise) {
+    task.call(_global, function () {
+      var handler;
+      if (isNode$1) {
+        process$2.emit('rejectionHandled', promise);
+      } else if (handler = _global.onrejectionhandled) {
+        handler({ promise: promise, reason: promise._v });
+      }
+    });
+  };
+  var $reject = function (value) {
+    var promise = this;
+    if (promise._d) return;
+    promise._d = true;
+    promise = promise._w || promise; // unwrap
+    promise._v = value;
+    promise._s = 2;
+    if (!promise._a) promise._a = promise._c.slice();
+    notify(promise, true);
+  };
+  var $resolve = function (value) {
+    var promise = this;
+    var then;
+    if (promise._d) return;
+    promise._d = true;
+    promise = promise._w || promise; // unwrap
+    try {
+      if (promise === value) throw TypeError$1("Promise can't be resolved itself");
+      if (then = isThenable(value)) {
+        microtask(function () {
+          var wrapper = { _w: promise, _d: false }; // wrap
+          try {
+            then.call(value, _ctx($resolve, wrapper, 1), _ctx($reject, wrapper, 1));
+          } catch (e) {
+            $reject.call(wrapper, e);
+          }
+        });
+      } else {
+        promise._v = value;
+        promise._s = 1;
+        notify(promise, false);
+      }
+    } catch (e) {
+      $reject.call({ _w: promise, _d: false }, e); // wrap
+    }
+  };
+
+  // constructor polyfill
+  if (!USE_NATIVE) {
+    // 25.4.3.1 Promise(executor)
+    $Promise = function Promise(executor) {
+      _anInstance(this, $Promise, PROMISE, '_h');
+      _aFunction(executor);
+      Internal.call(this);
+      try {
+        executor(_ctx($resolve, this, 1), _ctx($reject, this, 1));
+      } catch (err) {
+        $reject.call(this, err);
+      }
+    };
+    // eslint-disable-next-line no-unused-vars
+    Internal = function Promise(executor) {
+      this._c = [];             // <- awaiting reactions
+      this._a = undefined;      // <- checked in isUnhandled reactions
+      this._s = 0;              // <- state
+      this._d = false;          // <- done
+      this._v = undefined;      // <- value
+      this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
+      this._n = false;          // <- notify
+    };
+    Internal.prototype = _redefineAll($Promise.prototype, {
+      // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
+      then: function then(onFulfilled, onRejected) {
+        var reaction = newPromiseCapability(_speciesConstructor(this, $Promise));
+        reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
+        reaction.fail = typeof onRejected == 'function' && onRejected;
+        reaction.domain = isNode$1 ? process$2.domain : undefined;
+        this._c.push(reaction);
+        if (this._a) this._a.push(reaction);
+        if (this._s) notify(this, false);
+        return reaction.promise;
+      },
+      // 25.4.5.1 Promise.prototype.catch(onRejected)
+      'catch': function (onRejected) {
+        return this.then(undefined, onRejected);
+      }
+    });
+    OwnPromiseCapability = function () {
+      var promise = new Internal();
+      this.promise = promise;
+      this.resolve = _ctx($resolve, promise, 1);
+      this.reject = _ctx($reject, promise, 1);
+    };
+    _newPromiseCapability.f = newPromiseCapability = function (C) {
+      return C === $Promise || C === Wrapper
+        ? new OwnPromiseCapability(C)
+        : newGenericPromiseCapability(C);
+    };
+  }
+
+  _export(_export.G + _export.W + _export.F * !USE_NATIVE, { Promise: $Promise });
+  _setToStringTag($Promise, PROMISE);
+  _setSpecies(PROMISE);
+  Wrapper = _core[PROMISE];
+
+  // statics
+  _export(_export.S + _export.F * !USE_NATIVE, PROMISE, {
+    // 25.4.4.5 Promise.reject(r)
+    reject: function reject(r) {
+      var capability = newPromiseCapability(this);
+      var $$reject = capability.reject;
+      $$reject(r);
+      return capability.promise;
+    }
+  });
+  _export(_export.S + _export.F * (_library || !USE_NATIVE), PROMISE, {
+    // 25.4.4.6 Promise.resolve(x)
+    resolve: function resolve(x) {
+      return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
+    }
+  });
+  _export(_export.S + _export.F * !(USE_NATIVE && _iterDetect(function (iter) {
+    $Promise.all(iter)['catch'](empty);
+  })), PROMISE, {
+    // 25.4.4.1 Promise.all(iterable)
+    all: function all(iterable) {
+      var C = this;
+      var capability = newPromiseCapability(C);
+      var resolve = capability.resolve;
+      var reject = capability.reject;
+      var result = _perform(function () {
+        var values = [];
+        var index = 0;
+        var remaining = 1;
+        _forOf(iterable, false, function (promise) {
+          var $index = index++;
+          var alreadyCalled = false;
+          values.push(undefined);
+          remaining++;
+          C.resolve(promise).then(function (value) {
+            if (alreadyCalled) return;
+            alreadyCalled = true;
+            values[$index] = value;
+            --remaining || resolve(values);
+          }, reject);
+        });
+        --remaining || resolve(values);
+      });
+      if (result.e) reject(result.v);
+      return capability.promise;
+    },
+    // 25.4.4.4 Promise.race(iterable)
+    race: function race(iterable) {
+      var C = this;
+      var capability = newPromiseCapability(C);
+      var reject = capability.reject;
+      var result = _perform(function () {
+        _forOf(iterable, false, function (promise) {
+          C.resolve(promise).then(capability.resolve, reject);
+        });
+      });
+      if (result.e) reject(result.v);
+      return capability.promise;
+    }
   });
 
   // https://github.com/tc39/Array.prototype.includes
@@ -5421,10 +5926,10 @@
 
   _export(_export.S + _export.F, 'Object', { assign: _objectAssign });
 
-  var f$4 = _wks;
+  var f$5 = _wks;
 
   var _wksExt = {
-  	f: f$4
+  	f: f$5
   };
 
   var defineProperty = _objectDp.f;
@@ -5455,12 +5960,12 @@
 
   var hiddenKeys = _enumBugKeys.concat('length', 'prototype');
 
-  var f$5 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+  var f$6 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
     return _objectKeysInternal(O, hiddenKeys);
   };
 
   var _objectGopn = {
-  	f: f$5
+  	f: f$6
   };
 
   // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
@@ -5479,12 +5984,12 @@
     }
   };
 
-  var f$6 = function getOwnPropertyNames(it) {
+  var f$7 = function getOwnPropertyNames(it) {
     return windowNames && toString$1.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(_toIobject(it));
   };
 
   var _objectGopnExt = {
-  	f: f$6
+  	f: f$7
   };
 
   // ECMAScript 6 symbols shim
@@ -5527,7 +6032,7 @@
   var AllSymbols = _shared('symbols');
   var OPSymbols = _shared('op-symbols');
   var ObjectProto$1 = Object[PROTOTYPE$2];
-  var USE_NATIVE = typeof $Symbol == 'function';
+  var USE_NATIVE$1 = typeof $Symbol == 'function';
   var QObject = _global.QObject;
   // Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
   var setter = !QObject || !QObject[PROTOTYPE$2] || !QObject[PROTOTYPE$2].findChild;
@@ -5550,7 +6055,7 @@
     return sym;
   };
 
-  var isSymbol = USE_NATIVE && typeof $Symbol.iterator == 'symbol' ? function (it) {
+  var isSymbol = USE_NATIVE$1 && typeof $Symbol.iterator == 'symbol' ? function (it) {
     return typeof it == 'symbol';
   } : function (it) {
     return it instanceof $Symbol;
@@ -5617,7 +6122,7 @@
   };
 
   // 19.4.1.1 Symbol([description])
-  if (!USE_NATIVE) {
+  if (!USE_NATIVE$1) {
     $Symbol = function Symbol() {
       if (this instanceof $Symbol) throw TypeError('Symbol is not a constructor!');
       var tag = _uid(arguments.length > 0 ? arguments[0] : undefined);
@@ -5648,7 +6153,7 @@
     };
   }
 
-  _export(_export.G + _export.W + _export.F * !USE_NATIVE, { Symbol: $Symbol });
+  _export(_export.G + _export.W + _export.F * !USE_NATIVE$1, { Symbol: $Symbol });
 
   for (var es6Symbols = (
     // 19.4.2.2, 19.4.2.3, 19.4.2.4, 19.4.2.6, 19.4.2.8, 19.4.2.9, 19.4.2.10, 19.4.2.11, 19.4.2.12, 19.4.2.13, 19.4.2.14
@@ -5657,7 +6162,7 @@
 
   for (var wellKnownSymbols = _objectKeys(_wks.store), k = 0; wellKnownSymbols.length > k;) _wksDefine(wellKnownSymbols[k++]);
 
-  _export(_export.S + _export.F * !USE_NATIVE, 'Symbol', {
+  _export(_export.S + _export.F * !USE_NATIVE$1, 'Symbol', {
     // 19.4.2.1 Symbol.for(key)
     'for': function (key) {
       return _has(SymbolRegistry, key += '')
@@ -5673,7 +6178,7 @@
     useSimple: function () { setter = false; }
   });
 
-  _export(_export.S + _export.F * !USE_NATIVE, 'Object', {
+  _export(_export.S + _export.F * !USE_NATIVE$1, 'Object', {
     // 19.1.2.2 Object.create(O [, Properties])
     create: $create,
     // 19.1.2.4 Object.defineProperty(O, P, Attributes)
@@ -5689,7 +6194,7 @@
   });
 
   // 24.3.2 JSON.stringify(value [, replacer [, space]])
-  $JSON && _export(_export.S + _export.F * (!USE_NATIVE || _fails(function () {
+  $JSON && _export(_export.S + _export.F * (!USE_NATIVE$1 || _fails(function () {
     var S = $Symbol();
     // MS Edge converts symbol values to JSON as {}
     // WebKit converts symbol values to JSON as null
@@ -5720,16 +6225,6 @@
   _setToStringTag(Math, 'Math', true);
   // 24.3.3 JSON[@@toStringTag]
   _setToStringTag(_global.JSON, 'JSON', true);
-
-  var SPECIES$1 = _wks('species');
-
-  var _setSpecies = function (KEY) {
-    var C = _global[KEY];
-    if (_descriptors && C && !C[SPECIES$1]) _objectDp.f(C, SPECIES$1, {
-      configurable: true,
-      get: function () { return this; }
-    });
-  };
 
   var dP$2 = _objectDp.f;
   var gOPN$2 = _objectGopn.f;
@@ -5933,501 +6428,6 @@
       return _collectionStrong.def(_validateCollection(this, MAP), key === 0 ? 0 : key, value);
     }
   }, _collectionStrong, true);
-
-  // 7.3.20 SpeciesConstructor(O, defaultConstructor)
-
-
-  var SPECIES$2 = _wks('species');
-  var _speciesConstructor = function (O, D) {
-    var C = _anObject(O).constructor;
-    var S;
-    return C === undefined || (S = _anObject(C)[SPECIES$2]) == undefined ? D : _aFunction(S);
-  };
-
-  // fast apply, http://jsperf.lnkit.com/fast-apply/5
-  var _invoke = function (fn, args, that) {
-    var un = that === undefined;
-    switch (args.length) {
-      case 0: return un ? fn()
-                        : fn.call(that);
-      case 1: return un ? fn(args[0])
-                        : fn.call(that, args[0]);
-      case 2: return un ? fn(args[0], args[1])
-                        : fn.call(that, args[0], args[1]);
-      case 3: return un ? fn(args[0], args[1], args[2])
-                        : fn.call(that, args[0], args[1], args[2]);
-      case 4: return un ? fn(args[0], args[1], args[2], args[3])
-                        : fn.call(that, args[0], args[1], args[2], args[3]);
-    } return fn.apply(that, args);
-  };
-
-  var process = _global.process;
-  var setTask = _global.setImmediate;
-  var clearTask = _global.clearImmediate;
-  var MessageChannel = _global.MessageChannel;
-  var Dispatch = _global.Dispatch;
-  var counter = 0;
-  var queue = {};
-  var ONREADYSTATECHANGE = 'onreadystatechange';
-  var defer, channel, port;
-  var run = function () {
-    var id = +this;
-    // eslint-disable-next-line no-prototype-builtins
-    if (queue.hasOwnProperty(id)) {
-      var fn = queue[id];
-      delete queue[id];
-      fn();
-    }
-  };
-  var listener = function (event) {
-    run.call(event.data);
-  };
-  // Node.js 0.9+ & IE10+ has setImmediate, otherwise:
-  if (!setTask || !clearTask) {
-    setTask = function setImmediate(fn) {
-      var args = [];
-      var i = 1;
-      while (arguments.length > i) args.push(arguments[i++]);
-      queue[++counter] = function () {
-        // eslint-disable-next-line no-new-func
-        _invoke(typeof fn == 'function' ? fn : Function(fn), args);
-      };
-      defer(counter);
-      return counter;
-    };
-    clearTask = function clearImmediate(id) {
-      delete queue[id];
-    };
-    // Node.js 0.8-
-    if (_cof(process) == 'process') {
-      defer = function (id) {
-        process.nextTick(_ctx(run, id, 1));
-      };
-    // Sphere (JS game engine) Dispatch API
-    } else if (Dispatch && Dispatch.now) {
-      defer = function (id) {
-        Dispatch.now(_ctx(run, id, 1));
-      };
-    // Browsers with MessageChannel, includes WebWorkers
-    } else if (MessageChannel) {
-      channel = new MessageChannel();
-      port = channel.port2;
-      channel.port1.onmessage = listener;
-      defer = _ctx(port.postMessage, port, 1);
-    // Browsers with postMessage, skip WebWorkers
-    // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-    } else if (_global.addEventListener && typeof postMessage == 'function' && !_global.importScripts) {
-      defer = function (id) {
-        _global.postMessage(id + '', '*');
-      };
-      _global.addEventListener('message', listener, false);
-    // IE8-
-    } else if (ONREADYSTATECHANGE in _domCreate('script')) {
-      defer = function (id) {
-        _html.appendChild(_domCreate('script'))[ONREADYSTATECHANGE] = function () {
-          _html.removeChild(this);
-          run.call(id);
-        };
-      };
-    // Rest old browsers
-    } else {
-      defer = function (id) {
-        setTimeout(_ctx(run, id, 1), 0);
-      };
-    }
-  }
-  var _task = {
-    set: setTask,
-    clear: clearTask
-  };
-
-  var macrotask = _task.set;
-  var Observer = _global.MutationObserver || _global.WebKitMutationObserver;
-  var process$1 = _global.process;
-  var Promise$1 = _global.Promise;
-  var isNode = _cof(process$1) == 'process';
-
-  var _microtask = function () {
-    var head, last, notify;
-
-    var flush = function () {
-      var parent, fn;
-      if (isNode && (parent = process$1.domain)) parent.exit();
-      while (head) {
-        fn = head.fn;
-        head = head.next;
-        try {
-          fn();
-        } catch (e) {
-          if (head) notify();
-          else last = undefined;
-          throw e;
-        }
-      } last = undefined;
-      if (parent) parent.enter();
-    };
-
-    // Node.js
-    if (isNode) {
-      notify = function () {
-        process$1.nextTick(flush);
-      };
-    // browsers with MutationObserver, except iOS Safari - https://github.com/zloirock/core-js/issues/339
-    } else if (Observer && !(_global.navigator && _global.navigator.standalone)) {
-      var toggle = true;
-      var node = document.createTextNode('');
-      new Observer(flush).observe(node, { characterData: true }); // eslint-disable-line no-new
-      notify = function () {
-        node.data = toggle = !toggle;
-      };
-    // environments with maybe non-completely correct, but existent Promise
-    } else if (Promise$1 && Promise$1.resolve) {
-      // Promise.resolve without an argument throws an error in LG WebOS 2
-      var promise = Promise$1.resolve(undefined);
-      notify = function () {
-        promise.then(flush);
-      };
-    // for other environments - macrotask based on:
-    // - setImmediate
-    // - MessageChannel
-    // - window.postMessag
-    // - onreadystatechange
-    // - setTimeout
-    } else {
-      notify = function () {
-        // strange IE + webpack dev server bug - use .call(global)
-        macrotask.call(_global, flush);
-      };
-    }
-
-    return function (fn) {
-      var task = { fn: fn, next: undefined };
-      if (last) last.next = task;
-      if (!head) {
-        head = task;
-        notify();
-      } last = task;
-    };
-  };
-
-  // 25.4.1.5 NewPromiseCapability(C)
-
-
-  function PromiseCapability(C) {
-    var resolve, reject;
-    this.promise = new C(function ($$resolve, $$reject) {
-      if (resolve !== undefined || reject !== undefined) throw TypeError('Bad Promise constructor');
-      resolve = $$resolve;
-      reject = $$reject;
-    });
-    this.resolve = _aFunction(resolve);
-    this.reject = _aFunction(reject);
-  }
-
-  var f$7 = function (C) {
-    return new PromiseCapability(C);
-  };
-
-  var _newPromiseCapability = {
-  	f: f$7
-  };
-
-  var _perform = function (exec) {
-    try {
-      return { e: false, v: exec() };
-    } catch (e) {
-      return { e: true, v: e };
-    }
-  };
-
-  var navigator = _global.navigator;
-
-  var _userAgent = navigator && navigator.userAgent || '';
-
-  var _promiseResolve = function (C, x) {
-    _anObject(C);
-    if (_isObject(x) && x.constructor === C) return x;
-    var promiseCapability = _newPromiseCapability.f(C);
-    var resolve = promiseCapability.resolve;
-    resolve(x);
-    return promiseCapability.promise;
-  };
-
-  var task = _task.set;
-  var microtask = _microtask();
-
-
-
-
-  var PROMISE = 'Promise';
-  var TypeError$1 = _global.TypeError;
-  var process$2 = _global.process;
-  var versions = process$2 && process$2.versions;
-  var v8 = versions && versions.v8 || '';
-  var $Promise = _global[PROMISE];
-  var isNode$1 = _classof(process$2) == 'process';
-  var empty = function () { /* empty */ };
-  var Internal, newGenericPromiseCapability, OwnPromiseCapability, Wrapper;
-  var newPromiseCapability = newGenericPromiseCapability = _newPromiseCapability.f;
-
-  var USE_NATIVE$1 = !!function () {
-    try {
-      // correct subclassing with @@species support
-      var promise = $Promise.resolve(1);
-      var FakePromise = (promise.constructor = {})[_wks('species')] = function (exec) {
-        exec(empty, empty);
-      };
-      // unhandled rejections tracking support, NodeJS Promise without it fails @@species test
-      return (isNode$1 || typeof PromiseRejectionEvent == 'function')
-        && promise.then(empty) instanceof FakePromise
-        // v8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
-        // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
-        // we can't detect it synchronously, so just check versions
-        && v8.indexOf('6.6') !== 0
-        && _userAgent.indexOf('Chrome/66') === -1;
-    } catch (e) { /* empty */ }
-  }();
-
-  // helpers
-  var isThenable = function (it) {
-    var then;
-    return _isObject(it) && typeof (then = it.then) == 'function' ? then : false;
-  };
-  var notify = function (promise, isReject) {
-    if (promise._n) return;
-    promise._n = true;
-    var chain = promise._c;
-    microtask(function () {
-      var value = promise._v;
-      var ok = promise._s == 1;
-      var i = 0;
-      var run = function (reaction) {
-        var handler = ok ? reaction.ok : reaction.fail;
-        var resolve = reaction.resolve;
-        var reject = reaction.reject;
-        var domain = reaction.domain;
-        var result, then, exited;
-        try {
-          if (handler) {
-            if (!ok) {
-              if (promise._h == 2) onHandleUnhandled(promise);
-              promise._h = 1;
-            }
-            if (handler === true) result = value;
-            else {
-              if (domain) domain.enter();
-              result = handler(value); // may throw
-              if (domain) {
-                domain.exit();
-                exited = true;
-              }
-            }
-            if (result === reaction.promise) {
-              reject(TypeError$1('Promise-chain cycle'));
-            } else if (then = isThenable(result)) {
-              then.call(result, resolve, reject);
-            } else resolve(result);
-          } else reject(value);
-        } catch (e) {
-          if (domain && !exited) domain.exit();
-          reject(e);
-        }
-      };
-      while (chain.length > i) run(chain[i++]); // variable length - can't use forEach
-      promise._c = [];
-      promise._n = false;
-      if (isReject && !promise._h) onUnhandled(promise);
-    });
-  };
-  var onUnhandled = function (promise) {
-    task.call(_global, function () {
-      var value = promise._v;
-      var unhandled = isUnhandled(promise);
-      var result, handler, console;
-      if (unhandled) {
-        result = _perform(function () {
-          if (isNode$1) {
-            process$2.emit('unhandledRejection', value, promise);
-          } else if (handler = _global.onunhandledrejection) {
-            handler({ promise: promise, reason: value });
-          } else if ((console = _global.console) && console.error) {
-            console.error('Unhandled promise rejection', value);
-          }
-        });
-        // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
-        promise._h = isNode$1 || isUnhandled(promise) ? 2 : 1;
-      } promise._a = undefined;
-      if (unhandled && result.e) throw result.v;
-    });
-  };
-  var isUnhandled = function (promise) {
-    return promise._h !== 1 && (promise._a || promise._c).length === 0;
-  };
-  var onHandleUnhandled = function (promise) {
-    task.call(_global, function () {
-      var handler;
-      if (isNode$1) {
-        process$2.emit('rejectionHandled', promise);
-      } else if (handler = _global.onrejectionhandled) {
-        handler({ promise: promise, reason: promise._v });
-      }
-    });
-  };
-  var $reject = function (value) {
-    var promise = this;
-    if (promise._d) return;
-    promise._d = true;
-    promise = promise._w || promise; // unwrap
-    promise._v = value;
-    promise._s = 2;
-    if (!promise._a) promise._a = promise._c.slice();
-    notify(promise, true);
-  };
-  var $resolve = function (value) {
-    var promise = this;
-    var then;
-    if (promise._d) return;
-    promise._d = true;
-    promise = promise._w || promise; // unwrap
-    try {
-      if (promise === value) throw TypeError$1("Promise can't be resolved itself");
-      if (then = isThenable(value)) {
-        microtask(function () {
-          var wrapper = { _w: promise, _d: false }; // wrap
-          try {
-            then.call(value, _ctx($resolve, wrapper, 1), _ctx($reject, wrapper, 1));
-          } catch (e) {
-            $reject.call(wrapper, e);
-          }
-        });
-      } else {
-        promise._v = value;
-        promise._s = 1;
-        notify(promise, false);
-      }
-    } catch (e) {
-      $reject.call({ _w: promise, _d: false }, e); // wrap
-    }
-  };
-
-  // constructor polyfill
-  if (!USE_NATIVE$1) {
-    // 25.4.3.1 Promise(executor)
-    $Promise = function Promise(executor) {
-      _anInstance(this, $Promise, PROMISE, '_h');
-      _aFunction(executor);
-      Internal.call(this);
-      try {
-        executor(_ctx($resolve, this, 1), _ctx($reject, this, 1));
-      } catch (err) {
-        $reject.call(this, err);
-      }
-    };
-    // eslint-disable-next-line no-unused-vars
-    Internal = function Promise(executor) {
-      this._c = [];             // <- awaiting reactions
-      this._a = undefined;      // <- checked in isUnhandled reactions
-      this._s = 0;              // <- state
-      this._d = false;          // <- done
-      this._v = undefined;      // <- value
-      this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
-      this._n = false;          // <- notify
-    };
-    Internal.prototype = _redefineAll($Promise.prototype, {
-      // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
-      then: function then(onFulfilled, onRejected) {
-        var reaction = newPromiseCapability(_speciesConstructor(this, $Promise));
-        reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
-        reaction.fail = typeof onRejected == 'function' && onRejected;
-        reaction.domain = isNode$1 ? process$2.domain : undefined;
-        this._c.push(reaction);
-        if (this._a) this._a.push(reaction);
-        if (this._s) notify(this, false);
-        return reaction.promise;
-      },
-      // 25.4.5.1 Promise.prototype.catch(onRejected)
-      'catch': function (onRejected) {
-        return this.then(undefined, onRejected);
-      }
-    });
-    OwnPromiseCapability = function () {
-      var promise = new Internal();
-      this.promise = promise;
-      this.resolve = _ctx($resolve, promise, 1);
-      this.reject = _ctx($reject, promise, 1);
-    };
-    _newPromiseCapability.f = newPromiseCapability = function (C) {
-      return C === $Promise || C === Wrapper
-        ? new OwnPromiseCapability(C)
-        : newGenericPromiseCapability(C);
-    };
-  }
-
-  _export(_export.G + _export.W + _export.F * !USE_NATIVE$1, { Promise: $Promise });
-  _setToStringTag($Promise, PROMISE);
-  _setSpecies(PROMISE);
-  Wrapper = _core[PROMISE];
-
-  // statics
-  _export(_export.S + _export.F * !USE_NATIVE$1, PROMISE, {
-    // 25.4.4.5 Promise.reject(r)
-    reject: function reject(r) {
-      var capability = newPromiseCapability(this);
-      var $$reject = capability.reject;
-      $$reject(r);
-      return capability.promise;
-    }
-  });
-  _export(_export.S + _export.F * (_library || !USE_NATIVE$1), PROMISE, {
-    // 25.4.4.6 Promise.resolve(x)
-    resolve: function resolve(x) {
-      return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
-    }
-  });
-  _export(_export.S + _export.F * !(USE_NATIVE$1 && _iterDetect(function (iter) {
-    $Promise.all(iter)['catch'](empty);
-  })), PROMISE, {
-    // 25.4.4.1 Promise.all(iterable)
-    all: function all(iterable) {
-      var C = this;
-      var capability = newPromiseCapability(C);
-      var resolve = capability.resolve;
-      var reject = capability.reject;
-      var result = _perform(function () {
-        var values = [];
-        var index = 0;
-        var remaining = 1;
-        _forOf(iterable, false, function (promise) {
-          var $index = index++;
-          var alreadyCalled = false;
-          values.push(undefined);
-          remaining++;
-          C.resolve(promise).then(function (value) {
-            if (alreadyCalled) return;
-            alreadyCalled = true;
-            values[$index] = value;
-            --remaining || resolve(values);
-          }, reject);
-        });
-        --remaining || resolve(values);
-      });
-      if (result.e) reject(result.v);
-      return capability.promise;
-    },
-    // 25.4.4.4 Promise.race(iterable)
-    race: function race(iterable) {
-      var C = this;
-      var capability = newPromiseCapability(C);
-      var reject = capability.reject;
-      var result = _perform(function () {
-        _forOf(iterable, false, function (promise) {
-          C.resolve(promise).then(capability.resolve, reject);
-        });
-      });
-      if (result.e) reject(result.v);
-      return capability.promise;
-    }
-  });
 
   var at = _stringAt(true);
 
@@ -9002,7 +9002,7 @@
     return str;
   };
 
-  var version = "1.8.0";
+  var version = "1.8.1";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -18752,6 +18752,123 @@
     };
   }();
 
+  var comicMap = new Map();
+  var loaded$9 = false;
+
+  var getComicData =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee() {
+      var csv, list;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (loaded$9) {
+                _context.next = 7;
+                break;
+              }
+
+              _context.next = 3;
+              return fetchWithHash('/blhxfy/data/comic.csv');
+
+            case 3:
+              csv = _context.sent;
+              list = parseCsv(csv);
+              list.forEach(function (item) {
+                var id = trim(item.id);
+                var title = filter(trim(item.title));
+                var url = filter(trim(item.url));
+
+                if (id && url) {
+                  comicMap.set(id, {
+                    title: title,
+                    url: url
+                  });
+                }
+              });
+              loaded$9 = true;
+
+            case 7:
+              return _context.abrupt("return", comicMap);
+
+            case 8:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function getComicData() {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
+  var comic =
+  /*#__PURE__*/
+  function () {
+    var _ref = _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee(data, pathname) {
+      var rgs, html, id, comicMap, info;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              rgs = pathname.match(/\/comic\/content\/episode\/(\d+)/);
+
+              if (!(rgs && rgs[1])) {
+                _context.next = 15;
+                break;
+              }
+
+              _context.prev = 2;
+              html = decodeURIComponent(data.data);
+              _context.next = 9;
+              break;
+
+            case 6:
+              _context.prev = 6;
+              _context.t0 = _context["catch"](2);
+              return _context.abrupt("return", data);
+
+            case 9:
+              id = rgs[1];
+              _context.next = 12;
+              return getComicData();
+
+            case 12:
+              comicMap = _context.sent;
+              info = comicMap.get(id);
+
+              if (info) {
+                if (info.title) {
+                  html = html.replace(/(<div\s+class=["']*prt-episode-title["']*>)[^<]*(<\/div>)/, "$1".concat(info.title, "$2"));
+                }
+
+                html = html.replace(/(<img\s+class=["']*img-episode["']* src=["']*)[^\s"'>]+(?=[\s"'>])/, "$1".concat(info.url));
+                data.data = encodeURIComponent(html);
+              }
+
+            case 15:
+              return _context.abrupt("return", data);
+
+            case 16:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, null, [[2, 6]]);
+    }));
+
+    return function comic(_x, _x2) {
+      return _ref.apply(this, arguments);
+    };
+  }();
+
   var replaceTime = function replaceTime(str) {
     if (!str) return str;
     return str.replace('時間', '小时');
@@ -18809,6 +18926,10 @@
   }();
 
   var replaceHour = function replaceHour(data, type) {
+    if (!data.status && !data.option && !data.option.user_status) {
+      return data;
+    }
+
     var status;
 
     try {
@@ -18830,7 +18951,7 @@
   };
 
   var voiceMap = new Map();
-  var loaded$9 = false;
+  var loaded$a = false;
 
   var getTownData$1 =
   /*#__PURE__*/
@@ -18843,7 +18964,7 @@
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              if (loaded$9) {
+              if (loaded$a) {
                 _context.next = 7;
                 break;
               }
@@ -18866,7 +18987,7 @@
                   });
                 }
               });
-              loaded$9 = true;
+              loaded$a = true;
 
             case 7:
               return _context.abrupt("return", voiceMap);
@@ -19174,48 +19295,53 @@
                 getUserName(data);
               }
 
-              _context.next = 19;
-              return transLangMsg(data, pathname);
-
-            case 19:
-              data = _context.sent;
-
               if (!pathname.includes('/user/content/index')) {
-                _context.next = 29;
+                _context.next = 26;
                 break;
               }
 
-              _context.next = 23;
+              _context.next = 20;
               return transTownInfo(data, pathname);
+
+            case 20:
+              data = _context.sent;
+              _context.next = 23;
+              return pageIndex(data, pathname);
 
             case 23:
               data = _context.sent;
-              _context.next = 26;
-              return pageIndex(data, pathname);
+              _context.next = 27;
+              break;
 
             case 26:
-              data = _context.sent;
-              _context.next = 30;
-              break;
-
-            case 29:
               data = replaceHour(data);
 
+            case 27:
+              if (!pathname.includes('/comic/content/episode/')) {
+                _context.next = 31;
+                break;
+              }
+
+              _context.next = 30;
+              return comic(data, pathname);
+
             case 30:
-              _context.next = 35;
+              data = _context.sent;
+
+            case 31:
+              _context.next = 36;
               break;
 
-            case 32:
-              _context.prev = 32;
+            case 33:
+              _context.prev = 33;
               _context.t0 = _context["catch"](15);
               console.error(_context.t0);
 
-            case 35:
-              _context.next = 37;
-              return transHTML(data, pathname);
+            case 36:
+              _context.next = 38;
+              return Promise.all([transLangMsg(data, pathname), transHTML(data, pathname)]);
 
-            case 37:
-              data = _context.sent;
+            case 38:
               _context.next = 100;
               break;
 
@@ -19376,7 +19502,7 @@
               return _context.stop();
           }
         }
-      }, _callee, null, [[15, 32]]);
+      }, _callee, null, [[15, 33]]);
     }));
     return _translate.apply(this, arguments);
   }
