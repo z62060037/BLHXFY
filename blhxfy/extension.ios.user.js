@@ -5904,7 +5904,7 @@
 	  return str;
 	};
 
-	var version = "1.8.1";
+	var version = "1.8.2";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -13392,10 +13392,12 @@ ${extraHtml}
 	  return comicMap;
 	};
 
-	const comic = async (data, pathname) => {
-	  const rgs = pathname.match(/\/comic\/content\/episode\/(\d+)/);
+	const insertTemplate = html => {
+	  return html.replace('<div class="prt-episode-thumbnail">', `<% if (n.trans) { %><div class="comic-transtag-blhxfy">🌼</div><% } %><div class="prt-episode-thumbnail">`);
+	};
 
-	  if (rgs && rgs[1]) {
+	const comic = async (data, pathname, type = 'default') => {
+	  if (type === 'template') {
 	    let html;
 
 	    try {
@@ -13404,17 +13406,42 @@ ${extraHtml}
 	      return data;
 	    }
 
-	    const id = rgs[1];
+	    html = insertTemplate(html);
+	    data.data = encodeURIComponent(html);
+	  } else if (type === 'data') {
 	    const comicMap = await getComicData();
-	    const info = comicMap.get(id);
 
-	    if (info) {
-	      if (info.title) {
-	        html = html.replace(/(<div\s+class=["']*prt-episode-title["']*>)[^<]*(<\/div>)/, `$1${info.title}$2`);
+	    if (data.list) {
+	      data.list.forEach(item => {
+	        if (comicMap.has(item.id)) {
+	          item.trans = true;
+	        }
+	      });
+	    }
+	  } else {
+	    const rgs = pathname.match(/\/comic\/content\/episode\/(\d+)/);
+
+	    if (rgs && rgs[1]) {
+	      const id = rgs[1];
+	      const comicMap = await getComicData();
+	      const info = comicMap.get(id);
+
+	      if (info) {
+	        let html;
+
+	        try {
+	          html = decodeURIComponent(data.data);
+	        } catch (err) {
+	          return data;
+	        }
+
+	        if (info.title) {
+	          html = html.replace(/(<div\s+class=["']*prt-episode-title["']*>)[^<]*(<\/div>)/, `$1${info.title}$2`);
+	        }
+
+	        html = html.replace(/(<img\s+class=["']*img-episode["']* src=["']*)[^\s"'>]+(?=[\s"'>])/, `$1${info.url}`);
+	        data.data = encodeURIComponent(html);
 	      }
-
-	      html = html.replace(/(<img\s+class=["']*img-episode["']* src=["']*)[^\s"'>]+(?=[\s"'>])/, `$1${info.url}`);
-	      data.data = encodeURIComponent(html);
 	    }
 	  }
 
@@ -13670,11 +13697,17 @@ ${extraHtml}
 	        if (pathname.includes('/comic/content/episode/')) {
 	          data = await comic(data, pathname);
 	        }
+
+	        if (pathname.includes('/comic/content/index')) {
+	          data = await comic(data, pathname, 'template');
+	        }
 	      } catch (err) {
 	        console.error(err);
 	      }
 
 	      await Promise.all([transLangMsg(data, pathname), transHTML(data, pathname)]);
+	    } else if (pathname.includes('/comic/list/')) {
+	      data = await comic(data, pathname, 'data');
 	    } else if (pathname.includes('/npc/npc/') || pathname.includes('/archive/npc_detail')) {
 	      data = await parseSkill(data, pathname);
 	    } else if (pathname.includes('/party_ability_subaction/') || pathname.includes('/party/job/') || pathname.includes('/party/ability_list/') || pathname.includes('/zenith/ability_list/') || pathname.includes('/party/job_info/')) {

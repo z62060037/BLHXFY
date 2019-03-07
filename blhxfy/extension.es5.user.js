@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.1
+// @version      1.8.2
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -9002,7 +9002,7 @@
     return str;
   };
 
-  var version = "1.8.1";
+  var version = "1.8.2";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -18807,21 +18807,34 @@
     };
   }();
 
+  var insertTemplate = function insertTemplate(html) {
+    return html.replace('<div class="prt-episode-thumbnail">', "<% if (n.trans) { %><div class=\"comic-transtag-blhxfy\">\uD83C\uDF3C</div><% } %><div class=\"prt-episode-thumbnail\">");
+  };
+
   var comic =
   /*#__PURE__*/
   function () {
     var _ref = _asyncToGenerator(
     /*#__PURE__*/
     regeneratorRuntime.mark(function _callee(data, pathname) {
-      var rgs, html, id, comicMap, info;
+      var type,
+          html,
+          comicMap,
+          rgs,
+          id,
+          _comicMap,
+          info,
+          _html,
+          _args = arguments;
+
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              rgs = pathname.match(/\/comic\/content\/episode\/(\d+)/);
+              type = _args.length > 2 && _args[2] !== undefined ? _args[2] : 'default';
 
-              if (!(rgs && rgs[1])) {
-                _context.next = 15;
+              if (!(type === 'template')) {
+                _context.next = 13;
                 break;
               }
 
@@ -18836,32 +18849,82 @@
               return _context.abrupt("return", data);
 
             case 9:
-              id = rgs[1];
-              _context.next = 12;
-              return getComicData();
+              html = insertTemplate(html);
+              data.data = encodeURIComponent(html);
+              _context.next = 38;
+              break;
 
-            case 12:
-              comicMap = _context.sent;
-              info = comicMap.get(id);
-
-              if (info) {
-                if (info.title) {
-                  html = html.replace(/(<div\s+class=["']*prt-episode-title["']*>)[^<]*(<\/div>)/, "$1".concat(info.title, "$2"));
-                }
-
-                html = html.replace(/(<img\s+class=["']*img-episode["']* src=["']*)[^\s"'>]+(?=[\s"'>])/, "$1".concat(info.url));
-                data.data = encodeURIComponent(html);
+            case 13:
+              if (!(type === 'data')) {
+                _context.next = 20;
+                break;
               }
 
-            case 15:
-              return _context.abrupt("return", data);
+              _context.next = 16;
+              return getComicData();
 
             case 16:
+              comicMap = _context.sent;
+
+              if (data.list) {
+                data.list.forEach(function (item) {
+                  if (comicMap.has(item.id)) {
+                    item.trans = true;
+                  }
+                });
+              }
+
+              _context.next = 38;
+              break;
+
+            case 20:
+              rgs = pathname.match(/\/comic\/content\/episode\/(\d+)/);
+
+              if (!(rgs && rgs[1])) {
+                _context.next = 38;
+                break;
+              }
+
+              id = rgs[1];
+              _context.next = 25;
+              return getComicData();
+
+            case 25:
+              _comicMap = _context.sent;
+              info = _comicMap.get(id);
+
+              if (!info) {
+                _context.next = 38;
+                break;
+              }
+
+              _context.prev = 28;
+              _html = decodeURIComponent(data.data);
+              _context.next = 35;
+              break;
+
+            case 32:
+              _context.prev = 32;
+              _context.t1 = _context["catch"](28);
+              return _context.abrupt("return", data);
+
+            case 35:
+              if (info.title) {
+                _html = _html.replace(/(<div\s+class=["']*prt-episode-title["']*>)[^<]*(<\/div>)/, "$1".concat(info.title, "$2"));
+              }
+
+              _html = _html.replace(/(<img\s+class=["']*img-episode["']* src=["']*)[^\s"'>]+(?=[\s"'>])/, "$1".concat(info.url));
+              data.data = encodeURIComponent(_html);
+
+            case 38:
+              return _context.abrupt("return", data);
+
+            case 39:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[2, 6]]);
+      }, _callee, null, [[2, 6], [28, 32]]);
     }));
 
     return function comic(_x, _x2) {
@@ -19265,7 +19328,7 @@
               }
 
               if (!(apiHosts.indexOf(hostname) !== -1)) {
-                _context.next = 102;
+                _context.next = 112;
                 break;
               }
 
@@ -19280,12 +19343,12 @@
 
             case 11:
               data = _context.sent;
-              _context.next = 100;
+              _context.next = 110;
               break;
 
             case 14:
               if (!pathname.includes('/content/')) {
-                _context.next = 40;
+                _context.next = 44;
                 break;
               }
 
@@ -19329,180 +19392,206 @@
               data = _context.sent;
 
             case 31:
-              _context.next = 36;
+              if (!pathname.includes('/comic/content/index')) {
+                _context.next = 35;
+                break;
+              }
+
+              _context.next = 34;
+              return comic(data, pathname, 'template');
+
+            case 34:
+              data = _context.sent;
+
+            case 35:
+              _context.next = 40;
               break;
 
-            case 33:
-              _context.prev = 33;
+            case 37:
+              _context.prev = 37;
               _context.t0 = _context["catch"](15);
               console.error(_context.t0);
 
-            case 36:
-              _context.next = 38;
+            case 40:
+              _context.next = 42;
               return Promise.all([transLangMsg(data, pathname), transHTML(data, pathname)]);
 
-            case 38:
-              _context.next = 100;
+            case 42:
+              _context.next = 110;
               break;
 
-            case 40:
-              if (!(pathname.includes('/npc/npc/') || pathname.includes('/archive/npc_detail'))) {
-                _context.next = 46;
+            case 44:
+              if (!pathname.includes('/comic/list/')) {
+                _context.next = 50;
                 break;
               }
 
-              _context.next = 43;
+              _context.next = 47;
+              return comic(data, pathname, 'data');
+
+            case 47:
+              data = _context.sent;
+              _context.next = 110;
+              break;
+
+            case 50:
+              if (!(pathname.includes('/npc/npc/') || pathname.includes('/archive/npc_detail'))) {
+                _context.next = 56;
+                break;
+              }
+
+              _context.next = 53;
               return parseSkill(data, pathname);
 
-            case 43:
+            case 53:
               data = _context.sent;
-              _context.next = 100;
+              _context.next = 110;
               break;
 
-            case 46:
+            case 56:
               if (!(pathname.includes('/party_ability_subaction/') || pathname.includes('/party/job/') || pathname.includes('/party/ability_list/') || pathname.includes('/zenith/ability_list/') || pathname.includes('/party/job_info/'))) {
-                _context.next = 52;
+                _context.next = 62;
                 break;
               }
 
-              _context.next = 49;
+              _context.next = 59;
               return transSkill$1(data, pathname);
 
-            case 49:
+            case 59:
               data = _context.sent;
-              _context.next = 100;
+              _context.next = 110;
               break;
 
-            case 52:
+            case 62:
               if (!pathname.includes('/island/init')) {
-                _context.next = 58;
+                _context.next = 68;
                 break;
               }
 
-              _context.next = 55;
+              _context.next = 65;
               return transIslandInfo(data, pathname);
 
-            case 55:
+            case 65:
               data = _context.sent;
-              _context.next = 100;
+              _context.next = 110;
               break;
 
-            case 58:
+            case 68:
               if (!pathname.includes('/rest/sound/mypage_voice')) {
-                _context.next = 63;
+                _context.next = 73;
                 break;
               }
 
-              _context.next = 61;
+              _context.next = 71;
               return showVoiceSub(data, pathname, 'list');
 
-            case 61:
-              _context.next = 100;
+            case 71:
+              _context.next = 110;
               break;
 
-            case 63:
+            case 73:
               if (!/\/rest\/(multi)?raid\/start\.json/.test(pathname)) {
-                _context.next = 72;
+                _context.next = 82;
                 break;
               }
 
-              _context.next = 66;
+              _context.next = 76;
               return transChat(data);
 
-            case 66:
+            case 76:
               data = _context.sent;
-              _context.next = 69;
+              _context.next = 79;
               return transBattle(data);
 
-            case 69:
+            case 79:
               data = _context.sent;
-              _context.next = 100;
+              _context.next = 110;
               break;
 
-            case 72:
+            case 82:
               if (!(/\/rest\/(multi)?raid\/ability_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/temporary_item_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/normal_attack_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/summon_result\.json/.test(pathname))) {
-                _context.next = 78;
+                _context.next = 88;
                 break;
               }
 
-              _context.next = 75;
+              _context.next = 85;
               return transBattle(data, 'result');
 
-            case 75:
+            case 85:
               data = _context.sent;
-              _context.next = 100;
+              _context.next = 110;
               break;
 
-            case 78:
+            case 88:
               if (!/\/rest\/.*?raid\/condition\/\d+\/\d\/\d\.json/.test(pathname)) {
-                _context.next = 83;
-                break;
-              }
-
-              _context.next = 81;
-              return transBuff(data.condition);
-
-            case 81:
-              _context.next = 100;
-              break;
-
-            case 83:
-              if (!pathname.includes('/user/status')) {
-                _context.next = 87;
-                break;
-              }
-
-              data = replaceHour(data, 'user');
-              _context.next = 100;
-              break;
-
-            case 87:
-              if (!(pathname.includes('/weapon/weapon/') || pathname.includes('/archive/weapon_detail'))) {
                 _context.next = 93;
                 break;
               }
 
-              _context.next = 90;
-              return weaponSkill(data);
+              _context.next = 91;
+              return transBuff(data.condition);
 
-            case 90:
-              data = _context.sent;
-              _context.next = 100;
+            case 91:
+              _context.next = 110;
               break;
 
             case 93:
-              if (!(pathname.includes('/summon/summon/') || pathname.includes('/archive/summon_detail'))) {
-                _context.next = 99;
+              if (!pathname.includes('/user/status')) {
+                _context.next = 97;
                 break;
               }
 
-              _context.next = 96;
-              return summonSkill(data);
-
-            case 96:
-              data = _context.sent;
-              _context.next = 100;
+              data = replaceHour(data, 'user');
+              _context.next = 110;
               break;
 
-            case 99:
-              return _context.abrupt("return");
+            case 97:
+              if (!(pathname.includes('/weapon/weapon/') || pathname.includes('/archive/weapon_detail'))) {
+                _context.next = 103;
+                break;
+              }
+
+              _context.next = 100;
+              return weaponSkill(data);
 
             case 100:
-              _context.next = 103;
+              data = _context.sent;
+              _context.next = 110;
               break;
 
-            case 102:
+            case 103:
+              if (!(pathname.includes('/summon/summon/') || pathname.includes('/archive/summon_detail'))) {
+                _context.next = 109;
+                break;
+              }
+
+              _context.next = 106;
+              return summonSkill(data);
+
+            case 106:
+              data = _context.sent;
+              _context.next = 110;
+              break;
+
+            case 109:
               return _context.abrupt("return");
 
-            case 103:
+            case 110:
+              _context.next = 113;
+              break;
+
+            case 112:
+              return _context.abrupt("return");
+
+            case 113:
               state.result = isJSON ? JSON.stringify(data) : data;
 
-            case 104:
+            case 114:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[15, 33]]);
+      }, _callee, null, [[15, 37]]);
     }));
     return _translate.apply(this, arguments);
   }
