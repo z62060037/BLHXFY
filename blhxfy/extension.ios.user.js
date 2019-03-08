@@ -5904,7 +5904,7 @@
 	  return str;
 	};
 
-	var version = "1.8.2";
+	var version = "1.8.3";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -11437,6 +11437,14 @@ ${extraHtml}
 	      const type = idArr[1] || 'detail';
 	      const obj = transMap.get(id) || {};
 	      obj[type] = item.trans ? filter(item.trans.replace(new RegExp(config.defaultName, 'g'), config.displayName || config.userName)) : false;
+
+	      if (item.trans) {
+	        const rep = new RegExp(config.defaultName, 'g');
+	        const uname = config.displayName || config.userName;
+	        const str = filter(item.trans.replace(rep, uname));
+	        obj[type] = str.replace(/<span\sclass="nickname"><\/span>/g, `<span class='nickname'></span>`);
+	      }
+
 	      obj[`${type}-origin`] = item.trans;
 	      transMap.set(id, obj);
 	    }
@@ -11554,6 +11562,19 @@ ${extraHtml}
 	  }
 	};
 
+	const getUsernameFromTutorial = data => {
+	  for (let item of data) {
+	    let id = parseInt(item.id);
+
+	    if (id === 25 || id === 24) {
+	      if (item.charcter1_name) {
+	        config.userName = item.charcter1_name;
+	        localStorage.setItem('blhxfy:name', config.userName);
+	      }
+	    }
+	  }
+	};
+
 	const transStart = async (data, pathname) => {
 	  const pathRst = pathname.match(/\/[^/]*?scenario.*?\/(scene[^\/]+)\/?/);
 	  if (!pathRst || !pathRst[1]) return data;
@@ -11563,6 +11584,10 @@ ${extraHtml}
 	    let rst = pathname.match(/\/[^/]*?scenario.*?\/(scene.+)$/);
 	    if (!rst || !rst[1]) return data;
 	    sNameTemp = rst[1].replace(/\//g, '_');
+	  }
+
+	  if (pathname.includes('scene_tutorial02')) {
+	    getUsernameFromTutorial(data);
 	  }
 
 	  insertToolHtml();
@@ -13482,7 +13507,7 @@ ${extraHtml}
 	};
 
 	const replaceHour = (data, type) => {
-	  if (!data.status && !data.option && !data.option.user_status) {
+	  if (!data.status && (!data.option || !data.option.user_status)) {
 	    return data;
 	  }
 
@@ -13639,7 +13664,7 @@ ${extraHtml}
 	};
 
 	const setUserName = () => {
-	  if (!config.userName && Game.userId) {
+	  if ((!config.userName || config.userName === '<span>古兰</span>') && Game.userId && location.hash !== '#tutorial/4' && location.hash !== '#tutorial/6' && location.hash !== '#tutorial/8') {
 	    require(['model/content'], function (mc) {
 	      let req = new mc({
 	        controller: "profile",
@@ -13651,7 +13676,7 @@ ${extraHtml}
 	      req.fetch();
 	    });
 
-	    config.userName = '古兰';
+	    config.userName = '<span>古兰</span>';
 	    localStorage.setItem('blhxfy:name', config.userName);
 	  }
 	};
@@ -13716,10 +13741,10 @@ ${extraHtml}
 	      data = await transIslandInfo(data, pathname);
 	    } else if (pathname.includes('/rest/sound/mypage_voice')) {
 	      await showVoiceSub(data, pathname, 'list');
-	    } else if (/\/rest\/(multi)?raid\/start\.json/.test(pathname)) {
+	    } else if (/\/rest\/(multi)?raid\/start\.json/.test(pathname) || /\/rest\/tutorial\/tutorial\d{1,2}\.json/.test(pathname)) {
 	      data = await transChat(data);
 	      data = await transBattle(data);
-	    } else if (/\/rest\/(multi)?raid\/ability_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/temporary_item_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/normal_attack_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/summon_result\.json/.test(pathname)) {
+	    } else if (/\/rest\/(multi)?raid\/ability_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/temporary_item_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/normal_attack_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/summon_result\.json/.test(pathname) || /\/rest\/tutorial\/tutorial_battle_\d+_\d+\.json/.test(pathname)) {
 	      data = await transBattle(data, 'result');
 	    } else if (/\/rest\/.*?raid\/condition\/\d+\/\d\/\d\.json/.test(pathname)) {
 	      await transBuff(data.condition);

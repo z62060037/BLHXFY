@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.2
+// @version      1.8.3
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -9002,7 +9002,7 @@
     return str;
   };
 
-  var version = "1.8.2";
+  var version = "1.8.3";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -14583,6 +14583,14 @@
                   var type = idArr[1] || 'detail';
                   var obj = transMap.get(id) || {};
                   obj[type] = item.trans ? filter(item.trans.replace(new RegExp(config.defaultName, 'g'), config.displayName || config.userName)) : false;
+
+                  if (item.trans) {
+                    var rep = new RegExp(config.defaultName, 'g');
+                    var uname = config.displayName || config.userName;
+                    var str = filter(item.trans.replace(rep, uname));
+                    obj[type] = str.replace(/<span\sclass="nickname"><\/span>/g, "<span class='nickname'></span>");
+                  }
+
                   obj["".concat(type, "-origin")] = item.trans;
                   transMap.set(id, obj);
                 }
@@ -14733,6 +14741,39 @@
     }
   };
 
+  var getUsernameFromTutorial = function getUsernameFromTutorial(data) {
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+      for (var _iterator3 = data[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        var item = _step3.value;
+        var id = parseInt(item.id);
+
+        if (id === 25 || id === 24) {
+          if (item.charcter1_name) {
+            config.userName = item.charcter1_name;
+            localStorage.setItem('blhxfy:name', config.userName);
+          }
+        }
+      }
+    } catch (err) {
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+          _iterator3.return();
+        }
+      } finally {
+        if (_didIteratorError3) {
+          throw _iteratorError3;
+        }
+      }
+    }
+  };
+
   var transStart =
   /*#__PURE__*/
   function () {
@@ -14775,6 +14816,10 @@
               sNameTemp = rst[1].replace(/\//g, '_');
 
             case 9:
+              if (pathname.includes('scene_tutorial02')) {
+                getUsernameFromTutorial(data);
+              }
+
               insertToolHtml();
               autoDownloadCsv();
               scenarioName = sNameTemp;
@@ -14784,35 +14829,35 @@
               scenarioCache.hasAutoTrans = false;
               scenarioCache.transMap = null;
               scenarioCache.originName = '';
-              _context3.next = 20;
+              _context3.next = 21;
               return getScenario(scenarioName);
 
-            case 20:
+            case 21:
               _ref4 = _context3.sent;
               transMap = _ref4.transMap;
               csv = _ref4.csv;
-              _context3.next = 25;
+              _context3.next = 26;
               return getNameData();
 
-            case 25:
+            case 26:
               nameData = _context3.sent;
               nameMap = Game.lang !== 'ja' ? nameData['enNameMap'] : nameData['jpNameMap'];
               scenarioCache.nameMap = nameMap;
 
               if (transMap) {
-                _context3.next = 52;
+                _context3.next = 53;
                 break;
               }
 
               if (!(config.transJa && Game.lang === 'ja' || config.transEn && Game.lang === 'en')) {
-                _context3.next = 49;
+                _context3.next = 50;
                 break;
               }
 
-              _context3.next = 32;
+              _context3.next = 33;
               return getNounData();
 
-            case 32:
+            case 33:
               _ref5 = _context3.sent;
               nounMap = _ref5.nounMap;
               nounFixMap = _ref5.nounFixMap;
@@ -14820,10 +14865,10 @@
               transMap = new Map();
               _collectTxt = collectTxt(data), txtList = _collectTxt.txtList, infoList = _collectTxt.infoList;
               startIndex = getStartIndex(data);
-              _context3.next = 41;
+              _context3.next = 42;
               return transMulti(txtList, nameMap, nounMap, nounFixMap, caiyunPrefixMap);
 
-            case 41:
+            case 42:
               transList = _context3.sent;
               transNotice = false;
               transApiName = {
@@ -14848,22 +14893,22 @@
                 scenarioCache.transMap = transMap;
               }
 
-              _context3.next = 50;
+              _context3.next = 51;
               break;
-
-            case 49:
-              return _context3.abrupt("return", data);
 
             case 50:
-              _context3.next = 55;
+              return _context3.abrupt("return", data);
+
+            case 51:
+              _context3.next = 56;
               break;
 
-            case 52:
+            case 53:
               scenarioCache.hasTrans = true;
               scenarioCache.csv = csv;
               scenarioCache.transMap = transMap;
 
-            case 55:
+            case 56:
               if (scenarioCache.hasAutoTrans || scenarioCache.hasTrans) {
                 scenarioFont();
               }
@@ -14883,7 +14928,7 @@
               });
               return _context3.abrupt("return", data);
 
-            case 58:
+            case 59:
             case "end":
               return _context3.stop();
           }
@@ -18989,7 +19034,7 @@
   }();
 
   var replaceHour = function replaceHour(data, type) {
-    if (!data.status && !data.option && !data.option.user_status) {
+    if (!data.status && (!data.option || !data.option.user_status)) {
       return data;
     }
 
@@ -19277,7 +19322,7 @@
   };
 
   var setUserName = function setUserName() {
-    if (!config.userName && Game.userId) {
+    if ((!config.userName || config.userName === '<span>古兰</span>') && Game.userId && location.hash !== '#tutorial/4' && location.hash !== '#tutorial/6' && location.hash !== '#tutorial/8') {
       require(['model/content'], function (mc) {
         var req = new mc({
           controller: "profile",
@@ -19289,7 +19334,7 @@
         req.fetch();
       });
 
-      config.userName = '古兰';
+      config.userName = '<span>古兰</span>';
       localStorage.setItem('blhxfy:name', config.userName);
     }
   };
@@ -19490,7 +19535,7 @@
               break;
 
             case 73:
-              if (!/\/rest\/(multi)?raid\/start\.json/.test(pathname)) {
+              if (!(/\/rest\/(multi)?raid\/start\.json/.test(pathname) || /\/rest\/tutorial\/tutorial\d{1,2}\.json/.test(pathname))) {
                 _context.next = 82;
                 break;
               }
@@ -19509,7 +19554,7 @@
               break;
 
             case 82:
-              if (!(/\/rest\/(multi)?raid\/ability_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/temporary_item_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/normal_attack_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/summon_result\.json/.test(pathname))) {
+              if (!(/\/rest\/(multi)?raid\/ability_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/temporary_item_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/normal_attack_result\.json/.test(pathname) || /\/rest\/(multi)?raid\/summon_result\.json/.test(pathname) || /\/rest\/tutorial\/tutorial_battle_\d+_\d+\.json/.test(pathname))) {
                 _context.next = 88;
                 break;
               }
