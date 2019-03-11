@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.3
+// @version      1.8.4
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -9002,7 +9002,7 @@
     return str;
   };
 
-  var version = "1.8.3";
+  var version = "1.8.4";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -18113,7 +18113,7 @@
     var _battle = _asyncToGenerator(
     /*#__PURE__*/
     regeneratorRuntime.mark(function _callee(data, mode) {
-      var ability, scenario, spms, abKey, item, key, arr, skill, name, trans, npcId, state$1, skillData, index, _key, _arr, _skill, _name, _trans, detail, _getPlusStr3, _getPlusStr4, plus1, plus2, _trans2, _detail, _key2, _arr2, _skill2, _name2, _detail2, param, _index, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _item, _npcId, _state, _skillData, _name3, _trans3, _detail3, _getPlusStr5, _getPlusStr6, _plus, _plus2, _trans4, _detail4, _name4, _detail5, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, _item2, scKey, _item3, _trans5, _getPlusStr7, _getPlusStr8, _plus3, _trans6, _getPlusStr9, _getPlusStr10, _plus4, _trans7, _getPlusStr11, _getPlusStr12, _plus5;
+      var ability, scenario, spms, abKey, item, key, arr, skill, _name2, trans, tsDetail, npcId, state$1, skillData, index, _key, _arr, _skill, _name3, _getPlusStr3, _getPlusStr4, plus1, plus2, _name, _trans, tsName, _tsDetail, _trans2, _tsName, _tsDetail2, _key2, _arr2, _skill2, _name4, detail, param, _index, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _item, _npcId, _state, _skillData, _name5, _getPlusStr5, _getPlusStr6, _plus, _plus2, _name6, _trans3, _tsName2, _tsDetail3, _trans4, _tsName3, _tsDetail4, _name7, _detail, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, _item2, scKey, _item3, _trans5, _getPlusStr7, _getPlusStr8, _plus3, _trans6, _getPlusStr9, _getPlusStr10, _plus4, _getPlusStr11, _getPlusStr12, _plus5, _plus6, _name8, _trans7, _tsName4, _tsDetail5;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -18152,7 +18152,7 @@
 
             case 6:
               if (!isObject_1(ability)) {
-                _context.next = 96;
+                _context.next = 107;
                 break;
               }
 
@@ -18160,7 +18160,7 @@
 
             case 8:
               if ((_context.t1 = _context.t0()).done) {
-                _context.next = 96;
+                _context.next = 107;
                 break;
               }
 
@@ -18168,12 +18168,12 @@
               item = ability[abKey];
 
               if (!(item && isObject_1(item.list))) {
-                _context.next = 94;
+                _context.next = 105;
                 break;
               }
 
               if (!(item.mode === 'player')) {
-                _context.next = 29;
+                _context.next = 39;
                 break;
               }
 
@@ -18181,7 +18181,7 @@
 
             case 14:
               if ((_context.t3 = _context.t2()).done) {
-                _context.next = 27;
+                _context.next = 37;
                 break;
               }
 
@@ -18190,49 +18190,67 @@
               skill = arr[0];
 
               if (!(skill && skill['ability-name'])) {
-                _context.next = 25;
+                _context.next = 35;
                 break;
               }
 
-              name = skill['ability-name'];
+              _name2 = skill['ability-name'];
               _context.next = 22;
-              return getSkillData$1(name);
+              return getSkillData$1(_name2);
 
             case 22:
               trans = _context.sent;
 
-              if (trans) {
-                if (!skillTemp.has(name)) skillTemp.set(name, trans);
-                skill['ability-name'] = trans.name;
-                skill['text-data'] = trans.detail;
+              if (!trans) {
+                _context.next = 29;
+                break;
               }
 
-              skill['duration-type'] = replaceTurn(skill['duration-type']);
-
-            case 25:
-              _context.next = 14;
-              break;
-
-            case 27:
-              _context.next = 94;
+              if (!skillTemp.has(_name2)) skillTemp.set(_name2, trans);
+              skill['ability-name'] = trans.name;
+              skill['text-data'] = trans.detail;
+              _context.next = 34;
               break;
 
             case 29:
+              _context.next = 31;
+              return transSkill(skill['text-data'], state);
+
+            case 31:
+              tsDetail = _context.sent;
+              skill['text-data'] = tsDetail;
+              if (!skillTemp.has(_name2)) skillTemp.set(_name2, {
+                name: _name2,
+                detail: tsDetail
+              });
+
+            case 34:
+              skill['duration-type'] = replaceTurn(skill['duration-type']);
+
+            case 35:
+              _context.next = 14;
+              break;
+
+            case 37:
+              _context.next = 105;
+              break;
+
+            case 39:
               if (!(item.mode === 'npc')) {
-                _context.next = 94;
+                _context.next = 105;
                 break;
               }
 
               npcId = posMap.get(item.pos);
-              _context.next = 33;
+              _context.next = 43;
               return getSkillData(npcId);
 
-            case 33:
+            case 43:
               state$1 = _context.sent;
               skillData = state$1.skillMap.get(npcId);
 
               if (!(skillData && isObject_1(item.list))) {
-                _context.next = 80;
+                _context.next = 91;
                 break;
               }
 
@@ -18240,9 +18258,9 @@
               index = 0;
               _context.t4 = regeneratorRuntime.keys(item.list);
 
-            case 39:
+            case 49:
               if ((_context.t5 = _context.t4()).done) {
-                _context.next = 78;
+                _context.next = 89;
                 break;
               }
 
@@ -18252,91 +18270,98 @@
               _skill = _arr[0];
 
               if (!(_skill && _skill['ability-name'])) {
-                _context.next = 76;
+                _context.next = 87;
                 break;
               }
 
-              _name = _skill['ability-name'];
+              _name3 = _skill['ability-name'];
+              _getPlusStr3 = getPlusStr(_name3), _getPlusStr4 = _slicedToArray(_getPlusStr3, 3), plus1 = _getPlusStr4[0], plus2 = _getPlusStr4[1], _name = _getPlusStr4[2];
 
               if (!skillData["skill-".concat(_name)]) {
-                _context.next = 61;
+                _context.next = 73;
                 break;
               }
 
-              _trans = skillData["skill-".concat(_name)];
+              _trans = skillData["skill-".concat(_name).concat(plus2)];
+              if (!_trans) _trans = skillData["skill-".concat(_name)];
+              tsName = _name3;
+              _tsDetail = _skill['text-data'];
 
-              if (!_trans) {
-                _context.next = 54;
+              if (_trans) {
+                if (_trans.name) tsName = _trans.name + plus1;
+                if (_trans.detail) _tsDetail = _trans.detail;
+              }
+
+              if (!(_tsDetail === _skill['text-data'])) {
+                _context.next = 68;
                 break;
               }
 
-              if (!skillTemp.has(_name)) skillTemp.set(_name, _trans);
-              _skill['ability-name'] = _trans.name;
-              _skill['text-data'] = _trans.detail;
-              _context.next = 59;
-              break;
-
-            case 54:
-              _context.next = 56;
+              _context.next = 66;
               return transSkill(_skill['text-data'], state$1);
 
-            case 56:
-              detail = _context.sent;
-              _skill['text-data'] = detail;
-              if (!skillTemp.has(_name)) skillTemp.set(_name, {
-                name: _name,
-                detail: detail
-              });
+            case 66:
+              _tsDetail = _context.sent;
+              _skill['text-data'] = _tsDetail;
 
-            case 59:
-              _context.next = 76;
+            case 68:
+              _skill['ability-name'] = tsName;
+              _skill['text-data'] = _tsDetail;
+              skillTemp.set(_name3, {
+                name: tsName,
+                detail: _tsDetail
+              });
+              _context.next = 86;
               break;
 
-            case 61:
-              _getPlusStr3 = getPlusStr(_name), _getPlusStr4 = _slicedToArray(_getPlusStr3, 2), plus1 = _getPlusStr4[0], plus2 = _getPlusStr4[1];
+            case 73:
               _trans2 = skillData["skill-".concat(index).concat(plus2)];
               if (!_trans2) _trans2 = skillData["skill-".concat(index)];
+              _tsName = _name3;
+              _tsDetail2 = _skill['text-data'];
 
-              if (!_trans2) {
-                _context.next = 70;
+              if (_trans2) {
+                if (_trans2.name) _tsName = _trans2.name + plus1;
+                if (_trans2.detail) _tsDetail2 = _trans2.detail;
+              }
+
+              if (!(_tsDetail2 === _skill['text-data'])) {
+                _context.next = 83;
                 break;
               }
 
-              if (!skillTemp.has(_name)) skillTemp.set(_name, _trans2);
-              _skill['ability-name'] = "".concat(_trans2.name).concat(plus1);
-              _skill['text-data'] = _trans2.detail;
-              _context.next = 75;
-              break;
-
-            case 70:
-              _context.next = 72;
+              _context.next = 81;
               return transSkill(_skill['text-data'], state$1);
 
-            case 72:
-              _detail = _context.sent;
-              _skill['text-data'] = _detail;
-              if (!skillTemp.has(_name)) skillTemp.set(_name, {
-                name: _name,
-                detail: _detail
+            case 81:
+              _tsDetail2 = _context.sent;
+              _skill['text-data'] = _tsDetail2;
+
+            case 83:
+              _skill['ability-name'] = _tsName;
+              _skill['text-data'] = _tsDetail2;
+              skillTemp.set(_name3, {
+                name: _tsName,
+                detail: _tsDetail2
               });
 
-            case 75:
+            case 86:
               _skill['duration-type'] = replaceTurn(_skill['duration-type']);
 
-            case 76:
-              _context.next = 39;
+            case 87:
+              _context.next = 49;
               break;
 
-            case 78:
-              _context.next = 94;
+            case 89:
+              _context.next = 105;
               break;
 
-            case 80:
+            case 91:
               _context.t6 = regeneratorRuntime.keys(item.list);
 
-            case 81:
+            case 92:
               if ((_context.t7 = _context.t6()).done) {
-                _context.next = 94;
+                _context.next = 105;
                 break;
               }
 
@@ -18345,33 +18370,33 @@
               _skill2 = _arr2[0];
 
               if (!(_skill2 && _skill2['ability-name'] && _skill2['text-data'])) {
-                _context.next = 92;
+                _context.next = 103;
                 break;
               }
 
-              _name2 = _skill2['ability-name'];
-              _context.next = 89;
+              _name4 = _skill2['ability-name'];
+              _context.next = 100;
               return transSkill(_skill2['text-data'], state$1);
 
-            case 89:
-              _detail2 = _context.sent;
-              _skill2['text-data'] = _detail2;
-              if (!skillTemp.has(_name2)) skillTemp.set(_name2, {
-                name: _name2,
-                detail: _detail2
+            case 100:
+              detail = _context.sent;
+              _skill2['text-data'] = detail;
+              skillTemp.set(_name4, {
+                name: _name4,
+                detail: detail
               });
 
-            case 92:
-              _context.next = 81;
+            case 103:
+              _context.next = 92;
               break;
 
-            case 94:
+            case 105:
               _context.next = 8;
               break;
 
-            case 96:
+            case 107:
               if (!(mode !== 'result' && data.player && isArray_1(data.player.param))) {
-                _context.next = 171;
+                _context.next = 183;
                 break;
               }
 
@@ -18380,315 +18405,383 @@
               _iteratorNormalCompletion2 = true;
               _didIteratorError2 = false;
               _iteratorError2 = undefined;
-              _context.prev = 102;
+              _context.prev = 113;
               _iterator2 = param[Symbol.iterator]();
 
-            case 104:
+            case 115:
               if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
-                _context.next = 157;
+                _context.next = 169;
                 break;
               }
 
               _item = _step2.value;
               _npcId = posMap.get(_index);
               _index++;
-              _context.next = 110;
+              _context.next = 121;
               return getSkillData(_npcId);
 
-            case 110:
+            case 121:
               _state = _context.sent;
               _skillData = _state.skillMap.get(_npcId);
 
               if (!_skillData) {
-                _context.next = 147;
+                _context.next = 159;
                 break;
               }
 
               collectNpcSkill(_skillData);
 
               if (!_item['special_skill']) {
-                _context.next = 145;
+                _context.next = 157;
                 break;
               }
 
-              _name3 = _item['special_skill'];
+              _name5 = _item['special_skill'];
+              _getPlusStr5 = getPlusStr(_name5), _getPlusStr6 = _slicedToArray(_getPlusStr5, 3), _plus = _getPlusStr6[0], _plus2 = _getPlusStr6[1], _name6 = _getPlusStr6[2];
 
-              if (!_skillData["special-".concat(_name3)]) {
-                _context.next = 131;
+              if (!_skillData["special-".concat(_name6)]) {
+                _context.next = 144;
                 break;
               }
 
-              _trans3 = _skillData["special-".concat(_name3)];
+              _trans3 = _skillData["special-".concat(_name6).concat(_plus2)];
+              if (!_trans3) _trans3 = _skillData["special-".concat(_name6)];
+              _tsName2 = _name5;
+              _tsDetail3 = _item['special_comment'];
 
-              if (!_trans3) {
-                _context.next = 124;
+              if (_trans3) {
+                if (_trans3.name) _tsName2 = _trans3.name + _plus;
+                if (_trans3.detail) _tsDetail3 = _trans3.detail;
+              }
+
+              if (!(_tsDetail3 === _item['special_comment'])) {
+                _context.next = 139;
                 break;
               }
 
-              if (!skillTemp.has(_name3)) skillTemp.set(_name3, _trans3);
-              _item['special_skill'] = _trans3.name;
-              _item['special_comment'] = _trans3.detail;
-              _context.next = 129;
-              break;
-
-            case 124:
-              _context.next = 126;
+              _context.next = 137;
               return transSkill(_item['special_comment'], _state);
 
-            case 126:
-              _detail3 = _context.sent;
-              _item['special_comment'] = _detail3;
-              if (!skillTemp.has(_name3)) skillTemp.set(_name3, {
-                name: _name3,
-                detail: _detail3
-              });
+            case 137:
+              _tsDetail3 = _context.sent;
+              _item['special_comment'] = _tsDetail3;
 
-            case 129:
-              _context.next = 145;
+            case 139:
+              _item['special_skill'] = _tsName2;
+              _item['special_comment'] = _tsDetail3;
+              skillTemp.set(_name5, {
+                name: _tsName2,
+                detail: _tsDetail3
+              });
+              _context.next = 157;
               break;
 
-            case 131:
-              _getPlusStr5 = getPlusStr(_name3), _getPlusStr6 = _slicedToArray(_getPlusStr5, 2), _plus = _getPlusStr6[0], _plus2 = _getPlusStr6[1];
+            case 144:
               _trans4 = _skillData["special".concat(_plus2)];
-              if (!_trans4) _trans4 = _skillData['special'];
+              if (!_trans4) _trans4 = _skillData["special"];
+              _tsName3 = _name5;
+              _tsDetail4 = _item['special_comment'];
 
-              if (!_trans4) {
-                _context.next = 140;
-                break;
+              if (_trans4) {
+                if (_trans4.name) _tsName3 = _trans4.name + _plus;
+                if (_trans4.detail) _tsDetail4 = _trans4.detail;
               }
 
-              if (!skillTemp.has(_name3)) skillTemp.set(_name3, _trans4);
-              _item['special_skill'] = "".concat(_trans4.name).concat(_plus);
-              _item['special_comment'] = _trans4.detail;
-              _context.next = 145;
-              break;
-
-            case 140:
-              _context.next = 142;
-              return transSkill(_item['special_comment'], _state);
-
-            case 142:
-              _detail4 = _context.sent;
-              _item['special_comment'] = _detail4;
-              if (!skillTemp.has(_name3)) skillTemp.set(_name3, {
-                name: _name3,
-                detail: _detail4
-              });
-
-            case 145:
-              _context.next = 154;
-              break;
-
-            case 147:
-              if (!(_item['special_skill'] && _item['special_comment'])) {
+              if (!(_tsDetail4 === _item['special_comment'])) {
                 _context.next = 154;
                 break;
               }
 
-              _name4 = _item['special_skill'];
-              _context.next = 151;
+              _context.next = 152;
               return transSkill(_item['special_comment'], _state);
 
-            case 151:
-              _detail5 = _context.sent;
-              _item['special_comment'] = _detail5;
-              if (!skillTemp.has(_name4)) skillTemp.set(_name4, {
-                name: _name4,
-                detail: _detail5
-              });
+            case 152:
+              _tsDetail4 = _context.sent;
+              _item['special_comment'] = _tsDetail4;
 
             case 154:
-              _iteratorNormalCompletion2 = true;
-              _context.next = 104;
-              break;
+              _item['special_skill'] = _tsName3;
+              _item['special_comment'] = _tsDetail4;
+              skillTemp.set(_name5, {
+                name: _tsName3,
+                detail: _tsDetail4
+              });
 
             case 157:
-              _context.next = 163;
+              _context.next = 166;
               break;
 
             case 159:
-              _context.prev = 159;
-              _context.t8 = _context["catch"](102);
+              if (!(_item['special_skill'] && _item['special_comment'])) {
+                _context.next = 166;
+                break;
+              }
+
+              _name7 = _item['special_skill'];
+              _context.next = 163;
+              return transSkill(_item['special_comment'], _state);
+
+            case 163:
+              _detail = _context.sent;
+              _item['special_comment'] = _detail;
+              skillTemp.set(_name7, {
+                name: _name7,
+                detail: _detail
+              });
+
+            case 166:
+              _iteratorNormalCompletion2 = true;
+              _context.next = 115;
+              break;
+
+            case 169:
+              _context.next = 175;
+              break;
+
+            case 171:
+              _context.prev = 171;
+              _context.t8 = _context["catch"](113);
               _didIteratorError2 = true;
               _iteratorError2 = _context.t8;
 
-            case 163:
-              _context.prev = 163;
-              _context.prev = 164;
+            case 175:
+              _context.prev = 175;
+              _context.prev = 176;
 
               if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
                 _iterator2.return();
               }
 
-            case 166:
-              _context.prev = 166;
+            case 178:
+              _context.prev = 178;
 
               if (!_didIteratorError2) {
-                _context.next = 169;
+                _context.next = 181;
                 break;
               }
 
               throw _iteratorError2;
 
-            case 169:
-              return _context.finish(166);
+            case 181:
+              return _context.finish(178);
 
-            case 170:
-              return _context.finish(163);
+            case 182:
+              return _context.finish(175);
 
-            case 171:
+            case 183:
               if (!(data.summon && isArray_1(data.summon))) {
-                _context.next = 205;
+                _context.next = 217;
                 break;
               }
 
               _iteratorNormalCompletion3 = true;
               _didIteratorError3 = false;
               _iteratorError3 = undefined;
-              _context.prev = 175;
+              _context.prev = 187;
               _iterator3 = data.summon[Symbol.iterator]();
 
-            case 177:
+            case 189:
               if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
-                _context.next = 191;
+                _context.next = 203;
                 break;
               }
 
               _item2 = _step3.value;
 
               if (!_item2) {
-                _context.next = 188;
+                _context.next = 200;
                 break;
               }
 
               if (!_item2.comment) {
-                _context.next = 184;
+                _context.next = 196;
                 break;
               }
 
-              _context.next = 183;
+              _context.next = 195;
               return transSkill(_item2.comment, state);
 
-            case 183:
+            case 195:
               _item2.comment = _context.sent;
 
-            case 184:
+            case 196:
               if (!_item2.protection) {
-                _context.next = 188;
+                _context.next = 200;
                 break;
               }
 
-              _context.next = 187;
+              _context.next = 199;
               return transSkill(_item2.protection, state);
 
-            case 187:
+            case 199:
               _item2.protection = _context.sent;
 
-            case 188:
+            case 200:
               _iteratorNormalCompletion3 = true;
-              _context.next = 177;
+              _context.next = 189;
               break;
 
-            case 191:
-              _context.next = 197;
+            case 203:
+              _context.next = 209;
               break;
 
-            case 193:
-              _context.prev = 193;
-              _context.t9 = _context["catch"](175);
+            case 205:
+              _context.prev = 205;
+              _context.t9 = _context["catch"](187);
               _didIteratorError3 = true;
               _iteratorError3 = _context.t9;
 
-            case 197:
-              _context.prev = 197;
-              _context.prev = 198;
+            case 209:
+              _context.prev = 209;
+              _context.prev = 210;
 
               if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
                 _iterator3.return();
               }
 
-            case 200:
-              _context.prev = 200;
+            case 212:
+              _context.prev = 212;
 
               if (!_didIteratorError3) {
-                _context.next = 203;
+                _context.next = 215;
                 break;
               }
 
               throw _iteratorError3;
 
-            case 203:
-              return _context.finish(200);
+            case 215:
+              return _context.finish(212);
 
-            case 204:
-              return _context.finish(197);
+            case 216:
+              return _context.finish(209);
 
-            case 205:
+            case 217:
               if (!(data.supporter && data.supporter.name)) {
-                _context.next = 215;
+                _context.next = 227;
                 break;
               }
 
-              _context.next = 208;
+              _context.next = 220;
               return transSkill(data.supporter.comment, state);
 
-            case 208:
+            case 220:
               data.supporter.comment = _context.sent;
-              _context.next = 211;
+              _context.next = 223;
               return transSkill(data.supporter.detail, state);
 
-            case 211:
+            case 223:
               data.supporter.detail = _context.sent;
-              _context.next = 214;
+              _context.next = 226;
               return transSkill(data.supporter.protection, state);
 
-            case 214:
+            case 226:
               data.supporter.protection = _context.sent;
 
-            case 215:
-              // translate scenario
-              if (scenario) {
-                for (scKey in scenario) {
-                  _item3 = scenario[scKey];
-
-                  if (_item3 && _item3.name) {
-                    if (_item3.cmd === 'ability') {
-                      _trans5 = skillTemp.get(_item3.name);
-                      _getPlusStr7 = getPlusStr(_item3.name), _getPlusStr8 = _slicedToArray(_getPlusStr7, 1), _plus3 = _getPlusStr8[0];
-
-                      if (_trans5) {
-                        _item3.name = _trans5.name + _plus3;
-                        _item3.comment = _trans5.detail;
-                      }
-                    } else if (_item3.cmd === 'special_npc') {
-                      _trans6 = skillTemp.get(_item3.name);
-                      _getPlusStr9 = getPlusStr(_item3.name), _getPlusStr10 = _slicedToArray(_getPlusStr9, 1), _plus4 = _getPlusStr10[0];
-
-                      if (_trans6) {
-                        _item3.name = _trans6.name + _plus4;
-                      }
-                    } else if (_item3.cmd === 'special_change') {
-                      _trans7 = skillTemp.get(_item3.name);
-                      _getPlusStr11 = getPlusStr(_item3.name), _getPlusStr12 = _slicedToArray(_getPlusStr11, 1), _plus5 = _getPlusStr12[0];
-
-                      if (_trans7) {
-                        _item3.name = _trans7.name + _plus5;
-                        _item3.text = _trans7.detail;
-                      }
-                    }
-                  }
-                }
+            case 227:
+              if (!scenario) {
+                _context.next = 262;
+                break;
               }
 
+              _context.t10 = regeneratorRuntime.keys(scenario);
+
+            case 229:
+              if ((_context.t11 = _context.t10()).done) {
+                _context.next = 262;
+                break;
+              }
+
+              scKey = _context.t11.value;
+              _item3 = scenario[scKey];
+
+              if (!(_item3 && _item3.name)) {
+                _context.next = 260;
+                break;
+              }
+
+              if (!(_item3.cmd === 'ability')) {
+                _context.next = 239;
+                break;
+              }
+
+              _trans5 = skillTemp.get(_item3.name);
+              _getPlusStr7 = getPlusStr(_item3.name), _getPlusStr8 = _slicedToArray(_getPlusStr7, 1), _plus3 = _getPlusStr8[0];
+
+              if (_trans5) {
+                _item3.name = _trans5.name + _plus3;
+                _item3.comment = _trans5.detail;
+              }
+
+              _context.next = 260;
+              break;
+
+            case 239:
+              if (!(_item3.cmd === 'special_npc')) {
+                _context.next = 245;
+                break;
+              }
+
+              _trans6 = skillTemp.get(_item3.name);
+              _getPlusStr9 = getPlusStr(_item3.name), _getPlusStr10 = _slicedToArray(_getPlusStr9, 1), _plus4 = _getPlusStr10[0];
+
+              if (_trans6) {
+                _item3.name = _trans6.name + _plus4;
+              }
+
+              _context.next = 260;
+              break;
+
+            case 245:
+              if (!(_item3.cmd === 'special_change')) {
+                _context.next = 260;
+                break;
+              }
+
+              _getPlusStr11 = getPlusStr(_item3.name), _getPlusStr12 = _slicedToArray(_getPlusStr11, 3), _plus5 = _getPlusStr12[0], _plus6 = _getPlusStr12[1], _name8 = _getPlusStr12[2];
+              _trans7 = skillTemp.get(_item3.name);
+              if (!_trans7) _trans7 = skillTemp.get(_name8);
+              _tsName4 = _item3.name;
+              _tsDetail5 = _item3.text;
+
+              if (_trans7) {
+                if (_trans7.name) _tsName4 = _trans7.name + _plus5;
+                if (_trans7.detail) _tsDetail5 = _trans7.detail;
+              }
+
+              if (!(_tsDetail5 === _item3.text)) {
+                _context.next = 257;
+                break;
+              }
+
+              _context.next = 255;
+              return transSkill(_item3.text, state);
+
+            case 255:
+              _tsDetail5 = _context.sent;
+              _item3.text = _tsDetail5;
+
+            case 257:
+              _item3.name = _tsName4;
+              _item3.text = _tsDetail5;
+              skillTemp.set(name, {
+                name: _tsName4,
+                detail: _tsDetail5
+              });
+
+            case 260:
+              _context.next = 229;
+              break;
+
+            case 262:
               viraSkillTitle();
               return _context.abrupt("return", data);
 
-            case 218:
+            case 264:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[102, 159, 163, 171], [164,, 166, 170], [175, 193, 197, 205], [198,, 200, 204]]);
+      }, _callee, null, [[113, 171, 175, 183], [176,, 178, 182], [187, 205, 209, 217], [210,, 212, 216]]);
     }));
 
     function battle(_x, _x2) {
