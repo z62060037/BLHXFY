@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.4
+// @version      1.8.5
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -9002,7 +9002,7 @@
     return str;
   };
 
-  var version = "1.8.4";
+  var version = "1.8.5";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -18308,7 +18308,7 @@
               _skill['ability-name'] = tsName;
               _skill['text-data'] = _tsDetail;
               skillTemp.set(_name3, {
-                name: tsName,
+                name: getPlusStr(tsName)[2],
                 detail: _tsDetail
               });
               _context.next = 86;
@@ -18341,7 +18341,7 @@
               _skill['ability-name'] = _tsName;
               _skill['text-data'] = _tsDetail2;
               skillTemp.set(_name3, {
-                name: _tsName,
+                name: getPlusStr(_tsName)[2],
                 detail: _tsDetail2
               });
 
@@ -18382,7 +18382,7 @@
               detail = _context.sent;
               _skill2['text-data'] = detail;
               skillTemp.set(_name4, {
-                name: _name4,
+                name: getPlusStr(_name4)[2],
                 detail: detail
               });
 
@@ -18470,7 +18470,7 @@
               _item['special_skill'] = _tsName2;
               _item['special_comment'] = _tsDetail3;
               skillTemp.set(_name5, {
-                name: _tsName2,
+                name: getPlusStr(_tsName2)[2],
                 detail: _tsDetail3
               });
               _context.next = 157;
@@ -18503,7 +18503,7 @@
               _item['special_skill'] = _tsName3;
               _item['special_comment'] = _tsDetail4;
               skillTemp.set(_name5, {
-                name: _tsName3,
+                name: getPlusStr(_tsName3)[2],
                 detail: _tsDetail4
               });
 
@@ -18525,7 +18525,7 @@
               _detail = _context.sent;
               _item['special_comment'] = _detail;
               skillTemp.set(_name7, {
-                name: _name7,
+                name: getPlusStr(_name7)[2],
                 detail: _detail
               });
 
@@ -18764,7 +18764,7 @@
               _item3.name = _tsName4;
               _item3.text = _tsDetail5;
               skillTemp.set(name, {
-                name: _tsName4,
+                name: getPlusStr(_tsName4)[2],
                 detail: _tsDetail5
               });
 

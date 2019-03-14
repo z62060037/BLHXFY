@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.4
+// @version      1.8.5
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -5920,7 +5920,7 @@
 	  return str;
 	};
 
-	var version = "1.8.4";
+	var version = "1.8.5";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -13200,7 +13200,7 @@ ${extraHtml}
 	                  skill['ability-name'] = tsName;
 	                  skill['text-data'] = tsDetail;
 	                  skillTemp.set(name, {
-	                    name: tsName,
+	                    name: getPlusStr(tsName)[2],
 	                    detail: tsDetail
 	                  });
 	                } else {
@@ -13222,7 +13222,7 @@ ${extraHtml}
 	                  skill['ability-name'] = tsName;
 	                  skill['text-data'] = tsDetail;
 	                  skillTemp.set(name, {
-	                    name: tsName,
+	                    name: getPlusStr(tsName)[2],
 	                    detail: tsDetail
 	                  });
 	                }
@@ -13240,7 +13240,7 @@ ${extraHtml}
 	                const detail = await transSkill(skill['text-data'], state);
 	                skill['text-data'] = detail;
 	                skillTemp.set(name, {
-	                  name,
+	                  name: getPlusStr(name)[2],
 	                  detail
 	                });
 	              }
@@ -13288,7 +13288,7 @@ ${extraHtml}
 	            item['special_skill'] = tsName;
 	            item['special_comment'] = tsDetail;
 	            skillTemp.set(name, {
-	              name: tsName,
+	              name: getPlusStr(tsName)[2],
 	              detail: tsDetail
 	            });
 	          } else {
@@ -13310,7 +13310,7 @@ ${extraHtml}
 	            item['special_skill'] = tsName;
 	            item['special_comment'] = tsDetail;
 	            skillTemp.set(name, {
-	              name: tsName,
+	              name: getPlusStr(tsName)[2],
 	              detail: tsDetail
 	            });
 	          }
@@ -13321,7 +13321,7 @@ ${extraHtml}
 	          const detail = await transSkill(item['special_comment'], state);
 	          item['special_comment'] = detail;
 	          skillTemp.set(name, {
-	            name,
+	            name: getPlusStr(name)[2],
 	            detail
 	          });
 	        }
@@ -13391,7 +13391,7 @@ ${extraHtml}
 	          item.name = tsName;
 	          item.text = tsDetail;
 	          skillTemp.set(name, {
-	            name: tsName,
+	            name: getPlusStr(tsName)[2],
 	            detail: tsDetail
 	          });
 	        }
