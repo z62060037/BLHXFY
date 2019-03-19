@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.6
+// @version      1.8.7
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -9002,7 +9002,7 @@
     return str;
   };
 
-  var version = "1.8.6";
+  var version = "1.8.7";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -9093,7 +9093,11 @@
       document.body.appendChild(iframe);
       lacia = iframe.contentWindow;
     });
+    var timer = setTimeout(function () {
+      rej("\u52A0\u8F7Diframe\u8D85\u65F6");
+    }, config.timeout * 1000);
     ee.once('loaded', function () {
+      clearTimeout(timer);
       rev();
     });
   });
@@ -9109,17 +9113,27 @@
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _context.next = 2;
-              return load;
-
-            case 2:
               url = pathname;
               flag = Math.random();
+              _context.prev = 2;
+              _context.next = 5;
+              return load;
+
+            case 5:
               lacia.postMessage({
                 type: 'fetch',
                 url: url,
                 flag: flag
               }, origin);
+              _context.next = 11;
+              break;
+
+            case 8:
+              _context.prev = 8;
+              _context.t0 = _context["catch"](2);
+              return _context.abrupt("return", '');
+
+            case 11:
               return _context.abrupt("return", new Promise(function (rev, rej) {
                 var timer = setTimeout(function () {
                   rej("\u52A0\u8F7D".concat(pathname, "\u8D85\u65F6"));
@@ -9136,12 +9150,12 @@
                 });
               }));
 
-            case 6:
+            case 12:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee);
+      }, _callee, null, [[2, 8]]);
     }));
 
     return function fetchData(_x) {
@@ -9288,7 +9302,7 @@
             rev(data.hash);
           });
         }
-      });
+      }).catch(rej);
     } else {
       rev(fetchInfo.data.hash);
     }
@@ -20012,8 +20026,10 @@
 
   keepBgm();
 
-  window.addEventListener('load', function () {
-    $('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
+  window.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+      $('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
+    }, 1000);
   });
 
   var saveToLocalstorage = function saveToLocalstorage(key, value) {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.6
+// @version      1.8.7
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -5920,7 +5920,7 @@
 	  return str;
 	};
 
-	var version = "1.8.6";
+	var version = "1.8.7";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -6018,20 +6018,30 @@
 	    document.body.appendChild(iframe);
 	    lacia = iframe.contentWindow;
 	  });
+	  let timer = setTimeout(() => {
+	    rej(`加载iframe超时`);
+	  }, config.timeout * 1000);
 	  ee.once('loaded', () => {
+	    clearTimeout(timer);
 	    rev();
 	  });
 	});
 
 	const fetchData = async pathname => {
-	  await load;
 	  const url = pathname;
 	  const flag = Math.random();
-	  lacia.postMessage({
-	    type: 'fetch',
-	    url,
-	    flag
-	  }, origin);
+
+	  try {
+	    await load;
+	    lacia.postMessage({
+	      type: 'fetch',
+	      url,
+	      flag
+	    }, origin);
+	  } catch (e) {
+	    return '';
+	  }
+
 	  return new Promise((rev, rej) => {
 	    let timer = setTimeout(() => {
 	      rej(`加载${pathname}超时`);
@@ -6117,7 +6127,7 @@
 	          rev(data.hash);
 	        });
 	      }
-	    });
+	    }).catch(rej);
 	  } else {
 	    rev(fetchInfo.data.hash);
 	  }
@@ -14062,8 +14072,10 @@ ${extraHtml}
 
 	keepBgm();
 
-	window.addEventListener('load', function () {
-	  $('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
+	window.addEventListener('DOMContentLoaded', function () {
+	  setTimeout(() => {
+	    $('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
+	  }, 1000);
 	});
 
 	const saveToLocalstorage = (key, value) => {
