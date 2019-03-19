@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.5
+// @version      1.8.6
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -9002,7 +9002,7 @@
     return str;
   };
 
-  var version = "1.8.5";
+  var version = "1.8.6";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -14455,7 +14455,6 @@
                   txt = replaceWords(txt, nounMap, lang);
                 } else if (config.transApi === 'caiyun') {
                   txt = replaceWords(txt, caiyunPrefixMap, lang);
-                  txt = txt.replace(/─/g, '—');
                 }
 
                 if (userName) {
@@ -14508,7 +14507,12 @@
 
                   if (config.displayName || userName) {
                     var name = config.displayName || userName;
-                    _str = _str.replace(new RegExp("".concat(config.defaultName, "(\u5148\u751F|\u5C0F\u59D0)?"), 'g'), name);
+
+                    if (lang === 'en') {
+                      _str = _str.replace(new RegExp("".concat(config.defaultEnName), 'g'), name);
+                    } else {
+                      _str = _str.replace(new RegExp("".concat(config.defaultName, "(\u5148\u751F|\u5C0F\u59D0)?"), 'g'), name);
+                    }
                   }
 
                   return result.concat(_str.split('\n'));

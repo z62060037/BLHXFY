@@ -5904,7 +5904,7 @@
 	  return str;
 	};
 
-	var version = "1.8.5";
+	var version = "1.8.6";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -11373,7 +11373,6 @@ ${extraHtml}
 	      txt = replaceWords(txt, nounMap, lang);
 	    } else if (config.transApi === 'caiyun') {
 	      txt = replaceWords(txt, caiyunPrefixMap, lang);
-	      txt = txt.replace(/─/g, '—');
 	    }
 
 	    if (userName) {
@@ -11400,7 +11399,12 @@ ${extraHtml}
 
 	      if (config.displayName || userName) {
 	        const name = config.displayName || userName;
-	        _str = _str.replace(new RegExp(`${config.defaultName}(先生|小姐)?`, 'g'), name);
+
+	        if (lang === 'en') {
+	          _str = _str.replace(new RegExp(`${config.defaultEnName}`, 'g'), name);
+	        } else {
+	          _str = _str.replace(new RegExp(`${config.defaultName}(先生|小姐)?`, 'g'), name);
+	        }
 	      }
 
 	      return result.concat(_str.split('\n'));
