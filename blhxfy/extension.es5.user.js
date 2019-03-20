@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.7
+// @version      1.8.8
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -9002,7 +9002,7 @@
     return str;
   };
 
-  var version = "1.8.7";
+  var version = "1.8.8";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -14344,9 +14344,9 @@
   var scenarioFont = function scenarioFont() {
     if (!config.font) {
       if (Game.ua.os.name === 'Windows') {
-        insertCSS$1('jpkana, FZShuiYJW, "Microsoft Jhenghei", "Yu Gothic", "Meiryo", sans-serif');
+        insertCSS$1('jpkana, blhxfywf, "Microsoft Jhenghei", "Yu Gothic", "Meiryo"');
       } else {
-        insertCSS$1('jpkana, sans-serif');
+        insertCSS$1('jpkana');
       }
     } else if (config.font !== 'none') {
       insertCSS$1(config.font);

@@ -5904,7 +5904,7 @@
 	  return str;
 	};
 
-	var version = "1.8.7";
+	var version = "1.8.8";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -11271,9 +11271,9 @@ ${extraHtml}
 	const scenarioFont = () => {
 	  if (!config.font) {
 	    if (Game.ua.os.name === 'Windows') {
-	      insertCSS$1('jpkana, FZShuiYJW, "Microsoft Jhenghei", "Yu Gothic", "Meiryo", sans-serif');
+	      insertCSS$1('jpkana, blhxfywf, "Microsoft Jhenghei", "Yu Gothic", "Meiryo"');
 	    } else {
-	      insertCSS$1('jpkana, sans-serif');
+	      insertCSS$1('jpkana');
 	    }
 	  } else if (config.font !== 'none') {
 	    insertCSS$1(config.font);
