@@ -5904,7 +5904,7 @@
 	  return str;
 	};
 
-	var version = "1.8.8";
+	var version = "1.8.9";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -13499,11 +13499,13 @@ ${extraHtml}
 	    const comicMap = await getComicData();
 
 	    if (data.list) {
-	      data.list.forEach(item => {
+	      for (let key in data.list) {
+	        const item = data.list[key];
+
 	        if (comicMap.has(item.id)) {
 	          item.trans = true;
 	        }
-	      });
+	      }
 	    }
 	  } else {
 	    const rgs = pathname.match(/\/comic\/content\/episode\/(\d+)/);
@@ -14058,7 +14060,7 @@ ${extraHtml}
 
 	window.addEventListener('DOMContentLoaded', function () {
 	  setTimeout(() => {
-	    $('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
+	    if (jQuery) jQuery('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
 	  }, 1000);
 	});
 

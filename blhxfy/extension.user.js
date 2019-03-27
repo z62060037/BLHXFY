@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.8
+// @version      1.8.9
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -5920,7 +5920,7 @@
 	  return str;
 	};
 
-	var version = "1.8.8";
+	var version = "1.8.9";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -13515,11 +13515,13 @@ ${extraHtml}
 	    const comicMap = await getComicData();
 
 	    if (data.list) {
-	      data.list.forEach(item => {
+	      for (let key in data.list) {
+	        const item = data.list[key];
+
 	        if (comicMap.has(item.id)) {
 	          item.trans = true;
 	        }
-	      });
+	      }
 	    }
 	  } else {
 	    const rgs = pathname.match(/\/comic\/content\/episode\/(\d+)/);
@@ -14074,7 +14076,7 @@ ${extraHtml}
 
 	window.addEventListener('DOMContentLoaded', function () {
 	  setTimeout(() => {
-	    $('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
+	    if (jQuery) jQuery('.prt-global-ext .prt-config-balloon').html('感觉卡顿的时候，可以通过调整设定来改善');
 	  }, 1000);
 	});
 
