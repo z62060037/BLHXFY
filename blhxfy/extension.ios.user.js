@@ -5904,7 +5904,7 @@
 	  return str;
 	};
 
-	var version = "1.8.9";
+	var version = "1.8.10";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -11646,7 +11646,7 @@ ${extraHtml}
 	        obj[info.type] = transList[index] || '';
 
 	        if (!transNotice && info.index === startIndex && info.type === 'detail' && transList.length > 0) {
-	          obj[info.type] = `(本节由<a target="_blank" style="color:#9ccd4e" href="${apiData[1]}">${apiData[0]}</a>机翻，点右上Log设置关闭)<br>${obj[info.type]}`;
+	          obj[info.type] = `<a href="${apiData[1]}" target="_blank" class="autotrans-hint-blhxfy ${config.transApi}-blhxfy"></a>${obj[info.type]}`;
 	          transNotice = true;
 	        }
 
