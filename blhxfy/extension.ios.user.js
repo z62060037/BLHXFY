@@ -5904,7 +5904,7 @@
 	  return str;
 	};
 
-	var version = "1.8.10";
+	var version = "1.8.11";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -11646,7 +11646,7 @@ ${extraHtml}
 	        obj[info.type] = transList[index] || '';
 
 	        if (!transNotice && info.index === startIndex && info.type === 'detail' && transList.length > 0) {
-	          obj[info.type] = `<a href="${apiData[1]}" target="_blank" class="autotrans-hint-blhxfy ${config.transApi}-blhxfy"></a>${obj[info.type]}`;
+	          obj[info.type] = `<a href="${apiData[1]}" target="_blank" class="autotrans-hint-blhxfy ${config.transApi}-blhxfy"> </a>${obj[info.type]}`;
 	          transNotice = true;
 	        }
 
