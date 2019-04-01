@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.11
+// @version      1.8.12
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -5920,7 +5920,7 @@
 	  return str;
 	};
 
-	var version = "1.8.11";
+	var version = "1.8.12";
 
 	const config = {
 	  origin: 'https://blhx.danmu9.com',
@@ -6010,29 +6010,38 @@
 	  document.head.appendChild(style);
 	};
 
-	const load = new Promise((rev, rej) => {
-	  window.addEventListener('load', () => {
-	    const iframe = document.createElement('iframe');
-	    iframe.src = `${origin}/blhxfy/lacia.html`;
-	    iframe.style.display = 'none';
-	    document.body.appendChild(iframe);
-	    lacia = iframe.contentWindow;
+	let loadIframe = () => {
+	  return new Promise((rev, rej) => {
+	    window.addEventListener('load', () => {
+	      const iframe = document.createElement('iframe');
+	      iframe.src = `${origin}/blhxfy/lacia.html`;
+	      iframe.style.display = 'none';
+	      document.body.appendChild(iframe);
+	      lacia = iframe.contentWindow;
+	    });
+	    let timer = setTimeout(() => {
+	      rej(`加载iframe超时`);
+	    }, config.timeout * 1000);
+	    ee.once('loaded', () => {
+	      clearTimeout(timer);
+	      rev();
+	    });
 	  });
-	  let timer = setTimeout(() => {
-	    rej(`加载iframe超时`);
-	  }, config.timeout * 1000);
-	  ee.once('loaded', () => {
-	    clearTimeout(timer);
-	    rev();
-	  });
-	});
+	};
+
+	let iframeLoaded = false;
 
 	const fetchData = async pathname => {
 	  const url = pathname;
 	  const flag = Math.random();
 
 	  try {
-	    await load;
+	    if (!iframeLoaded) {
+	      loadIframe = loadIframe();
+	      iframeLoaded = true;
+	    }
+
+	    await loadIframe;
 	    lacia.postMessage({
 	      type: 'fetch',
 	      url,
@@ -14326,7 +14335,10 @@ ${extraHtml}
 	};
 
 	const main = () => {
-	  if (window.blhxfy) return;
+	  const time = sessionStorage.getItem('blhxfy:startTime') || 0;
+	  const now = Date.now();
+	  if (now - time < 1000) return;
+	  sessionStorage.setItem('blhxfy:startTime', now);
 	  eventMessage();
 	  injectXHR();
 	};

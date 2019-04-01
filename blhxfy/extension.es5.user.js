@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         碧蓝幻想翻译兼容版
 // @namespace    https://github.com/biuuu/BLHXFY
-// @version      1.8.11
+// @version      1.8.12
 // @description  碧蓝幻想的汉化脚本，提交新翻译请到 https://github.com/biuuu/BLHXFY
 // @icon         http://game.granbluefantasy.jp/favicon.ico
 // @author       biuuu
@@ -9002,7 +9002,7 @@
     return str;
   };
 
-  var version = "1.8.11";
+  var version = "1.8.12";
 
   var config = {
     origin: 'https://blhx.danmu9.com',
@@ -9085,22 +9085,26 @@
     document.head.appendChild(style);
   };
 
-  var load = new Promise(function (rev, rej) {
-    window.addEventListener('load', function () {
-      var iframe = document.createElement('iframe');
-      iframe.src = "".concat(origin, "/blhxfy/lacia.html");
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-      lacia = iframe.contentWindow;
+  var loadIframe = function loadIframe() {
+    return new Promise(function (rev, rej) {
+      window.addEventListener('load', function () {
+        var iframe = document.createElement('iframe');
+        iframe.src = "".concat(origin, "/blhxfy/lacia.html");
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        lacia = iframe.contentWindow;
+      });
+      var timer = setTimeout(function () {
+        rej("\u52A0\u8F7Diframe\u8D85\u65F6");
+      }, config.timeout * 1000);
+      ee.once('loaded', function () {
+        clearTimeout(timer);
+        rev();
+      });
     });
-    var timer = setTimeout(function () {
-      rej("\u52A0\u8F7Diframe\u8D85\u65F6");
-    }, config.timeout * 1000);
-    ee.once('loaded', function () {
-      clearTimeout(timer);
-      rev();
-    });
-  });
+  };
+
+  var iframeLoaded = false;
 
   var fetchData =
   /*#__PURE__*/
@@ -9116,24 +9120,30 @@
               url = pathname;
               flag = Math.random();
               _context.prev = 2;
-              _context.next = 5;
-              return load;
 
-            case 5:
+              if (!iframeLoaded) {
+                loadIframe = loadIframe();
+                iframeLoaded = true;
+              }
+
+              _context.next = 6;
+              return loadIframe;
+
+            case 6:
               lacia.postMessage({
                 type: 'fetch',
                 url: url,
                 flag: flag
               }, origin);
-              _context.next = 11;
+              _context.next = 12;
               break;
 
-            case 8:
-              _context.prev = 8;
+            case 9:
+              _context.prev = 9;
               _context.t0 = _context["catch"](2);
               return _context.abrupt("return", '');
 
-            case 11:
+            case 12:
               return _context.abrupt("return", new Promise(function (rev, rej) {
                 var timer = setTimeout(function () {
                   rej("\u52A0\u8F7D".concat(pathname, "\u8D85\u65F6"));
@@ -9150,12 +9160,12 @@
                 });
               }));
 
-            case 12:
+            case 13:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[2, 8]]);
+      }, _callee, null, [[2, 9]]);
     }));
 
     return function fetchData(_x) {
@@ -20315,7 +20325,10 @@
   };
 
   var main = function main() {
-    if (window.blhxfy) return;
+    var time = sessionStorage.getItem('blhxfy:startTime') || 0;
+    var now = Date.now();
+    if (now - time < 1000) return;
+    sessionStorage.setItem('blhxfy:startTime', now);
     eventMessage();
     injectXHR();
   };
